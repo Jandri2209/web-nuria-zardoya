@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Mensaje desde tu Web</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            background-color: #10B981; /* Verde Tailwind */
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 30px 20px;
+            color: #333333;
+        }
+        .content h2 {
+            color: #10B981;
+        }
+        .field {
+            margin-bottom: 20px;
+        }
+        .field-label {
+            font-weight: bold;
+            color: #555555;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .field-value {
+            background-color: #f9f9f9;
+            border-left: 4px solid #10B981;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #777777;
+        }
+    </style>
+</head>
+<body>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td align="center" style="padding: 20px 0;">
+                <div class="container">
+                    <div class="header">
+                        <!-- Puedes poner tu logo aquí si quieres -->
+                        <!-- <img src="URL_DE_TU_LOGO" alt="Logo Nuria Zardoya" width="150"> -->
+                        <h1>Nuevo Contacto Web</h1>
+                    </div>
+                    <div class="content">
+                        <h2>Detalles del Mensaje</h2>
+
+                        <!-- Netlify reemplazará estas variables con los datos del formulario -->
+                        <!-- La sintaxis {{- .Data.nombre_del_campo -}} es la correcta para las plantillas -->
+
+                        <div class="field">
+                            <span class="field-label">Nombre:</span>
+                            <div class="field-value">{{- .Data.name -}}</div>
+                        </div>
+
+                        <div class="field">
+                            <span class="field-label">Email:</span>
+                            <div class="field-value"><a href="mailto:{{- .Data.email -}}">{{- .Data.email -}}</a></div>
+                        </div>
+
+                        <div class="field">
+                            <span class="field-label">Motivo de la consulta:</span>
+                            <div class="field-value">{{- .Data.reason -}}</div>
+                        </div>
+
+                        <div class="field">
+                            <span class="field-label">Mensaje:</span>
+                            <div class="field-value">{{- .Data.message -}}</div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <p>Este correo fue enviado desde el formulario de contacto de tu sitio web.</p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
