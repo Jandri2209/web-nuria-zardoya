@@ -1,149 +1,37 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- ================================================== -->
+<!--            Contenido para: legal.html              -->
+<!-- ================================================== -->
+---
+layout: base.html
+title: Aviso Legal - Nuria Zardoya
+description: Aviso Legal del sitio web de Nuria Zardoya, Dietista-Nutricionista. Información sobre el titular y las condiciones de uso del sitio.
+---
+<div class="container mx-auto px-6 max-w-4xl">
+    <h1 class="text-4xl font-bold text-center mb-8">Aviso Legal</h1>
+    <div class="bg-white p-8 rounded-lg shadow-lg legal-content">
+        <style>
+            .legal-content h2 { font-size: 1.5rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; color: #166534; }
+            .legal-content p, .legal-content ul { margin-bottom: 1rem; line-height: 1.75; }
+            .legal-content ul { list-style-position: inside; list-style-type: disc; }
+            .legal-content a { color: #15803d; text-decoration: underline; }
+        </style>
+        <p><strong>Última actualización:</strong> 11 de agosto de 2025</p>
+        <h2>1. Datos Identificativos del Titular</h2>
+        <p>En cumplimiento de la Ley 34/2002, de 11 de julio, de servicios de la sociedad de la información y de comercio electrónico (LSSI-CE), se informa de los siguientes datos:</p>
+        <ul>
+            <li><strong>Titular:</strong> Nuria Zardoya Lasheras</li>
+            <li><strong>NIF/CIF:</strong> [Añadir NIF de Nuria cuando proceda]</li>
+            <li><strong>Domicilio:</strong> [Añadir domicilio profesional o el de Ribaforada, Navarra]</li>
+            <li><strong>Correo electrónico:</strong> nurianutricionista@gmail.com (o el email final que se use)</li>
+            <li><strong>Número de colegiada:</strong> NA00504 (CODINNA)</li>
+            <li><strong>Sitio web:</strong> https://www.hostinger.com/es/tutoriales/tengo-un-dominio-y-quiero-crear-una-pagina-web</li>
+        </ul>
+        <h2>2. Objeto y Condiciones de Uso</h2>
+        <p>El presente aviso legal regula el uso del sitio web. La navegación por el sitio web atribuye la condición de usuario del mismo e implica la aceptación plena y sin reservas de todas y cada una de las disposiciones incluidas en este Aviso Legal.</p>
+        <p>El contenido de este sitio web tiene un carácter meramente informativo y de divulgación. En ningún caso sustituye el consejo médico o la consulta con un profesional de la salud cualificado.</p>
+        <h2>3. Propiedad Intelectual e Industrial</h2>
+        <p>Todos los contenidos del sitio web, como textos, fotografías, gráficos e imágenes, son propiedad de Nuria Zardoya Lasheras. Queda prohibida su reproducción o distribución sin autorización previa.</p>
+    </div>
+</div>
 
-    <!-- Título Optimizado para SEO -->
-    <title>Aviso Legal - Nuria Zardoya Nutrición</title>
-
-    <!-- Meta Descripción para SEO -->
-    <meta name="description" content="Aviso Legal del sitio web de Nuria Zardoya, Dietista-Nutricionista. Información sobre el titular y las condiciones de uso del sitio.">
-
-    <!-- Favicon (Icono de la pestaña del navegador) -->
-    <link rel="icon" type="image/jpeg" href="https://i.imgur.com/fTyNpqg.jpeg">
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Google Fonts (Poppins) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <style>
-        body { font-family: 'Poppins', sans-serif; }
-        /* Estilos para el contenido del texto legal */
-        .legal-content h2 {
-            font-size: 1.5rem; /* 24px */
-            font-weight: 600;
-            margin-top: 2rem; /* 32px */
-            margin-bottom: 1rem; /* 16px */
-            color: #166534; /* green-800 */
-        }
-        .legal-content p, .legal-content ul {
-            margin-bottom: 1rem; /* 16px */
-            line-height: 1.75;
-        }
-        .legal-content ul {
-            list-style-position: inside;
-            list-style-type: disc;
-        }
-        .legal-content a {
-            color: #15803d; /* green-600 */
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body class="bg-gray-50 text-gray-800">
-
-    <!-- =========== Header y Navegación =========== -->
-    <header id="header" class="bg-white shadow-md fixed w-full top-0 z-50">
-        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
-            <a href="index.html" class="text-2xl font-bold text-green-600">Nuria Zardoya</a>
-            <div class="hidden md:flex space-x-6 items-center">
-                <a href="index.html" class="text-gray-600 hover:text-green-600">Inicio</a>
-                <a href="servicios.html" class="text-gray-600 hover:text-green-600">Servicios</a>
-                <a href="recetas.html" class="text-gray-600 hover:text-green-600">Recetas</a>
-                <a href="blog.html" class="text-gray-600 hover:text-green-600">Blog</a>
-                <a href="contacto.html" class="text-gray-600 hover:text-green-600">Contacto</a>
-                <a href="contacto.html" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-lg">Pide tu cita</a>
-            </div>
-            <div class="md:hidden">
-                <button id="menu-btn" class="text-gray-600 focus:outline-none"><i data-lucide="menu" class="w-6 h-6"></i></button>
-            </div>
-        </nav>
-        <div id="mobile-menu" class="hidden md:hidden">
-            <a href="index.html" class="block py-2 px-4 text-sm hover:bg-green-50">Inicio</a>
-            <a href="servicios.html" class="block py-2 px-4 text-sm hover:bg-green-50">Servicios</a>
-            <a href="recetas.html" class="block py-2 px-4 text-sm hover:bg-green-50">Recetas</a>
-            <a href="blog.html" class="block py-2 px-4 text-sm hover:bg-green-50">Blog</a>
-            <a href="contacto.html" class="block py-2 px-4 text-sm hover:bg-green-50">Contacto</a>
-        </div>
-    </header>
-
-    <main class="pt-24 md:pt-32 pb-16">
-        <div class="container mx-auto px-6 max-w-4xl">
-            <h1 class="text-4xl font-bold text-center mb-8">Aviso Legal</h1>
-            <div class="bg-white p-8 rounded-lg shadow-lg legal-content">
-                <p><strong>Última actualización:</strong> 11 de agosto de 2025</p>
-
-                <h2>1. Datos Identificativos del Titular</h2>
-                <p>
-                    En cumplimiento de la Ley 34/2002, de 11 de julio, de servicios de la sociedad de la información y de comercio electrónico (LSSI-CE), se informa de los siguientes datos:
-                </p>
-                <ul>
-                    <li><strong>Titular:</strong> Nuria Zardoya Lasheras</li>
-                    <li><strong>NIF/CIF:</strong> [Añadir NIF de Nuria cuando proceda]</li>
-                    <li><strong>Domicilio:</strong> [Añadir domicilio profesional o el de Ribaforada, Navarra]</li>
-                    <li><strong>Correo electrónico:</strong> nurianutricionista@gmail.com (o el email final que se use)</li>
-                    <li><strong>Número de colegiada:</strong> NA00504 (CODINNA)</li>
-                    <li><strong>Sitio web:</strong> https://www.hostinger.com/es/tutoriales/tengo-un-dominio-y-quiero-crear-una-pagina-web</li>
-                </ul>
-
-                <h2>2. Objeto y Condiciones de Uso</h2>
-                <p>
-                    El presente aviso legal regula el uso del sitio web. La navegación por el sitio web atribuye la condición de usuario del mismo e implica la aceptación plena y sin reservas de todas y cada una de las disposiciones incluidas en este Aviso Legal.
-                </p>
-                <p>
-                    El contenido de este sitio web tiene un carácter meramente informativo y de divulgación. En ningún caso sustituye el consejo médico o la consulta con un profesional de la salud cualificado.
-                </p>
-
-                <h2>3. Propiedad Intelectual e Industrial</h2>
-                <p>
-                    Todos los contenidos del sitio web, como textos, fotografías, gráficos, imágenes, así como su diseño gráfico y códigos fuente, constituyen una obra cuya propiedad pertenece a Nuria Zardoya Lasheras. Queda prohibida su reproducción, distribución o modificación sin la autorización previa y por escrito del titular.
-                </p>
-
-                <h2>4. Exclusión de Responsabilidad</h2>
-                <p>
-                    El titular del sitio web no se hace responsable de los daños y perjuicios de cualquier naturaleza que pudieran ocasionar, a título enunciativo: errores u omisiones en los contenidos, falta de disponibilidad del portal o la transmisión de virus o programas maliciosos en los contenidos, a pesar de haber adoptado todas las medidas tecnológicas necesarias para evitarlo.
-                </p>
-
-                <h2>5. Legislación Aplicable</h2>
-                <p>
-                    La relación entre el titular y el usuario se regirá por la normativa española vigente y cualquier controversia se someterá a los Juzgados y tribunales de la ciudad de Tudela, Navarra, salvo que la Ley aplicable disponga otra cosa.
-                </p>
-            </div>
-        </div>
-    </main>
-
-     <!-- =========== Footer =========== -->
-    <footer class="bg-gray-800 text-white py-8">
-        <div class="container mx-auto px-6 text-center">
-            <p class="text-lg font-bold mb-2">Nuria Zardoya - Dietista-Nutricionista</p>
-            <div class="flex justify-center space-x-6 my-4">
-                <a href="https://www.instagram.com/nuriazardoyaa?igsh=MWp0bmIyMGI3eHBpMg==" target="_blank" rel="noopener noreferrer" class="hover:text-green-400"><i data-lucide="instagram" class="w-6 h-6"></i></a>
-                <a href="https://www.linkedin.com/in/nuria-zardoya-lasheras-3579262b8" target="_blank" rel="noopener noreferrer" class="hover:text-green-400"><i data-lucide="linkedin" class="w-6 h-6"></i></a>
-                <a href="mailto:nuriariba03@gmail.com" class="hover:text-green-400"><i data-lucide="mail" class="w-6 h-6"></i></a>
-            </div>
-            <p class="text-sm text-gray-400">&copy; <span id="year"></span> Nuria Zardoya. Todos los derechos reservados.</p>
-            <p class="text-xs text-gray-500 mt-2">
-                <a href="privacidad.html" class="hover:underline">Política de Privacidad</a> |
-                <a href="legal.html" class="hover:underline">Aviso Legal</a> |
-                <a href="cookies.html" class="hover:underline">Política de Cookies</a>
-            </p>
-        </div>
-    </footer>
-
-    <script>
-        lucide.createIcons();
-        const menuBtn = document.getElementById('menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        menuBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
-        document.getElementById('year').textContent = new Date().getFullYear();
-    </script>
-</body>
-</html>
+---

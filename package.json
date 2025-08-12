@@ -1,0 +1,18 @@
+```json
+// ================================================== //
+//          Contenido para: package.json              //
+// ================================================== //
+// Este archivo le dice a Netlify qué herramientas necesita instalar.
+
+{
+  "name": "web-nuria-zardoya",
+  "version": "1.0.0",
+  "description": "Web de Nuria",
+  "scripts": {
+    "start": "npx @11ty/eleventy --serve",
+    "build": "npx @11ty/eleventy"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1"
+  }
+}
