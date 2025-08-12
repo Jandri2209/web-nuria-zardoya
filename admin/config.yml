@@ -1,41 +1,25 @@
 backend:
   name: git-gateway
-  branch: main # Importante: Apunta a la rama principal
+  branch: main
 
-# Carpeta para las imágenes que Nuria suba desde el CMS
 media_folder: "assets/uploads"
 public_folder: "/assets/uploads"
 
-# Define las colecciones de contenido que Nuria puede editar
 collections:
-  # Colección para las Recetas
   - name: "recetas"
     label: "Recetas"
-    folder: "recetas" # Guardará cada receta como un archivo en la carpeta /recetas/
+    folder: "recetas"
     create: true
-    slug: "{{slug}}" # El nombre del archivo será el título en minúsculas
-    fields: # Los campos que Nuria verá en el editor
-      - label: "Título de la Receta"
-        name: "title"
-        widget: "string"
-      - label: "Imagen Principal"
-        name: "image"
-        widget: "image"
-      - label: "Descripción Corta"
-        name: "description"
-        widget: "text"
-      - label: "Ingredientes"
-        name: "ingredients"
-        widget: "markdown"
-      - label: "Pasos de Preparación"
-        name: "preparation"
-        widget: "markdown"
-      - label: "Consejo de Nuria"
-        name: "tip"
-        widget: "markdown"
-        optional: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Título de la Receta", name: "title", widget: "string" }
+      - { label: "Imagen Principal", name: "image", widget: "image" }
+      - { label: "Descripción Corta", name: "description", widget: "text" }
+      - { label: "Ingredientes", name: "ingredients", widget: "markdown" }
+      - { label: "Pasos de Preparación", name: "preparation", widget: "markdown" }
+      - { label: "Consejo de Nuria", name: "tip", widget: "markdown", optional: true }
 
-  # Colección para el Blog (comentada para ocultarla, como acordamos)
+  # Colección para el Blog (comentada para ocultarla)
   # - name: "blog"
   #   label: "Blog"
   #   folder: "blog"

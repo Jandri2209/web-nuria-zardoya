@@ -9,9 +9,6 @@ module.exports = function(eleventyConfig) {
             layouts: "_layouts",
             output: "_site"
         },
-        passthroughFileCopy: true,
-        templateFormats: ["html", "md", "njk"],
-        htmlTemplateEngine: "njk",
-        markdownTemplateEngine: "njk"
+        passthroughFileCopy: true
     };
 };

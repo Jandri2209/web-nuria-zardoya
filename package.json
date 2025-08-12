@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Web de Nuria",
   "scripts": {
-    "start": "npx @11ty/eleventy --serve",
     "build": "npx @11ty/eleventy"
   },
   "devDependencies": {
