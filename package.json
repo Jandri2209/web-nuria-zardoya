@@ -1,9 +1,3 @@
-```json
-// ================================================== //
-//          Contenido para: package.json              //
-// ================================================== //
-// Este archivo le dice a Netlify qué herramientas necesita instalar.
-
 {
   "name": "web-nuria-zardoya",
   "version": "1.0.0",

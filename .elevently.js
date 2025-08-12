@@ -1,5 +1,4 @@
 module.exports = function(eleventyConfig) {
-    // Pasa los archivos estáticos (como la carpeta admin) a la salida final
     eleventyConfig.addPassthroughCopy("admin");
     eleventyConfig.addPassthroughCopy("assets");
 
@@ -8,7 +7,7 @@ module.exports = function(eleventyConfig) {
             input: ".",
             includes: "_includes",
             layouts: "_layouts",
-            output: "_site" // La carpeta final donde se construye la web
+            output: "_site"
         },
         passthroughFileCopy: true,
         templateFormats: ["html", "md", "njk"],
