@@ -1,9 +1,0 @@
-# Este archivo anula la configuración de la web de Netlify
-# y le da las instrucciones de construcción correctas.
-
-[build]
-  # Comando para construir la web
-  command = "npm run build"
-
-  # Carpeta donde se publica la web final
-  publish = "_site"
