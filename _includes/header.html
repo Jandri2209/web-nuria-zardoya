@@ -2,12 +2,16 @@
     <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
         <a href="/" class="text-2xl font-bold text-green-600">Nuria Zardoya</a>
         <div class="hidden md:flex space-x-6 items-center">
-            <a href="/" class="text-gray-600 hover:text-green-600">Inicio</a>
-            <a href="/servicios.html" class="text-gray-600 hover:text-green-600">Servicios</a>
-            <a href="/recetas.html" class="text-gray-600 hover:text-green-600">Recetas</a>
-            <!-- El enlace al Blog está comentado para ocultarlo -->
-            <!-- <a href="/blog.html" class="text-gray-600 hover:text-green-600">Blog</a> -->
-            <a href="/contacto.html" class="text-gray-600 hover:text-green-600">Contacto</a>
+            <!--
+              Ahora, cada enlace comprueba si la URL de la página actual (page.url)
+              coincide con la URL del enlace. Si es así, aplica el estilo de "activo".
+            -->
+            <a href="/" class="{% if page.url == '/' %}text-green-600 font-semibold{% else %}text-gray-600 hover:text-green-600{% endif %}">Inicio</a>
+            <a href="/servicios.html" class="{% if page.url == '/servicios.html' %}text-green-600 font-semibold{% else %}text-gray-600 hover:text-green-600{% endif %}">Servicios</a>
+            <a href="/recetas.html" class="{% if page.url == '/recetas.html' %}text-green-600 font-semibold{% else %}text-gray-600 hover:text-green-600{% endif %}">Recetas</a>
+            <!-- El enlace al Blog sigue oculto -->
+            <!-- <a href="/blog.html" class="{% if page.url == '/blog.html' %}text-green-600 font-semibold{% else %}text-gray-600 hover:text-green-600{% endif %}">Blog</a> -->
+            <a href="/contacto.html" class="{% if page.url == '/contacto.html' %}text-green-600 font-semibold{% else %}text-gray-600 hover:text-green-600{% endif %}">Contacto</a>
             <a href="/contacto.html" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-lg">Pide tu cita</a>
         </div>
         <div class="md:hidden">
