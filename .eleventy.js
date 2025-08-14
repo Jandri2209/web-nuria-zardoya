@@ -11,6 +11,10 @@ module.exports = function(eleventyConfig) {
             layouts: "_layouts",
             output: "_site"
         },
+        // Esta es la línea clave que faltaba:
+        // Le dice a Eleventy que procese los archivos HTML con el motor Nunjucks,
+        // que sí entiende el filtro "| safe".
+        htmlTemplateEngine: "njk",
         passthroughFileCopy: true
     };
 };
