@@ -1,0 +1,111 @@
+{# Banner + modal de preferencias (GDPR-friendly) #}
+<div id="cookie-banner" class="fixed inset-x-0 bottom-0 z-50 hidden">
+  <div class="mx-auto max-w-4xl m-4 rounded-2xl border bg-white shadow-xl p-4 md:p-5">
+    <div class="md:flex md:items-start md:gap-4">
+      <div class="flex-1">
+        <h2 class="text-lg font-semibold mb-1">Tu privacidad nos importa</h2>
+        <p class="text-sm text-gray-600">
+          Usamos cookies necesarias para que el sitio funcione y opcionalmente cookies de analítica para mejorar la experiencia.
+          Puedes aceptar todas, rechazar o configurar tus preferencias. Consulta la
+          <a href="/cookies.html" class="underline text-green-700">Política de Cookies</a>.
+        </p>
+      </div>
+      <div class="mt-3 md:mt-0 flex-shrink-0 flex gap-2">
+        <button id="cookie-reject-all" class="px-4 py-2 rounded-xl border text-gray-700">Rechazar</button>
+        <button id="cookie-open-prefs" class="px-4 py-2 rounded-xl border text-gray-700">Preferencias</button>
+        <button id="cookie-accept-all" class="px-4 py-2 rounded-xl bg-green-700 text-white">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Modal de preferencias #}
+<div id="cookie-modal" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-black/40"></div>
+  <div class="relative mx-auto mt-24 w-[min(42rem,92%)] rounded-2xl bg-white p-6 shadow-2xl">
+    <h3 class="text-xl font-semibold mb-4">Preferencias de cookies</h3>
+    <div class="space-y-4">
+      <label class="flex items-start gap-3">
+        <input type="checkbox" checked disabled class="mt-1">
+        <div>
+          <div class="font-medium">Necesarias</div>
+          <div class="text-sm text-gray-600">Imprescindibles para el funcionamiento básico del sitio. Siempre activas.</div>
+        </div>
+      </label>
+
+      <label class="flex items-start gap-3">
+        <input id="ck-analytics" type="checkbox" class="mt-1">
+        <div>
+          <div class="font-medium">Analítica</div>
+          <div class="text-sm text-gray-600">Ayudan a entender el uso del sitio para mejorarlo (p. ej., Google Analytics).</div>
+        </div>
+      </label>
+
+      <label class="flex items-start gap-3">
+        <input id="ck-marketing" type="checkbox" class="mt-1">
+        <div>
+          <div class="font-medium">Marketing</div>
+          <div class="text-sm text-gray-600">Cookies para publicidad y remarketing (solo si las usas).</div>
+        </div>
+      </label>
+    </div>
+
+    <div class="mt-6 flex justify-end gap-2">
+      <button id="cookie-cancel" class="px-4 py-2 rounded-xl border">Cancelar</button>
+      <button id="cookie-save-prefs" class="px-4 py-2 rounded-xl bg-green-700 text-white">Guardar preferencias</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const KEY = "cookieConsent.v1";
+  const $ = (sel) => document.querySelector(sel);
+  const banner = $("#cookie-banner");
+  const modal  = $("#cookie-modal");
+  const ckAnalytics = $("#ck-analytics");
+  const ckMarketing = $("#ck-marketing");
+
+  function getConsent() { try { return JSON.parse(localStorage.getItem(KEY)); } catch { return null; } }
+  function saveConsent(consent) { localStorage.setItem(KEY, JSON.stringify({ ...consent, ts: new Date().toISOString() })); }
+  function showBanner() { banner.classList.remove("hidden"); }
+  function hideBanner() { banner.classList.add("hidden"); }
+  function openModal() { modal.classList.remove("hidden"); }
+  function closeModal() { modal.classList.add("hidden"); }
+
+  function applyConsent(consent) {
+    // Aquí cargarías scripts opcionales según categorías
+    // if (consent.analytics) { /* loadAnalytics() */ }
+    // if (consent.marketing) { /* loadPixel() */ }
+  }
+
+  $("#cookie-accept-all")?.addEventListener("click", () => {
+    const consent = { necessary: true, analytics: true, marketing: true };
+    saveConsent(consent); hideBanner(); applyConsent(consent);
+  });
+  $("#cookie-reject-all")?.addEventListener("click", () => {
+    const consent = { necessary: true, analytics: false, marketing: false };
+    saveConsent(consent); hideBanner(); applyConsent(consent);
+  });
+  $("#cookie-open-prefs")?.addEventListener("click", () => { openModal(); });
+  $("#cookie-save-prefs")?.addEventListener("click", () => {
+    const consent = { necessary: true, analytics: !!ckAnalytics?.checked, marketing: !!ckMarketing?.checked };
+    saveConsent(consent); closeModal(); hideBanner(); applyConsent(consent);
+  });
+  $("#cookie-cancel")?.addEventListener("click", () => { closeModal(); });
+
+  document.addEventListener("click", (e) => {
+    if (e.target && e.target.id === "open-cookie-preferences") {
+      const current = getConsent() || { necessary:true, analytics:false, marketing:false };
+      if (ckAnalytics) ckAnalytics.checked = !!current.analytics;
+      if (ckMarketing) ckMarketing.checked = !!current.marketing;
+      openModal();
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const consent = getConsent();
+    if (!consent) showBanner(); else applyConsent(consent);
+  });
+})();
+</script>
