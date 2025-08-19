@@ -1,32 +1,36 @@
 backend:
   name: git-gateway
-  branch: main
+  branch: refactor-ssg   # ← cámbialo si tu rama es otra (p.ej., main)
 
 media_folder: "assets/uploads"
 public_folder: "/assets/uploads"
 
+publish_mode: editorial_workflow
+locale: "es"
+
 collections:
   - name: "recetas"
     label: "Recetas"
+    label_singular: "Receta"
     folder: "recetas"
     create: true
     slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    preview_path: "recetas/{{slug}}/"
     fields:
-      - { label: "Título de la Receta", name: "title", widget: "string" }
-      - { label: "Imagen Principal", name: "image", widget: "image" }
-      - { label: "Descripción Corta", name: "description", widget: "text" }
-      - { label: "Ingredientes", name: "ingredients", widget: "markdown" }
-      - { label: "Pasos de Preparación", name: "preparation", widget: "markdown" }
-      - { label: "Consejo de Nuria", name: "tip", widget: "markdown", optional: true }
-
-  # Colección para el Blog (comentada para ocultarla)
-  # - name: "blog"
-  #   label: "Blog"
-  #   folder: "blog"
-  #   create: true
-  #   slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
-  #   fields:
-  #     - { label: "Título", name: "title", widget: "string" }
-  #     - { label: "Fecha de Publicación", name: "date", widget: "datetime" }
-  #     - { label: "Imagen Principal", name: "thumbnail", widget: "image" }
-  #     - { label: "Cuerpo del Post", name: "body", widget: "markdown" }
+      - { label: "Layout", name: "layout", widget: "hidden", default: "recipe.njk" }
+      - { label: "Etiquetas", name: "tags", widget: "hidden", default: ["recetas"] }
+      - { label: "Título", name: "title", widget: "string" }
+      - { label: "Fecha", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
+      - { label: "Descripción", name: "description", widget: "text", hint: "Resumen corto para la tarjeta y SEO" }
+      - { label: "Imagen principal", name: "image", widget: "image", allow_multiple: false, hint: "Ideal ~1200×800" }
+      - { label: "Categoría", name: "category", widget: "select", options: ["Plato principal","Desayuno","Ensalada","Sopa/Crema","Snack","Postre","Bebida"], default: "Plato principal" }
+      - { label: "Raciones", name: "servings", widget: "number", value_type: "int", min: 1, default: 2 }
+      - { label: "Tiempo (min)", name: "time", widget: "number", value_type: "int", min: 0, default: 15 }
+      - { label: "Dificultad", name: "difficulty", widget: "select", options: ["Fácil","Media","Difícil"], default: "Fácil" }
+      - label: "Ingredientes"
+        name: "ingredients"
+        widget: "list"
+        field: { label: "Ingrediente", name: "item", widget: "string" }
+      - { label: "Preparación", name: "body", widget: "markdown" }

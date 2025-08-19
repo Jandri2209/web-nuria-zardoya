@@ -4,22 +4,29 @@ title: "Recetas Saludables - Nuria Zardoya"
 description: "Encuentra recetas saludables, fáciles y deliciosas creadas por Nuria Zardoya, Dietista-Nutricionista en Navarra."
 ---
 <div class="container mx-auto px-6">
-    <h1 class="text-4xl font-bold text-center mb-4">Mis Recetas Favoritas</h1>
-    <p class="text-lg text-gray-600 text-center max-w-3xl mx-auto mb-12">
-        Comer saludable no tiene por qué ser aburrido. Aquí te comparto algunas ideas deliciosas, fáciles y nutritivas.
-    </p>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
-            <img src="https://placehold.co/600x400/a7f3d0/333333?text=Ensalada+Quinoa" alt="Imagen de una receta" class="w-full h-48 object-cover">
-            <div class="p-6">
-                <span class="text-sm text-green-600 font-semibold">Plato principal</span>
-                <h3 class="text-xl font-bold my-2">Ensalada de Quinoa y Aguacate</h3>
-                <p class="text-gray-600 mb-4 text-sm">Una opción perfecta para una comida ligera y llena de nutrientes. Lista en 20 minutos.</p>
-                <a href="/recetas/ensalada-quinoa.html" class="font-semibold text-green-600 hover:text-green-700">Ver receta &rarr;</a>
-            </div>
-        </div>
-        <!-- Más tarjetas de recetas aquí -->
-    </div>
-</div>
+  <h1 class="text-4xl font-bold text-center mb-4">Mis Recetas Favoritas</h1>
+  <p class="text-lg text-gray-600 text-center max-w-3xl mx-auto mb-12">
+    Comer saludable no tiene por qué ser aburrido. Aquí te comparto algunas ideas deliciosas, fáciles y nutritivas.
+  </p>
 
----
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    {% for r in collections.recetas | reverse %}
+      {% set img = r.data.image or "https://placehold.co/600x400/a7f3d0/333333?text=Receta" %}
+      <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+        <a href="{{ r.url }}">
+          <img src="{{ img }}" alt="Imagen de {{ r.data.title }}" class="w-full h-48 object-cover">
+        </a>
+        <div class="p-6">
+          <span class="text-sm text-green-600 font-semibold">{{ r.data.category or "Receta" }}</span>
+          <h3 class="text-xl font-bold my-2">
+            <a href="{{ r.url }}">{{ r.data.title }}</a>
+          </h3>
+          {% if r.data.description %}
+            <p class="text-gray-600 mb-4 text-sm">{{ r.data.description }}</p>
+          {% endif %}
+          <a href="{{ r.url }}" class="font-semibold text-green-600 hover:text-green-700">Ver receta &rarr;</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
