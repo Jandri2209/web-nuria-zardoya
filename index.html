@@ -4,37 +4,67 @@ title: "Nuria Zardoya | Dietista-Nutricionista en Navarra"
 description: "Consulta de nutrición personalizada con Nuria Zardoya, Dietista-Nutricionista en Navarra. Aprende a comer de forma saludable y alcanza tus objetivos."
 ---
 <!-- =========== Sección de Inicio (Hero) =========== -->
-<section id="inicio" class="bg-white">
-    <div class="container mx-auto px-6 py-12 flex flex-col md:flex-row items-center">
-        <div class="md:w-1/2 text-center md:text-left mb-10 md:mb-0">
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 leading-tight mb-4">Transforma tu vida con una <span class="text-green-600">alimentación consciente</span></h1>
-            <p class="text-lg text-gray-600 mb-8">Descubre cómo comer bien puede mejorar tu salud y bienestar general. ¡Empecemos juntos este camino!</p>
-            <a href="/servicios.html" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 shadow-xl">Ver mis servicios</a>
-        </div>
-        <div class="md:w-1/2 flex justify-center">
-            <img src="https://i.imgur.com/fTyNpqg.jpeg" alt="Foto profesional de Nuria Zardoya" class="rounded-full shadow-2xl w-64 h-64 md:w-80 md:h-80 object-cover">
-        </div>
+<section id="inicio" class="bg-white" aria-labelledby="hero-title">
+  <div class="container mx-auto px-6 py-12 flex flex-col md:flex-row items-center">
+    <div class="md:w-1/2 text-center md:text-left mb-10 md:mb-0">
+      <h1 id="hero-title" class="text-4xl md:text-5xl font-bold text-gray-800 leading-tight mb-2">
+        Transforma tu vida con una <span class="text-green-600">alimentación consciente</span>
+      </h1>
+
+      <!-- Subtítulo añadido (SEO local, no sustituye nada) -->
+      <p class="text-base text-gray-500 mb-4">
+        Dietista-Nutricionista en Navarra · Consulta presencial y online
+      </p>
+
+      <p class="text-lg text-gray-600 mb-8">Descubre cómo comer bien puede mejorar tu salud y bienestar general. ¡Empecemos juntos este camino!</p>
+      <a href="/servicios.html" class="bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 shadow-xl" aria-label="Ver mis servicios de nutrición">
+        Ver mis servicios
+      </a>
     </div>
+    <div class="md:w-1/2 flex justify-center">
+      <img
+        src="https://i.imgur.com/fTyNpqg.jpeg"
+        alt="Foto profesional de Nuria Zardoya"
+        class="rounded-full shadow-2xl w-64 h-64 md:w-80 md:h-80 object-cover"
+        width="320" height="320"
+        decoding="async" fetchpriority="high">
+    </div>
+  </div>
 </section>
 
-<!-- Script de Netlify Identity para el pop-up de login/registro -->
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<!-- Script de Netlify Identity para el pop-up de login/registro (dejado por si lo necesitas) -->
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js" defer></script>
+
 <!-- =========== Sección Sobre Mí (mejorada) =========== -->
-<section id="sobre-mi" class="py-20 bg-gray-50">
+<section id="sobre-mi" class="py-20 bg-gray-50" aria-labelledby="sobre-mi-title">
   <div class="container mx-auto px-6">
     <div class="flex flex-col md:flex-row items-center gap-12">
       <!-- Foto -->
       <div class="md:w-1/3 flex justify-center">
-        <img src="https://i.imgur.com/BrMGKNy.jpeg" alt="Retrato ilustrado de Nuria Zardoya" class="rounded-lg shadow-lg w-full max-w-sm">
+        <img
+          src="https://i.imgur.com/BrMGKNy.jpeg"
+          alt="Retrato ilustrado de Nuria Zardoya"
+          class="rounded-lg shadow-lg w-full max-w-sm"
+          width="480" height="600"
+          loading="lazy" decoding="async">
       </div>
 
       <!-- Texto -->
       <div class="md:w-2/3">
-        <h2 class="text-3xl font-bold mb-6 text-gray-900">Conóceme un poco más</h2>
+        <h2 id="sobre-mi-title" class="text-3xl font-bold mb-6 text-gray-900">Conóceme un poco más</h2>
 
         <h3 class="text-2xl font-semibold text-green-700 mb-3">Hola, soy Nuria Zardoya</h3>
         <p class="text-gray-700 mb-4">
-          Soy <strong>Dietista-Nutricionista</strong> colegiada (N.º Col. <strong>NA00504</strong> en CODINNA) y graduada por la Universidad de Navarra. Me apasiona la ciencia de la nutrición y acompañar a las personas para que consigan objetivos <strong>realistas</strong> y duraderos.
+          Soy <strong>Dietista-Nutricionista</strong> colegiada (N.º Col. <strong>NA00504</strong> en
+          <!-- Enlace externo a CODINNA -->
+          <a href="https://codinna.com/" target="_blank" rel="noopener noreferrer" class="underline decoration-dotted hover:decoration-solid">
+            CODINNA<span aria-hidden="true"> ↗</span><span class="sr-only"> (se abre en pestaña nueva)</span>
+          </a>
+          ) y graduada por la
+          <!-- Enlace externo a Universidad de Navarra -->
+          <a href="https://www.unav.edu/" target="_blank" rel="noopener noreferrer" class="underline decoration-dotted hover:decoration-solid">
+            Universidad de Navarra<span aria-hidden="true"> ↗</span><span class="sr-only"> (se abre en pestaña nueva)</span>
+          </a>.
         </p>
         <p class="text-gray-700 mb-4">
           Soy una apasionada por la ciencia de la nutrición y por ayudar a las personas a alcanzar sus objetivos de <strong>salud nutricional</strong> de una forma realista e individualizada.
@@ -47,7 +77,7 @@ description: "Consulta de nutrición personalizada con Nuria Zardoya, Dietista-N
         </p>
 
         <!-- Badges de confianza -->
-        <ul class="flex flex-wrap gap-2 mb-6">
+        <ul class="flex flex-wrap gap-2 mb-6" aria-label="Fortalezas del servicio">
           <li class="text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full">Enfoque basado en evidencia</li>
           <li class="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full">Plan 100% personalizado</li>
           <li class="text-sm bg-purple-100 text-purple-800 px-3 py-1 rounded-full">Acompañamiento cercano</li>
@@ -59,43 +89,73 @@ description: "Consulta de nutrición personalizada con Nuria Zardoya, Dietista-N
           <ol class="space-y-3">
             <li class="flex gap-3">
               <span class="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded-full bg-green-500 text-white font-bold">1</span>
-              <p class="text-gray-700"><strong>Primera toma de contacto:</strong> escucho tu historia, hábitos, horarios y objetivos.</p>
+              <p class="text-gray-700"><strong>Primera toma de contacto:</strong> escucho tu historia, hábitos alimentarios, estilo de vida, antecedentes médicos y objetivos.</p>
             </li>
             <li class="flex gap-3">
               <span class="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded-full bg-green-500 text-white font-bold">2</span>
-              <p class="text-gray-700"><strong>Plan a tu medida:</strong> pautas claras, ideas de menús y recursos adaptados a tu vida real (sin dietas milagro).</p>
+              <p class="text-gray-700"><strong>Plan a tu medida:</strong> pautas claras, ideas de menús y recursos adaptados a tu vida real.</p>
             </li>
             <li class="flex gap-3">
               <span class="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded-full bg-green-500 text-white font-bold">3</span>
-              <p class="text-gray-700"><strong>Seguimiento profesional:</strong> revisiones periódicas, ajustes y métricas más allá del peso (energía, saciedad, adhesión).</p>
+              <p class="text-gray-700"><strong>Seguimiento profesional:</strong> revisiones periódicas, ajustes y métricas más allá del peso.</p>
             </li>
             <li class="flex gap-3">
               <span class="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded-full bg-green-500 text-white font-bold">4</span>
-              <p class="text-gray-700"><strong>Autonomía:</strong> el objetivo es que no me necesites; te doy herramientas para mantener resultados.</p>
+              <p class="text-gray-700"><strong>Autonomía:</strong> el objetivo es que aprendas a comer y a <strong>disfrutar de la comida sin restricciones</strong>, buscando un <strong>equilibrio</strong> en tu plan de alimentación a través de las herramientas proporcionadas durante el proceso.</p>
             </li>
           </ol>
         </div>
 
-        <!-- Seguimiento que conecta con su forma de ser -->
+        <!-- Seguimiento que sí suma -->
         <div class="mb-8">
           <h4 class="text-xl font-semibold text-gray-900 mb-3">Seguimiento que sí suma</h4>
           <ul class="list-disc pl-6 space-y-2 text-gray-700">
-            <li>Materiales prácticos y fáciles de aplicar (ideas rápidas, lista de la compra, batch cooking básico).</li>
+            <li>Materiales prácticos y fáciles de aplicar (ideas rápidas, lista de la compra, etc.).</li>
             <li>Soporte entre sesiones con dudas puntuales por canal acordado.</li>
             <li>Objetivos pequeños y realistas, sin culpa ni prohibiciones absurdas.</li>
           </ul>
         </div>
 
-        <!-- Toque personal (ajusta 1–2 detalles reales) -->
-        <!-- EJEMPLOS: cambia por algo auténtico de Nuria -->
+        <!-- Mini-galería con <picture> + srcset y fallback a Imgur (no se rompe nada si aún no subes /images/...) -->
+        <div class="mb-10" aria-label="Galería de imágenes de la consulta y ejemplos">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <!-- Img 1: Consulta -->
+            <figure class="overflow-hidden rounded-xl border border-gray-200">
+              <picture>
+                <!-- Subir versiones propias a /images/consulta-600.jpg y /images/consulta-1200.jpg cuando las tengas -->
+                <source srcset="/images/consulta-1200.jpg 1200w, /images/consulta-600.jpg 600w" sizes="(min-width: 640px) 33vw, 100vw">
+                <img src="https://i.imgur.com/fTyNpqg.jpeg" alt="Consulta de nutrición personalizada" class="w-full h-48 object-cover" width="600" height="400" loading="lazy" decoding="async">
+              </picture>
+              <figcaption class="sr-only">Consulta de nutrición personalizada</figcaption>
+            </figure>
+            <!-- Img 2: Ingredientes/planificación -->
+            <figure class="overflow-hidden rounded-xl border border-gray-200">
+              <picture>
+                <source srcset="/images/ingredientes-1200.jpg 1200w, /images/ingredientes-600.jpg 600w" sizes="(min-width: 640px) 33vw, 100vw">
+                <img src="https://i.imgur.com/BrMGKNy.jpeg" alt="Ingredientes y planificación de menús" class="w-full h-48 object-cover" width="600" height="400" loading="lazy" decoding="async">
+              </picture>
+              <figcaption class="sr-only">Ingredientes y planificación de menús</figcaption>
+            </figure>
+            <!-- Img 3: Plato sencillo -->
+            <figure class="overflow-hidden rounded-xl border border-gray-200">
+              <picture>
+                <source srcset="/images/plato-1200.jpg 1200w, /images/plato-600.jpg 600w" sizes="(min-width: 640px) 33vw, 100vw">
+                <img src="https://i.imgur.com/fTyNpqg.jpeg" alt="Plato saludable y sencillo" class="w-full h-48 object-cover" width="600" height="400" loading="lazy" decoding="async">
+              </picture>
+              <figcaption class="sr-only">Plato saludable y sencillo</figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <!-- Toque personal (se mantiene tal cual) -->
         <p class="text-gray-700 mb-6">
           Fuera de consulta, me gusta acercar la nutrición al día a día: recetas sencillas, trucos para comer mejor con poco tiempo y una relación más amable con la comida.
         </p>
 
         <!-- CTA -->
         <div class="flex flex-wrap items-center gap-3">
-          <a href="/contacto.html" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-full transition shadow-lg">Quiero empezar</a>
-          <span class="text-sm text-gray-500">Colegiada CODINNA · N.º Col. NA00504</span>
+          <a href="/contacto.html" class="bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 text-white font-semibold py-3 px-6 rounded-full transition shadow-lg">Quiero empezar</a>
+          <span class="text-sm text-gray-500">Colegiada en CODINNA · N.º Col. NA00504</span>
         </div>
       </div>
     </div>
@@ -103,20 +163,24 @@ description: "Consulta de nutrición personalizada con Nuria Zardoya, Dietista-N
 </section>
 
 <!-- (Opcional) Bloque breve "Lo que NO vas a encontrar" -->
-<section class="py-10">
+<section class="py-10" aria-labelledby="no-encontraras-title">
   <div class="container mx-auto px-6">
     <div class="bg-white border border-gray-200 rounded-2xl p-6">
-      <h4 class="text-lg font-semibold mb-3">Lo que NO vas a encontrar</h4>
+      <h4 id="no-encontraras-title" class="text-lg font-semibold mb-3">Lo que NO vas a encontrar</h4>
       <ul class="grid md:grid-cols-3 gap-2 text-gray-700">
-        <li class="flex items-center gap-2"><span class="text-red-500">✖</span> Dietas milagro</li>
-        <li class="flex items-center gap-2"><span class="text-red-500">✖</span> Planes genéricos</li>
-        <li class="flex items-center gap-2"><span class="text-red-500">✖</span> Culpa por comer</li>
+        <li class="flex items-center gap-2"><span class="text-red-500" aria-hidden="true">✖</span> Dietas milagro</li>
+        <li class="flex items-center gap-2"><span class="text-red-500" aria-hidden="true">✖</span> Planes genéricos</li>
+        <li class="flex items-center gap-2"><span class="text-red-500" aria-hidden="true">✖</span> Culpa por comer</li>
       </ul>
     </div>
   </div>
 </section>
 
-<!-- (Opcional) Datos estructurados para SEO local -->
+<!-- =================== SEO local (datos estructurados) =================== -->
+<!-- EDITA AQUÍ (Person):
+     - "url": cambia a tu dominio real
+     - "image": cambia si usas otra foto
+     - "areaServed": ajusta si atiendes fuera de Navarra -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -127,7 +191,47 @@ description: "Consulta de nutrición personalizada con Nuria Zardoya, Dietista-N
   "medicalSpecialty": "Nutrition",
   "areaServed": "Navarra, España",
   "image": "https://i.imgur.com/fTyNpqg.jpeg",
-  "url": "https://tudominio.com/",
+  "url": "https://nuriazardoyalasheras.netlify.app/",
   "description": "Consulta de nutrición personalizada en Navarra."
+}
+</script>
+
+<!-- EDITA AQUÍ (LocalBusiness):
+     - "url": tu dominio real
+     - "telephone": comprueba que esté correcto
+     - "address": street/locality/region/postalCode
+     - "openingHoursSpecification": tus horarios reales
+     - "sameAs": tus redes y ficha de Google Business
+     - (Opcional) añade "geo" con lat/long y "hasMap" con URL de Google Maps del local -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Nuria Zardoya · Dietista-Nutricionista",
+  "image": "https://i.imgur.com/fTyNpqg.jpeg",
+  "url": "https://nuriazardoyalasheras.netlify.app/",
+  "areaServed": "Navarra, España",
+  "priceRange": "€€",
+  "telephone": "+34 601 401 677",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Calle Antonio Machado, 33",
+    "addressLocality": "Ribaforada",
+    "addressRegion": "NA",
+    "postalCode": "31550",
+    "addressCountry": "ES"
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday","Wednesday", "Thursday","Friday"],
+      "opens": "8:00",
+      "closes": "17:00"
+    }
+  ],
+  "sameAs": [
+    "https://www.instagram.com/nuriazardoyaa?igsh=MWp0bmIyMGI3eHBpMg==",
+    "https://www.linkedin.com/in/nuria-zardoya-lasheras-3579262b8"
+  ]
 }
 </script>
