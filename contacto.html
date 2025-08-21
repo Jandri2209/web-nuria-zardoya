@@ -2,6 +2,7 @@
 layout: base.njk
 title: "Contacto - Nuria Zardoya"
 description: "Escríbeme tus dudas y te responderé lo antes posible. Consulta de nutrición en Navarra."
+permalink: "/contacto/"
 ---
 <div class="container mx-auto px-6">
   <div class="bg-green-700 text-white rounded-xl shadow-2xl p-8 md:p-12 my-12">
@@ -11,14 +12,14 @@ description: "Escríbeme tus dudas y te responderé lo antes posible. Consulta d
     </p>
 
     <div class="max-w-xl mx-auto">
-      <form name="contact" method="POST" action="/gracias.html"
-            data-netlify="true" data-netlify-honeypot="bot-field"
+      <form name="contact" method="POST" action="/gracias/"
+            data-netlify="true" netlify-honeypot="bot-field"
             class="bg-white text-gray-800 p-8 rounded-lg shadow-inner">
         <input type="hidden" name="form-name" value="contact" />
         <input type="hidden" name="subject" value="Nuevo Mensaje desde la Web de Nuria Zardoya" />
 
         <p class="hidden-form-field" aria-hidden="true">
-          <label>No rellenes esto si eres humano: <input name="bot-field" /></label>
+          <label>No rellenes esto si eres humano: <input name="bot-field" autocomplete="off" tabindex="-1" /></label>
         </p>
 
         <div class="mb-4">

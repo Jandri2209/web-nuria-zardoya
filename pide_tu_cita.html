@@ -13,26 +13,69 @@ permalink: "/pide-tu-cita/"
 
     <div class="text-center">
       <button id="btn-cita"
+              type="button"
               class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-full shadow">
         Abrir calendario
       </button>
-      <p class="mt-4">
-        <a href="https://calendly.com/d/cn3-j2k-gq3/reunion-de-demostracion-de-calendly"
-           target="_blank" rel="noopener">
-          ¿Prefieres abrir Calendly en otra pestaña?
-        </a>
-      </p>
     </div>
 
     <div id="calendly-inline"
          class="mt-8 mx-auto rounded-lg shadow-2xl overflow-hidden"
          style="min-width:320px; height:700px; max-width: 960px;"></div>
+
+    <!-- Fallback: se muestra si no hay consentimiento o si el script falla -->
+    <p id="calendly-fallback"
+       class="hidden mt-4 text-center text-sm text-gray-600"
+       aria-live="polite">
+      No se pudo cargar el calendario o no has aceptado las cookies de Marketing.
+      Puedes reservar desde
+      <a class="underline text-green-700"
+         href="https://calendly.com/d/cn3-j2k-gq3/reunion-de-demostracion-de-calendly"
+         target="_blank" rel="noopener">Calendly en una pestaña nueva</a>.
+    </p>
   </div>
 </div>
 
 <script>
+  /* ==== Helpers de UI para el botón ==== */
+  function setBtnLoading(on) {
+    const btn = document.getElementById("btn-cita");
+    if (!btn) return;
+    btn.disabled = on;
+    btn.setAttribute("aria-busy", on ? "true" : "false");
+    btn.classList.toggle("opacity-60", on);
+    btn.classList.toggle("cursor-wait", on);
+  }
+
+  /* ==== 1) Lee el consentimiento de tu CMP ==== */
+  function hasMarketingConsent() {
+    try {
+      if (window.cookiePrefs && typeof window.cookiePrefs.marketing !== "undefined") {
+        return !!window.cookiePrefs.marketing;
+      }
+      const ls = localStorage.getItem("cookie-consent");
+      if (ls) {
+        const prefs = JSON.parse(ls);
+        if (typeof prefs.marketing !== "undefined") return !!prefs.marketing;
+      }
+      if (window.consent && typeof window.consent.marketing !== "undefined") {
+        return !!window.consent.marketing;
+      }
+    } catch (e) { /* noop */ }
+    return false;
+  }
+
+  /* ==== 2) Calendly: init + carga bajo demanda ==== */
+  function showFallback() {
+    setBtnLoading(false);
+    const f = document.getElementById("calendly-fallback");
+    if (f) f.classList.remove("hidden");
+  }
+
   function initCalendly() {
-    if (!window.Calendly) return;
+    if (!window.Calendly) return showFallback();
+    // El init es rápido; reactivamos el botón tras llamar
+    setBtnLoading(false);
     Calendly.initInlineWidget({
       url: "https://calendly.com/d/cn3-j2k-gq3/reunion-de-demostracion-de-calendly",
       parentElement: document.getElementById("calendly-inline")
@@ -40,21 +83,45 @@ permalink: "/pide-tu-cita/"
   }
 
   function loadCalendly() {
-    // Si más adelante usas gestor de cookies, puedes condicionar la carga:
-    // if (!(window.consent && window.consent.marketing)) {
-    //   alert("Activa las cookies de marketing para cargar Calendly.");
-    //   return;
-    // }
-
-    if (document.getElementById('calendly-js')) return initCalendly();
-
-    const s = document.createElement('script');
+    if (document.getElementById("calendly-js")) return initCalendly();
+    setBtnLoading(true);
+    const s = document.createElement("script");
     s.src = "https://assets.calendly.com/assets/external/widget.js";
     s.async = true;
     s.id = "calendly-js";
     s.onload = initCalendly;
+    s.onerror = showFallback;
     document.head.appendChild(s);
   }
 
-  document.getElementById('btn-cita').addEventListener('click', loadCalendly);
+  /* ==== 3) Click: gate por consentimiento ==== */
+  document.getElementById("btn-cita").addEventListener("click", () => {
+    if (!hasMarketingConsent()) {
+      if (typeof window.openCookiePreferences === "function") {
+        window.openCookiePreferences("marketing");
+      } else {
+        showFallback();
+        alert("Para mostrar el calendario embebido de Calendly, activa las cookies de Marketing en Preferencias de cookies.");
+      }
+      return;
+    }
+    loadCalendly();
+  });
+
+  /* ==== 4) Reintento automático tras guardar preferencias ==== */
+  window.addEventListener("cookie-preferences:updated", (e) => {
+    if (e.detail?.marketing) loadCalendly();
+  });
+  window.addEventListener("consent:updated", (e) => {
+    if (e.detail?.marketing) loadCalendly();
+  });
 </script>
+
+<noscript>
+  <p class="mt-4 text-center">
+    Para reservar sin JavaScript, abre
+    <a href="https://calendly.com/d/cn3-j2k-gq3/reunion-de-demostracion-de-calendly" target="_blank" rel="noopener">
+      Calendly en una pestaña nueva
+    </a>.
+  </p>
+</noscript>

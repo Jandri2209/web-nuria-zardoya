@@ -1,12 +1,14 @@
-{# Banner + modal de preferencias (GDPR-friendly) #}
+{# Banner y modal de preferencias de cookies (AEPD-friendly) #}
+
+<!-- Banner (primera capa) -->
 <div id="cookie-banner" class="fixed inset-x-0 bottom-0 z-50 hidden">
   <div class="mx-auto max-w-4xl m-4 rounded-2xl border bg-white shadow-xl p-4 md:p-5">
     <div class="md:flex md:items-start md:gap-4">
       <div class="flex-1">
         <h2 class="text-lg font-semibold mb-1">Tu privacidad nos importa</h2>
         <p class="text-sm text-gray-600">
-          Usamos cookies necesarias para que el sitio funcione y opcionalmente cookies de analítica para mejorar la experiencia.
-          Puedes aceptar todas, rechazar o configurar tus preferencias. Consulta la
+          Usamos cookies necesarias para que el sitio funcione y, opcionalmente, cookies de analítica y marketing para mejorar la experiencia.
+          Puedes aceptar, rechazar o configurar tus preferencias. Consulta la
           <a href="/cookies.html" class="underline text-green-700">Política de Cookies</a>.
         </p>
       </div>
@@ -19,90 +21,153 @@
   </div>
 </div>
 
-{# Modal de preferencias #}
+<!-- Modal de preferencias (segunda capa) -->
 <div id="cookie-modal" class="fixed inset-0 z-50 hidden">
-  <div class="absolute inset-0 bg-black/40"></div>
-  <div class="relative mx-auto mt-24 w-[min(42rem,92%)] rounded-2xl bg-white p-6 shadow-2xl">
-    <h3 class="text-xl font-semibold mb-4">Preferencias de cookies</h3>
+  <div class="absolute inset-0 bg-black/40" aria-hidden="true"></div>
+  <div role="dialog" aria-modal="true" aria-labelledby="cookie-modal-title"
+       class="mx-auto max-w-xl mt-24 rounded-2xl border bg-white shadow-2xl p-6 relative">
+    <h3 id="cookie-modal-title" class="text-xl font-semibold mb-2">Preferencias de cookies</h3>
+    <p class="text-sm text-gray-600 mb-4">Puedes activar o desactivar categorías no esenciales.</p>
+
     <div class="space-y-4">
-      <label class="flex items-start gap-3">
-        <input type="checkbox" checked disabled class="mt-1">
+      <div class="flex items-start justify-between gap-4 p-3 rounded-lg border">
         <div>
-          <div class="font-medium">Necesarias</div>
-          <div class="text-sm text-gray-600">Imprescindibles para el funcionamiento básico del sitio. Siempre activas.</div>
+          <p class="font-medium">Necesarias</p>
+          <p class="text-sm text-gray-600">Imprescindibles para el funcionamiento básico (no pueden desactivarse).</p>
         </div>
-      </label>
+        <input type="checkbox" checked disabled aria-label="Cookies necesarias">
+      </div>
 
-      <label class="flex items-start gap-3">
-        <input id="ck-analytics" type="checkbox" class="mt-1">
+      <div class="flex items-start justify-between gap-4 p-3 rounded-lg border">
         <div>
-          <div class="font-medium">Analítica</div>
-          <div class="text-sm text-gray-600">Ayudan a entender el uso del sitio para mejorarlo (p. ej., Google Analytics).</div>
+          <p class="font-medium">Analítica</p>
+          <p class="text-sm text-gray-600">Medición anónima para mejorar el sitio (sin identificarte).</p>
         </div>
-      </label>
+        <input id="ck-analytics" type="checkbox" aria-label="Cookies de analítica">
+      </div>
 
-      <label class="flex items-start gap-3">
-        <input id="ck-marketing" type="checkbox" class="mt-1">
+      <div class="flex items-start justify-between gap-4 p-3 rounded-lg border">
         <div>
-          <div class="font-medium">Marketing</div>
-          <div class="text-sm text-gray-600">Cookies para publicidad y remarketing (solo si las usas).</div>
+          <p class="font-medium">Marketing</p>
+          <p class="text-sm text-gray-600">Servicios de terceros como el calendario embebido de Calendly.</p>
         </div>
-      </label>
+        <input id="ck-marketing" type="checkbox" aria-label="Cookies de marketing">
+      </div>
     </div>
 
     <div class="mt-6 flex justify-end gap-2">
-      <button id="cookie-cancel" class="px-4 py-2 rounded-xl border">Cancelar</button>
-      <button id="cookie-save-prefs" class="px-4 py-2 rounded-xl bg-green-700 text-white">Guardar preferencias</button>
+      <button id="cookie-cancel" class="px-4 py-2 rounded-xl border text-gray-700">Cancelar</button>
+      <button id="cookie-save" class="px-4 py-2 rounded-xl bg-green-700 text-white">Guardar preferencias</button>
     </div>
+
+    <!-- Botón de cierre (opcional) -->
+    <button type="button" class="absolute top-2 right-2 p-2 rounded hover:bg-gray-100" id="cookie-close-x" aria-label="Cerrar">✕</button>
   </div>
 </div>
 
 <script>
-(function() {
-  const KEY = "cookieConsent.v1";
+(() => {
+  const LS_KEY = "cookie-consent";
+
   const $ = (sel) => document.querySelector(sel);
   const banner = $("#cookie-banner");
   const modal  = $("#cookie-modal");
   const ckAnalytics = $("#ck-analytics");
   const ckMarketing = $("#ck-marketing");
 
-  function getConsent() { try { return JSON.parse(localStorage.getItem(KEY)); } catch { return null; } }
-  function saveConsent(consent) { localStorage.setItem(KEY, JSON.stringify({ ...consent, ts: new Date().toISOString() })); }
-  function showBanner() { banner.classList.remove("hidden"); }
-  function hideBanner() { banner.classList.add("hidden"); }
-  function openModal() { modal.classList.remove("hidden"); }
-  function closeModal() { modal.classList.add("hidden"); }
+  const btnAcceptAll = $("#cookie-accept-all");
+  const btnRejectAll = $("#cookie-reject-all");
+  const btnOpenPrefs = $("#cookie-open-prefs");
+  const btnSave      = $("#cookie-save");
+  const btnCancel    = $("#cookie-cancel");
+  const btnCloseX    = $("#cookie-close-x");
 
-  function applyConsent(consent) {
-    // Aquí cargarías scripts opcionales según categorías
-    // if (consent.analytics) { /* loadAnalytics() */ }
-    // if (consent.marketing) { /* loadPixel() */ }
+  function getConsent() {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch { return null; }
+  }
+  function setConsent(consent) {
+    // Normaliza el objeto
+    const value = {
+      necessary: true,
+      analytics: !!consent.analytics,
+      marketing: !!consent.marketing
+    };
+    // Guarda en localStorage
+    localStorage.setItem(LS_KEY, JSON.stringify(value));
+    // Expone variable global sencilla
+    window.cookiePrefs = value;
+    // Dispara evento para que otras páginas reaccionen (p. ej. /pide-tu-cita/)
+    window.dispatchEvent(new CustomEvent("cookie-preferences:updated", { detail: value }));
   }
 
-  $("#cookie-accept-all")?.addEventListener("click", () => {
-    const consent = { necessary: true, analytics: true, marketing: true };
-    saveConsent(consent); hideBanner(); applyConsent(consent);
-  });
-  $("#cookie-reject-all")?.addEventListener("click", () => {
-    const consent = { necessary: true, analytics: false, marketing: false };
-    saveConsent(consent); hideBanner(); applyConsent(consent);
-  });
-  $("#cookie-open-prefs")?.addEventListener("click", () => { openModal(); });
-  $("#cookie-save-prefs")?.addEventListener("click", () => {
-    const consent = { necessary: true, analytics: !!ckAnalytics?.checked, marketing: !!ckMarketing?.checked };
-    saveConsent(consent); closeModal(); hideBanner(); applyConsent(consent);
-  });
-  $("#cookie-cancel")?.addEventListener("click", () => { closeModal(); });
+  function applyConsent(consent) {
+    // Aquí podrías activar/desactivar integraciones de analítica sin cookies, etc.
+    // Este snippet no carga nada automáticamente; solo deja el estado preparado.
+    window.cookiePrefs = {
+      necessary: true,
+      analytics: !!consent.analytics,
+      marketing: !!consent.marketing
+    };
+  }
 
+  function showBanner() { banner?.classList.remove("hidden"); }
+  function hideBanner() { banner?.classList.add("hidden"); }
+  function openModal()  { modal?.classList.remove("hidden"); }
+  function closeModal() { modal?.classList.add("hidden"); }
+
+  // Exponer función global para abrir preferencias desde el footer o la política
+  window.openCookiePreferences = function (focusCategory) {
+    const current = getConsent() || { necessary: true, analytics: false, marketing: false };
+    if (ckAnalytics) ckAnalytics.checked = !!current.analytics;
+    if (ckMarketing) ckMarketing.checked = !!current.marketing;
+    openModal();
+    // Si quieres enfocar visualmente la categoría, podrías hacer scroll a ese bloque aquí.
+  };
+
+  // Botones del banner
+  btnAcceptAll?.addEventListener("click", () => {
+    setConsent({ analytics: true, marketing: true });
+    applyConsent({ analytics: true, marketing: true });
+    hideBanner();
+  });
+  btnRejectAll?.addEventListener("click", () => {
+    setConsent({ analytics: false, marketing: false });
+    applyConsent({ analytics: false, marketing: false });
+    hideBanner();
+  });
+  btnOpenPrefs?.addEventListener("click", () => {
+    const current = getConsent() || { necessary: true, analytics: false, marketing: false };
+    if (ckAnalytics) ckAnalytics.checked = !!current.analytics;
+    if (ckMarketing) ckMarketing.checked = !!current.marketing;
+    openModal();
+  });
+
+  // Botones del modal
+  btnSave?.addEventListener("click", () => {
+    const consent = {
+      analytics: ckAnalytics?.checked || false,
+      marketing: ckMarketing?.checked || false
+    };
+    setConsent(consent);
+    applyConsent(consent);
+    closeModal();
+    hideBanner();
+  });
+  btnCancel?.addEventListener("click", closeModal);
+  btnCloseX?.addEventListener("click", closeModal);
+
+  // Enlace genérico: <button id="open-cookie-preferences">Preferencias…</button>
   document.addEventListener("click", (e) => {
     if (e.target && e.target.id === "open-cookie-preferences") {
-      const current = getConsent() || { necessary:true, analytics:false, marketing:false };
-      if (ckAnalytics) ckAnalytics.checked = !!current.analytics;
-      if (ckMarketing) ckMarketing.checked = !!current.marketing;
-      openModal();
+      window.openCookiePreferences();
     }
   });
 
+  // Al cargar la página
   document.addEventListener("DOMContentLoaded", () => {
     const consent = getConsent();
     if (!consent) showBanner(); else applyConsent(consent);
