@@ -12,6 +12,12 @@
          class="{% if isInicio %}{{ active }}{% else %}{{ idle }}{% endif %}"
          {% if isInicio %}aria-current="page"{% endif %}>Inicio</a>
 
+      {# Quién soy: soporta /quien_soy/ y /quien-soy/ #}
+      {% set isQuienSoy = page.url == '/quien_soy/' %}
+      <a href="/quien_soy/"
+         class="{% if isQuienSoy %}{{ active }}{% else %}{{ idle }}{% endif %}"
+         {% if isQuienSoy %}aria-current="page"{% endif %}>Quién soy</a>
+
       {% set isServicios = page.url == '/servicios.html' or page.url == '/servicios/' %}
       <a href="/servicios/"
          class="{% if isServicios %}{{ active }}{% else %}{{ idle }}{% endif %}"
@@ -21,12 +27,6 @@
       <a href="/recetas/"
          class="{% if isRecetas %}{{ active }}{% else %}{{ idle }}{% endif %}"
          {% if isRecetas %}aria-current="page"{% endif %}>Recetas</a>
-
-      {# Quién soy: soporta /quien_soy/ y /quien-soy/ #}
-      {% set isQuienSoy = page.url == '/quien_soy/' %}
-      <a href="/quien_soy/"
-         class="{% if isQuienSoy %}{{ active }}{% else %}{{ idle }}{% endif %}"
-         {% if isQuienSoy %}aria-current="page"{% endif %}>Quién soy</a>
 
       {% set isContacto = page.url == '/contacto.html' or page.url == '/contacto/' %}
       <a href="/contacto/"
