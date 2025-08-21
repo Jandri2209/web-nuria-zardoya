@@ -37,7 +37,7 @@ permalink: "/pide-tu-cita/"
 </div>
 
 <script>
-  /* ==== Helpers de UI para el botón ==== */
+  /* ===== Helpers UI ===== */
   function setBtnLoading(on) {
     const btn = document.getElementById("btn-cita");
     if (!btn) return;
@@ -47,7 +47,20 @@ permalink: "/pide-tu-cita/"
     btn.classList.toggle("cursor-wait", on);
   }
 
-  /* ==== 1) Lee el consentimiento de tu CMP ==== */
+  function showFallback(msg) {
+    setBtnLoading(false);
+    const f = document.getElementById("calendly-fallback");
+    if (!f) return;
+    if (msg) {
+      const note = document.createElement("span");
+      note.className = "block mb-2";
+      note.textContent = msg;
+      f.prepend(note);
+    }
+    f.classList.remove("hidden");
+  }
+
+  /* ===== Consentimiento ===== */
   function hasMarketingConsent() {
     try {
       if (window.cookiePrefs && typeof window.cookiePrefs.marketing !== "undefined") {
@@ -61,20 +74,28 @@ permalink: "/pide-tu-cita/"
       if (window.consent && typeof window.consent.marketing !== "undefined") {
         return !!window.consent.marketing;
       }
-    } catch (e) { /* noop */ }
+    } catch (e) {}
     return false;
   }
 
-  /* ==== 2) Calendly: init + carga bajo demanda ==== */
-  function showFallback() {
-    setBtnLoading(false);
-    const f = document.getElementById("calendly-fallback");
-    if (f) f.classList.remove("hidden");
+  /* ===== Calendly ===== */
+  function isCalendlyMounted() {
+    return !!document.querySelector("#calendly-inline iframe");
+  }
+
+  function teardownCalendly() {
+    // Quita el iframe
+    const container = document.getElementById("calendly-inline");
+    if (container) container.innerHTML = "";
+    // Quita el script
+    const s = document.getElementById("calendly-js");
+    if (s) s.remove();
+    // Muestra fallback
+    showFallback("Has desactivado las cookies de Marketing.");
   }
 
   function initCalendly() {
     if (!window.Calendly) return showFallback();
-    // El init es rápido; reactivamos el botón tras llamar
     setBtnLoading(false);
     Calendly.initInlineWidget({
       url: "https://calendly.com/d/cn3-j2k-gq3/reunion-de-demostracion-de-calendly",
@@ -90,31 +111,35 @@ permalink: "/pide-tu-cita/"
     s.async = true;
     s.id = "calendly-js";
     s.onload = initCalendly;
-    s.onerror = showFallback;
+    s.onerror = () => showFallback("No se pudo cargar el widget de Calendly.");
     document.head.appendChild(s);
   }
 
-  /* ==== 3) Click: gate por consentimiento ==== */
+  /* ===== Interacciones ===== */
   document.getElementById("btn-cita").addEventListener("click", () => {
     if (!hasMarketingConsent()) {
       if (typeof window.openCookiePreferences === "function") {
         window.openCookiePreferences("marketing");
       } else {
-        showFallback();
-        alert("Para mostrar el calendario embebido de Calendly, activa las cookies de Marketing en Preferencias de cookies.");
+        showFallback("Para mostrar el calendario embebido de Calendly, activa las cookies de Marketing.");
+        alert("Activa las cookies de Marketing en Preferencias de cookies.");
       }
       return;
     }
     loadCalendly();
   });
 
-  /* ==== 4) Reintento automático tras guardar preferencias ==== */
-  window.addEventListener("cookie-preferences:updated", (e) => {
-    if (e.detail?.marketing) loadCalendly();
-  });
-  window.addEventListener("consent:updated", (e) => {
-    if (e.detail?.marketing) loadCalendly();
-  });
+  // Reacciona a cambios de preferencias: monta/desmonta en caliente
+  function onConsentUpdate(e) {
+    const allowed = !!e.detail?.marketing;
+    if (allowed) {
+      if (!isCalendlyMounted()) loadCalendly();
+    } else {
+      if (isCalendlyMounted()) teardownCalendly();
+    }
+  }
+  window.addEventListener("cookie-preferences:updated", onConsentUpdate);
+  window.addEventListener("consent:updated", onConsentUpdate);
 </script>
 
 <noscript>
