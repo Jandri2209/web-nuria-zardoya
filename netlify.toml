@@ -1,9 +1,28 @@
-# Este archivo anula la configuración de la web de Netlify
-# y le da las instrucciones de construcción correctas.
-
 [build]
-  # Comando para construir la web
   command = "npm run build"
-
-  # Carpeta donde se publica la web final
   publish = "_site"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+# Pretty URLs para legales (si enlazas /privacidad/, /legal/, /cookies/)
+[[redirects]]
+  from = "/privacidad.html"
+  to = "/privacidad/"
+  status = 301
+
+[[redirects]]
+  from = "/legal.html"
+  to = "/legal/"
+  status = 301
+
+[[redirects]]
+  from = "/cookies.html"
+  to = "/cookies/"
+  status = 301
+
+# Cache largo para assets estáticos (opcional)
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

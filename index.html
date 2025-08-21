@@ -18,7 +18,7 @@ permalink: "/"
       </p>
 
       <p class="text-lg text-gray-600 mb-8">Descubre cómo comer bien puede mejorar tu salud y bienestar general. ¡Empecemos juntos este camino!</p>
-      <a href="/servicios.html" class="bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 shadow-xl" aria-label="Ver mis servicios de nutrición">
+      <a href="/servicios/" class="bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 shadow-xl" aria-label="Ver mis servicios de nutrición">
         Ver mis servicios
       </a>
     </div>
@@ -155,7 +155,7 @@ permalink: "/"
 
         <!-- CTA -->
         <div class="flex flex-wrap items-center gap-3">
-          <a href="/contacto.html" class="bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 text-white font-semibold py-3 px-6 rounded-full transition shadow-lg">Quiero empezar</a>
+          <a href="/contacto/" class="bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 text-white font-semibold py-3 px-6 rounded-full transition shadow-lg">Quiero empezar</a>
           <span class="text-sm text-gray-500">Colegiada en CODINNA · N.º Col. NA00504</span>
         </div>
       </div>
@@ -182,7 +182,7 @@ permalink: "/"
      - "url": cambia a tu dominio real
      - "image": cambia si usas otra foto
      - "areaServed": ajusta si atiendes fuera de Navarra -->
-<script type="application/ld+json">
+<script type="application/ld+json" id="ld-person">
 {
   "@context": "https://schema.org",
   "@type": "Person",
@@ -191,48 +191,14 @@ permalink: "/"
   "memberOf": { "@type": "Organization", "name": "CODINNA" },
   "medicalSpecialty": "Nutrition",
   "areaServed": "Navarra, España",
-  "image": "https://i.imgur.com/fTyNpqg.jpeg",
-  "url": "https://nuriazardoyalasheras.netlify.app/",
+  "image": "{{ site.socialImage }}",
+  "url": "{{ site.url }}/",
+  "worksFor": { "@id": "{{ site.businessId }}" },
+  "sameAs": [
+    "https://www.instagram.com/nuriazardoyaa?igsh=MWp0bmIyMGI3eHBpMg==",
+    "https://www.linkedin.com/in/nuria-zardoya-lasheras-3579262b8"
+  ],
   "description": "Consulta de nutrición personalizada en Navarra."
 }
 </script>
 
-<!-- EDITA AQUÍ (LocalBusiness):
-     - "url": tu dominio real
-     - "telephone": comprueba que esté correcto
-     - "address": street/locality/region/postalCode
-     - "openingHoursSpecification": tus horarios reales
-     - "sameAs": tus redes y ficha de Google Business
-     - (Opcional) añade "geo" con lat/long y "hasMap" con URL de Google Maps del local -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "Nuria Zardoya · Dietista-Nutricionista",
-  "image": "https://i.imgur.com/fTyNpqg.jpeg",
-  "url": "https://nuriazardoyalasheras.netlify.app/",
-  "areaServed": "Navarra, España",
-  "priceRange": "€€",
-  "telephone": "+34 601 401 677",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "Calle Antonio Machado, 33",
-    "addressLocality": "Ribaforada",
-    "addressRegion": "NA",
-    "postalCode": "31550",
-    "addressCountry": "ES"
-  },
-  "openingHoursSpecification": [
-    {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Monday", "Tuesday","Wednesday", "Thursday","Friday"],
-      "opens": "8:00",
-      "closes": "17:00"
-    }
-  ],
-  "sameAs": [
-    "https://www.instagram.com/nuriazardoyaa?igsh=MWp0bmIyMGI3eHBpMg==",
-    "https://www.linkedin.com/in/nuria-zardoya-lasheras-3579262b8"
-  ]
-}
-</script>

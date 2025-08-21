@@ -1,11 +1,15 @@
 {
   "name": "web-nuria-zardoya",
-  "version": "1.0.0",
-  "description": "Web de Nuria",
+  "private": true,
   "scripts": {
+    "dev": "npx @11ty/eleventy --serve",
     "build": "npx @11ty/eleventy"
   },
   "devDependencies": {
-    "@11ty/eleventy": "^2.0.1"
+  "@11ty/eleventy": "^2.0.1",
+  "@quasibit/eleventy-plugin-sitemap": "^2.2.0"
+},
+  "engines": {
+    "node": ">=18"
   }
 }
