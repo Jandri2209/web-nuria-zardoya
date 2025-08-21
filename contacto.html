@@ -18,9 +18,13 @@ permalink: "/contacto/"
         <input type="hidden" name="form-name" value="contact" />
         <input type="hidden" name="subject" value="Nuevo Mensaje desde la Web de Nuria Zardoya" />
 
-        <p class="hidden-form-field" aria-hidden="true">
-          <label>No rellenes esto si eres humano: <input name="bot-field" autocomplete="off" tabindex="-1" /></label>
+        <p class="hidden">
+          <label>
+            <span class="sr-only">Deja este campo vacío</span>
+            <input type="text" name="bot-field" tabindex="-1" autocomplete="off">
+          </label>
         </p>
+
 
         <div class="mb-4">
           <label for="name" class="block text-gray-700 font-bold mb-2">Nombre</label>
