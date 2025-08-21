@@ -2,24 +2,41 @@
   <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
     <a href="/" class="text-2xl font-bold text-green-600">Nuria Zardoya</a>
 
+    {# Helpers de estilo #}
+    {% set active = "text-green-600 font-semibold" %}
+    {% set idle = "text-gray-600 hover:text-green-600" %}
+
     <!-- Desktop nav -->
     <div class="hidden md:flex space-x-6 items-center">
-      {% set active = "text-green-600 font-semibold" %}
-      {% set idle = "text-gray-600 hover:text-green-600" %}
-
-      <a href="/" class="{{ active if page.url == '/' else idle }}">Inicio</a>
+      {% set isInicio = page.url == '/' %}
+      <a href="/"
+         class="{{ active if isInicio else idle }}"
+         {{ 'aria-current="page"' if isInicio }}>Inicio</a>
 
       {% set isServicios = page.url == '/servicios.html' or page.url == '/servicios/' %}
-      <a href="/servicios/" class="{{ active if isServicios else idle }}">Servicios</a>
+      <a href="/servicios/"
+         class="{{ active if isServicios else idle }}"
+         {{ 'aria-current="page"' if isServicios }}>Servicios</a>
 
       {% set isRecetas = page.url == '/recetas.html' or page.url == '/recetas/' %}
-      <a href="/recetas/" class="{{ active if isRecetas else idle }}">Recetas</a>
+      <a href="/recetas/"
+         class="{{ active if isRecetas else idle }}"
+         {{ 'aria-current="page"' if isRecetas }}>Recetas</a>
+
+      {# Quién soy}
+      {% set isQuienSoy = page.url == '/quien_soy/' %}
+      <a href="/quien_soy/"
+         class="{{ active if isQuienSoy else idle }}"
+         {{ 'aria-current="page"' if isQuienSoy }}>Quién soy</a>
 
       {% set isContacto = page.url == '/contacto.html' or page.url == '/contacto/' %}
-      <a href="/contacto/" class="{{ active if isContacto else idle }}">Contacto</a>
+      <a href="/contacto/"
+         class="{{ active if isContacto else idle }}"
+         {{ 'aria-current="page"' if isContacto }}>Contacto</a>
 
       {% set isCita = page.url == '/pide_tu_cita.html' or page.url == '/pide-tu-cita/' %}
-      <a href="/pide-tu-cita/" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-lg {{ 'ring-2 ring-green-300' if isCita }}">
+      <a href="/pide-tu-cita/"
+         class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-lg {{ 'ring-2 ring-green-300' if isCita }}">
         Pide tu cita
       </a>
     </div>
@@ -40,6 +57,7 @@
       <a href="/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Inicio</a>
       <a href="/servicios/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Servicios</a>
       <a href="/recetas/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Recetas</a>
+      <a href="/quien_soy/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Quién soy</a>
       <a href="/contacto/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Contacto</a>
       <a href="/pide-tu-cita/" class="block py-2 text-sm font-semibold text-green-700 hover:bg-green-50" role="menuitem">
         Pide tu cita
