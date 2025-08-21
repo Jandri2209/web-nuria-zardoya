@@ -2,7 +2,6 @@
   <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
     <a href="/" class="text-2xl font-bold text-green-600">Nuria Zardoya</a>
 
-    {# Helpers de estilo #}
     {% set active = "text-green-600 font-semibold" %}
     {% set idle = "text-gray-600 hover:text-green-600" %}
 
@@ -10,33 +9,33 @@
     <div class="hidden md:flex space-x-6 items-center">
       {% set isInicio = page.url == '/' %}
       <a href="/"
-         class="{{ active if isInicio else idle }}"
-         {{ 'aria-current="page"' if isInicio }}>Inicio</a>
+         class="{% if isInicio %}{{ active }}{% else %}{{ idle }}{% endif %}"
+         {% if isInicio %}aria-current="page"{% endif %}>Inicio</a>
 
       {% set isServicios = page.url == '/servicios.html' or page.url == '/servicios/' %}
       <a href="/servicios/"
-         class="{{ active if isServicios else idle }}"
-         {{ 'aria-current="page"' if isServicios }}>Servicios</a>
+         class="{% if isServicios %}{{ active }}{% else %}{{ idle }}{% endif %}"
+         {% if isServicios %}aria-current="page"{% endif %}>Servicios</a>
 
       {% set isRecetas = page.url == '/recetas.html' or page.url == '/recetas/' %}
       <a href="/recetas/"
-         class="{{ active if isRecetas else idle }}"
-         {{ 'aria-current="page"' if isRecetas }}>Recetas</a>
+         class="{% if isRecetas %}{{ active }}{% else %}{{ idle }}{% endif %}"
+         {% if isRecetas %}aria-current="page"{% endif %}>Recetas</a>
 
-      {# Quién soy}
+      {# Quién soy: soporta /quien_soy/ y /quien-soy/ #}
       {% set isQuienSoy = page.url == '/quien_soy/' %}
       <a href="/quien_soy/"
-         class="{{ active if isQuienSoy else idle }}"
-         {{ 'aria-current="page"' if isQuienSoy }}>Quién soy</a>
+         class="{% if isQuienSoy %}{{ active }}{% else %}{{ idle }}{% endif %}"
+         {% if isQuienSoy %}aria-current="page"{% endif %}>Quién soy</a>
 
       {% set isContacto = page.url == '/contacto.html' or page.url == '/contacto/' %}
       <a href="/contacto/"
-         class="{{ active if isContacto else idle }}"
-         {{ 'aria-current="page"' if isContacto }}>Contacto</a>
+         class="{% if isContacto %}{{ active }}{% else %}{{ idle }}{% endif %}"
+         {% if isContacto %}aria-current="page"{% endif %}>Contacto</a>
 
       {% set isCita = page.url == '/pide_tu_cita.html' or page.url == '/pide-tu-cita/' %}
       <a href="/pide-tu-cita/"
-         class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-lg {{ 'ring-2 ring-green-300' if isCita }}">
+         class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-lg {% if isCita %}ring-2 ring-green-300{% endif %}">
         Pide tu cita
       </a>
     </div>
