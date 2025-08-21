@@ -172,5 +172,37 @@
     const consent = getConsent();
     if (!consent) showBanner(); else applyConsent(consent);
   });
+
+    /* === Mejora A11y/UX: cerrar con ESC y clic en el overlay === */
+  // Cerrar con la tecla ESC (solo si el modal está visible)
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !modal?.classList.contains("hidden")) {
+      closeModal();
+    }
+  });
+
+  // Cerrar al hacer clic en la capa oscura (overlay)
+  const overlayEl = modal?.querySelector('[aria-hidden="true"]');
+  overlayEl?.addEventListener("click", closeModal);
+
+  /* === Mejora UX: bloquear el scroll del body cuando el modal está abierto === */
+  const __openModal = openModal;
+  const __closeModal = closeModal;
+  openModal = function () {
+    __openModal();
+    document.body.style.overflow = "hidden";
+  };
+  closeModal = function () {
+    __closeModal();
+    document.body.style.overflow = "";
+  };
+
+  /* === Mejora A11y: foco inicial al abrir preferencias (wrapper sin tocar tu función) === */
+  const __openCookiePreferences = window.openCookiePreferences;
+  window.openCookiePreferences = function (focusCategory) {
+    __openCookiePreferences(focusCategory);
+    // Enfoca el primer control disponible dentro del modal
+    (ckAnalytics || ckMarketing || btnSave)?.focus();
+  };
 })();
 </script>
