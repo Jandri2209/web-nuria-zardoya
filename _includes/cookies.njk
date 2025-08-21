@@ -25,7 +25,8 @@
 <div id="cookie-modal" class="fixed inset-0 z-50 hidden">
   <div class="absolute inset-0 bg-black/40" aria-hidden="true"></div>
   <div role="dialog" aria-modal="true" aria-labelledby="cookie-modal-title"
-       class="mx-auto max-w-xl mt-24 rounded-2xl border bg-white shadow-2xl p-6 relative">
+     class="mx-auto max-w-xl mt-24 rounded-2xl border bg-white shadow-2xl p-6 relative
+            max-h-[80vh] overflow-y-auto">
     <h3 id="cookie-modal-title" class="text-xl font-semibold mb-2">Preferencias de cookies</h3>
     <p class="text-sm text-gray-600 mb-4">Puedes activar o desactivar categorías no esenciales.</p>
 
@@ -116,8 +117,15 @@
 
   function showBanner() { banner?.classList.remove("hidden"); }
   function hideBanner() { banner?.classList.add("hidden"); }
-  function openModal()  { modal?.classList.remove("hidden"); }
-  function closeModal() { modal?.classList.add("hidden"); }
+  function openModal() {
+  modal?.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+function closeModal() {
+  modal?.classList.add("hidden");
+  document.body.style.overflow = "";
+}
+
 
   // Exponer función global para abrir preferencias desde el footer o la política
   window.openCookiePreferences = function (focusCategory) {
@@ -184,18 +192,6 @@
   // Cerrar al hacer clic en la capa oscura (overlay)
   const overlayEl = modal?.querySelector('[aria-hidden="true"]');
   overlayEl?.addEventListener("click", closeModal);
-
-  /* === Mejora UX: bloquear el scroll del body cuando el modal está abierto === */
-  const __openModal = openModal;
-  const __closeModal = closeModal;
-  openModal = function () {
-    __openModal();
-    document.body.style.overflow = "hidden";
-  };
-  closeModal = function () {
-    __closeModal();
-    document.body.style.overflow = "";
-  };
 
   /* === Mejora A11y: foco inicial al abrir preferencias (wrapper sin tocar tu función) === */
   const __openCookiePreferences = window.openCookiePreferences;
