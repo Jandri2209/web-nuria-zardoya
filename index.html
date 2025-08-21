@@ -117,13 +117,12 @@ permalink: "/"
           </ul>
         </div>
 
-        <!-- Mini-galería con <picture> + srcset y fallback a Imgur (no se rompe nada si aún no subes /images/...) -->
+        <!-- Mini-galería (la dejamos como está; migrarás a eleventy-img cuando quieras) -->
         <div class="mb-10" aria-label="Galería de imágenes de la consulta y ejemplos">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <!-- Img 1: Consulta -->
             <figure class="overflow-hidden rounded-xl border border-gray-200">
               <picture>
-                <!-- Subir versiones propias a /images/consulta-600.jpg y /images/consulta-1200.jpg cuando las tengas -->
                 <source sizes="(min-width: 640px) 33vw, 100vw">
                 <img src="https://i.imgur.com/zQNMcTM.jpeg" alt="Consulta de nutrición personalizada" class="w-full h-48 object-cover" width="600" height="400" loading="lazy" decoding="async">
               </picture>
@@ -148,7 +147,7 @@ permalink: "/"
           </div>
         </div>
 
-        <!-- Toque personal (se mantiene tal cual) -->
+        <!-- Toque personal -->
         <p class="text-gray-700 mb-6">
           Fuera de consulta, me gusta acercar la nutrición al día a día: recetas sencillas, trucos para comer mejor con poco tiempo y una relación más amable con la comida.
         </p>
@@ -163,7 +162,7 @@ permalink: "/"
   </div>
 </section>
 
-<!-- (Opcional) Bloque breve "Lo que NO vas a encontrar" -->
+<!-- Bloque breve "Lo que NO vas a encontrar" -->
 <section class="py-10" aria-labelledby="no-encontraras-title">
   <div class="container mx-auto px-6">
     <div class="bg-white border border-gray-200 rounded-2xl p-6">
@@ -173,6 +172,29 @@ permalink: "/"
         <li class="flex items-center gap-2"><span class="text-red-500" aria-hidden="true">✖</span> Planes genéricos</li>
         <li class="flex items-center gap-2"><span class="text-red-500" aria-hidden="true">✖</span> Culpa por comer</li>
       </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Bloque complementario "Lo que SÍ vas a encontrar" -->
+<section class="py-10" aria-labelledby="si-encontraras-title">
+  <div class="container mx-auto px-6">
+    <div class="bg-green-50 border border-green-200 rounded-2xl p-6">
+      <h4 id="si-encontraras-title" class="text-lg font-semibold mb-6 text-green-800">Lo que SÍ vas a encontrar</h4>
+      <div class="grid md:grid-cols-3 gap-6 text-gray-700">
+        <div class="bg-white rounded-xl shadow p-5 text-center">
+          <h5 class="font-semibold text-green-700 mb-2">Acompañamiento cercano</h5>
+          <p>Escucha activa, comprensión y apoyo constante en cada paso de tu proceso.</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-5 text-center">
+          <h5 class="font-semibold text-green-700 mb-2">Planes realistas</h5>
+          <p>Recomendaciones adaptadas a tu estilo de vida, sin prohibiciones absurdas ni “dietas milagro”.</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-5 text-center">
+          <h5 class="font-semibold text-green-700 mb-2">Evidencia científica</h5>
+          <p>Todo mi trabajo está basado en ciencia actual y en la práctica clínica, no en modas pasajeras.</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -201,4 +223,3 @@ permalink: "/"
   "description": "Consulta de nutrición personalizada en Navarra."
 }
 </script>
-
