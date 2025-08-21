@@ -1,0 +1,112 @@
+---
+layout: base.njk
+title: "Quién soy | Nuria Zardoya, Dietista-Nutricionista"
+description: "Conoce a Nuria Zardoya: formación, valores y enfoque de trabajo en nutrición basada en evidencia."
+permalink: "/quien_soy/"
+---
+
+<section class="bg-white" aria-labelledby="qs-title">
+  <div class="container mx-auto px-6 py-12 max-w-4xl">
+    <h1 id="qs-title" class="text-4xl font-bold mb-3">Quién soy</h1>
+    <p class="text-gray-600 mb-8">Mi historia, mi forma de ver la nutrición y cómo trabajo contigo.</p>
+
+    <!-- Hero compacto -->
+    <div class="flex flex-col md:flex-row items-center gap-8 mb-12">
+      <img src="https://i.imgur.com/fTyNpqg.jpeg" alt="Foto de Nuria Zardoya"
+           class="rounded-full shadow-2xl w-40 h-40 object-cover" width="240" height="240" loading="lazy" decoding="async">
+      <div>
+        <h2 class="text-2xl font-semibold mb-2">Hola, soy Nuria Zardoya</h2>
+        <p class="text-gray-700">
+          Dietista-Nutricionista colegiada (N.º Col. <strong>NA00504</strong> en
+          <a href="https://codinna.com/" target="_blank" rel="noopener" class="underline decoration-dotted">CODINNA</a>)
+          y graduada por la <a href="https://www.unav.edu/" target="_blank" rel="noopener" class="underline decoration-dotted">Universidad de Navarra</a>.
+        </p>
+      </div>
+    </div>
+
+    <!-- Enfoque / valores -->
+    <div class="grid md:grid-cols-3 gap-6 mb-12">
+      <div class="bg-green-50 border border-green-100 rounded-xl p-5">
+        <h3 class="font-semibold text-green-800 mb-2">Acompañamiento cercano</h3>
+        <p class="text-gray-700">Escucha activa y apoyo constante. Tu historia y contexto importan.</p>
+      </div>
+      <div class="bg-green-50 border border-green-100 rounded-xl p-5">
+        <h3 class="font-semibold text-green-800 mb-2">Plan realista</h3>
+        <p class="text-gray-700">Adaptado a tu estilo de vida, sin prohibiciones rígidas ni “dietas milagro”.</p>
+      </div>
+      <div class="bg-green-50 border border-green-100 rounded-xl p-5">
+        <h3 class="font-semibold text-green-800 mb-2">Evidencia científica</h3>
+        <p class="text-gray-700">Recomendaciones basadas en ciencia y experiencia clínica.</p>
+      </div>
+    </div>
+
+    <!-- Historia breve -->
+    <div class="mb-12">
+      <h3 class="text-xl font-semibold mb-3">Mi camino</h3>
+      <p class="text-gray-700">
+        Me dedico a acercar la nutrición a la vida real: aprender a comer, entender tus señales
+        y construir una relación más amable con la comida. Mi objetivo es que ganes autonomía.
+      </p>
+    </div>
+
+    <!-- Cómo trabajo (traído desde la home) -->
+    <div class="mb-12">
+      <h3 class="text-xl font-semibold mb-3">Cómo trabajo</h3>
+      <ol class="space-y-3">
+        <li class="flex gap-3">
+          <span class="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded-full bg-green-500 text-white font-bold">1</span>
+          <p class="text-gray-700"><strong>Primera toma de contacto:</strong> hábitos, estilo de vida, antecedentes y objetivos.</p>
+        </li>
+        <li class="flex gap-3">
+          <span class="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded-full bg-green-500 text-white font-bold">2</span>
+          <p class="text-gray-700"><strong>Plan a medida:</strong> pautas claras e ideas de menús aplicables.</p>
+        </li>
+        <li class="flex gap-3">
+          <span class="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded-full bg-green-500 text-white font-bold">3</span>
+          <p class="text-gray-700"><strong>Seguimiento profesional:</strong> revisiones y ajustes continuos, más allá del peso.</p>
+        </li>
+        <li class="flex gap-3">
+          <span class="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded-full bg-green-500 text-white font-bold">4</span>
+          <p class="text-gray-700"><strong>Autonomía:</strong> que disfrutes comiendo y tomes decisiones con seguridad.</p>
+        </li>
+      </ol>
+    </div>
+
+    <!-- Acreditaciones / pertenencias -->
+    <div class="mb-12">
+      <h3 class="text-xl font-semibold mb-3">Acreditaciones</h3>
+      <ul class="list-disc pl-6 text-gray-700 space-y-1">
+        <li>Colegiada en CODINNA (NA00504).</li>
+        <li>Graduada en Nutrición Humana y Dietética – Universidad de Navarra.</li>
+        <!-- Añade formaciones/cursos cuando quieras -->
+      </ul>
+    </div>
+
+    <!-- CTA -->
+    <div class="flex flex-wrap gap-3">
+      <a href="/pide-tu-cita/" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full shadow">Pide tu cita</a>
+      <a href="/contacto/" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-6 rounded-full">Escríbeme</a>
+    </div>
+  </div>
+</section>
+
+<!-- Datos estructurados Person (muévelos aquí desde la home) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Nuria Zardoya",
+  "jobTitle": "Dietista-Nutricionista",
+  "memberOf": { "@type": "Organization", "name": "CODINNA" },
+  "medicalSpecialty": "Nutrition",
+  "areaServed": "Navarra, España",
+  "image": "{{ site.socialImage }}",
+  "url": "{{ site.url }}/quien-soy/",
+  "worksFor": { "@id": "{{ site.businessId }}" },
+  "sameAs": [
+    "https://www.instagram.com/nuriazardoyaa?igsh=MWp0bmIyMGI3eHBpMg==",
+    "https://www.linkedin.com/in/nuria-zardoya-lasheras-3579262b8"
+  ],
+  "description": "Dietista-Nutricionista colegiada en Navarra. Enfoque cercano, realista y basado en evidencia."
+}
+</script>
