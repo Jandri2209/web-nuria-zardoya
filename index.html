@@ -19,9 +19,11 @@ permalink: "/"
         Descubre cómo comer bien puede mejorar tu salud y bienestar general. ¡Empecemos juntos este camino!
       </p>
       <a href="/servicios/"
-         class="bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 shadow-xl"
+         class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full shadow transition duration-300"
          aria-label="Ver mis servicios de nutrición">
         Ver mis servicios
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 5l7 7-7 7"/></svg>
       </a>
     </div>
 
@@ -35,9 +37,6 @@ permalink: "/"
     </div>
   </div>
 </section>
-
-<!-- (Opcional) Netlify Identity widget -->
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js" defer></script>
 
 <!-- =========== Teaser Sobre Mí (link a /quien_soy/) =========== -->
 <section id="sobre-mi" class="py-16 bg-gray-50" aria-labelledby="sobre-mi-title">
@@ -55,9 +54,11 @@ permalink: "/"
           con planes realistas y basados en evidencia científica.
         </p>
         <a href="/quien_soy/"
-           class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full shadow">
+           class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full shadow transition duration-300"
+           aria-label="Saber más sobre mí">
           Saber más sobre mí
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </a>
       </div>
     </div>
@@ -65,38 +66,39 @@ permalink: "/"
 </section>
 
 <!-- =========== Lo que NO vas a encontrar =========== -->
-<section class="py-10" aria-labelledby="no-encontraras-title">
-  <div class="container mx-auto px-6">
-    <div class="bg-white border border-gray-200 rounded-2xl p-6">
-      <h4 id="no-encontraras-title" class="text-lg font-semibold mb-3">Lo que NO vas a encontrar</h4>
-      <ul class="grid md:grid-cols-3 gap-2 text-gray-700">
-        <li class="flex items-center gap-2"><span class="text-red-500" aria-hidden="true">✖</span> Dietas milagro</li>
-        <li class="flex items-center gap-2"><span class="text-red-500" aria-hidden="true">✖</span> Planes genéricos</li>
-        <li class="flex items-center gap-2"><span class="text-red-500" aria-hidden="true">✖</span> Culpa por comer</li>
+<section class="py-12" aria-labelledby="no-encontraras-title">
+  <div class="container mx-auto px-6 max-w-5xl">
+    <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow">
+      <h3 id="no-encontraras-title" class="text-xl font-bold mb-6 text-gray-900">Lo que <span class="text-red-600">NO</span> vas a encontrar</h3>
+      <ul class="grid md:grid-cols-3 gap-4 text-gray-700">
+        <li class="flex items-center gap-2"><span class="text-red-500 text-lg" aria-hidden="true">✖</span> Dietas milagro</li>
+        <li class="flex items-center gap-2"><span class="text-red-500 text-lg" aria-hidden="true">✖</span> Planes genéricos</li>
+        <li class="flex items-center gap-2"><span class="text-red-500 text-lg" aria-hidden="true">✖</span> Culpa por comer</li>
       </ul>
     </div>
   </div>
 </section>
 
 <!-- =========== Lo que SÍ vas a encontrar =========== -->
-<section class="py-10" aria-labelledby="si-encontraras-title">
-  <div class="container mx-auto px-6">
-    <div class="bg-green-50 border border-green-200 rounded-2xl p-6">
-      <h4 id="si-encontraras-title" class="text-lg font-semibold mb-6 text-green-800">Lo que SÍ vas a encontrar</h4>
+<section class="py-12" aria-labelledby="si-encontraras-title">
+  <div class="container mx-auto px-6 max-w-5xl">
+    <div class="bg-green-50 border border-green-200 rounded-2xl p-8 shadow">
+      <h3 id="si-encontraras-title" class="text-xl font-bold mb-6 text-green-800">Lo que <span class="text-green-700">SÍ</span> vas a encontrar</h3>
       <div class="grid md:grid-cols-3 gap-6 text-gray-700">
-        <div class="bg-white rounded-xl shadow p-5 text-center">
-          <h5 class="font-semibold text-green-700 mb-2">Acompañamiento cercano</h5>
+        <div class="bg-white rounded-xl shadow p-6 text-center">
+          <h4 class="font-semibold text-green-700 mb-2">Acompañamiento cercano</h4>
           <p>Escucha activa, comprensión y apoyo constante en cada paso de tu proceso.</p>
         </div>
-        <div class="bg-white rounded-xl shadow p-5 text-center">
-          <h5 class="font-semibold text-green-700 mb-2">Planes realistas</h5>
+        <div class="bg-white rounded-xl shadow p-6 text-center">
+          <h4 class="font-semibold text-green-700 mb-2">Planes realistas</h4>
           <p>Recomendaciones adaptadas a tu estilo de vida, sin prohibiciones absurdas ni “dietas milagro”.</p>
         </div>
-        <div class="bg-white rounded-xl shadow p-5 text-center">
-          <h5 class="font-semibold text-green-700 mb-2">Evidencia científica</h5>
+        <div class="bg-white rounded-xl shadow p-6 text-center">
+          <h4 class="font-semibold text-green-700 mb-2">Evidencia científica</h4>
           <p>Todo mi trabajo está basado en ciencia actual y en la práctica clínica, no en modas pasajeras.</p>
         </div>
       </div>
     </div>
   </div>
 </section>
+
