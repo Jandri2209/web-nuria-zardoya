@@ -1,0 +1,60 @@
+---
+layout: base.njk
+title: "Pide tu Cita - Nuria Zardoya"
+description: "Reserva tu cita online con Nuria Zardoya. Elige el día y la hora que mejor te convenga."
+permalink: "/pide-tu-cita/"
+---
+<div class="container mx-auto px-6">
+  <div class="mb-12">
+    <h1 class="text-4xl font-bold text-center mb-4">Pide tu cita</h1>
+    <p class="text-lg text-gray-600 text-center max-w-3xl mx-auto mb-8">
+      Haz clic para cargar el calendario y elegir la hora que mejor te convenga.
+    </p>
+
+    <div class="text-center">
+      <button id="btn-cita"
+              class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-full shadow">
+        Abrir calendario
+      </button>
+      <p class="mt-4">
+        <a href="https://calendly.com/d/cn3-j2k-gq3/reunion-de-demostracion-de-calendly"
+           target="_blank" rel="noopener">
+          ¿Prefieres abrir Calendly en otra pestaña?
+        </a>
+      </p>
+    </div>
+
+    <div id="calendly-inline"
+         class="mt-8 mx-auto rounded-lg shadow-2xl overflow-hidden"
+         style="min-width:320px; height:700px; max-width: 960px;"></div>
+  </div>
+</div>
+
+<script>
+  function initCalendly() {
+    if (!window.Calendly) return;
+    Calendly.initInlineWidget({
+      url: "https://calendly.com/d/cn3-j2k-gq3/reunion-de-demostracion-de-calendly",
+      parentElement: document.getElementById("calendly-inline")
+    });
+  }
+
+  function loadCalendly() {
+    // Si más adelante usas gestor de cookies, puedes condicionar la carga:
+    // if (!(window.consent && window.consent.marketing)) {
+    //   alert("Activa las cookies de marketing para cargar Calendly.");
+    //   return;
+    // }
+
+    if (document.getElementById('calendly-js')) return initCalendly();
+
+    const s = document.createElement('script');
+    s.src = "https://assets.calendly.com/assets/external/widget.js";
+    s.async = true;
+    s.id = "calendly-js";
+    s.onload = initCalendly;
+    document.head.appendChild(s);
+  }
+
+  document.getElementById('btn-cita').addEventListener('click', loadCalendly);
+</script>

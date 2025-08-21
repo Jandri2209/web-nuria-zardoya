@@ -1,28 +1,86 @@
-<header id="header" class="bg-white shadow-md fixed w-full top-0 z-50">
-    <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
-        <a href="/" class="text-2xl font-bold text-green-600">Nuria Zardoya</a>
-        <div class="hidden md:flex space-x-6 items-center">
-            <!--
-              Ahora, cada enlace comprueba si la URL de la página actual (page.url)
-              coincide con la URL del enlace. Si es así, aplica el estilo de "activo".
-            -->
-            <a href="/" class="{% if page.url == '/' %}text-green-600 font-semibold{% else %}text-gray-600 hover:text-green-600{% endif %}">Inicio</a>
-            <a href="/servicios.html" class="{% if page.url == '/servicios.html' %}text-green-600 font-semibold{% else %}text-gray-600 hover:text-green-600{% endif %}">Servicios</a>
-            <a href="/recetas.html" class="{% if page.url == '/recetas.html' %}text-green-600 font-semibold{% else %}text-gray-600 hover:text-green-600{% endif %}">Recetas</a>
-            <!-- El enlace al Blog sigue oculto -->
-            <!-- <a href="/blog.html" class="{% if page.url == '/blog.html' %}text-green-600 font-semibold{% else %}text-gray-600 hover:text-green-600{% endif %}">Blog</a> -->
-            <a href="/contacto.html" class="{% if page.url == '/contacto.html' %}text-green-600 font-semibold{% else %}text-gray-600 hover:text-green-600{% endif %}">Contacto</a>
-            <a href="/contacto.html" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-lg">Pide tu cita</a>
-        </div>
-        <div class="md:hidden">
-            <button id="menu-btn" class="text-gray-600 focus:outline-none"><i data-lucide="menu" class="w-6 h-6"></i></button>
-        </div>
-    </nav>
-    <div id="mobile-menu" class="hidden md:hidden">
-        <a href="/" class="block py-2 px-4 text-sm hover:bg-green-50">Inicio</a>
-        <a href="/servicios.html" class="block py-2 px-4 text-sm hover:bg-green-50">Servicios</a>
-        <a href="/recetas.html" class="block py-2 px-4 text-sm hover:bg-green-50">Recetas</a>
-        <!-- <a href="/blog.html" class="block py-2 px-4 text-sm hover:bg-green-50">Blog</a> -->
-        <a href="/contacto.html" class="block py-2 px-4 text-sm hover:bg-green-50">Contacto</a>
+<header id="site-header" class="bg-white/90 backdrop-blur shadow-md fixed w-full top-0 z-50">
+  <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+    <a href="/" class="text-2xl font-bold text-green-600">Nuria Zardoya</a>
+
+    <!-- Desktop nav -->
+    <div class="hidden md:flex space-x-6 items-center">
+      {% set active = "text-green-600 font-semibold" %}
+      {% set idle = "text-gray-600 hover:text-green-600" %}
+
+      <a href="/" class="{{ active if page.url == '/' else idle }}">Inicio</a>
+
+      {% set isServicios = page.url == '/servicios.html' or page.url == '/servicios/' %}
+      <a href="/servicios/" class="{{ active if isServicios else idle }}">Servicios</a>
+
+      {% set isRecetas = page.url == '/recetas.html' or page.url == '/recetas/' %}
+      <a href="/recetas/" class="{{ active if isRecetas else idle }}">Recetas</a>
+
+      {% set isContacto = page.url == '/contacto.html' or page.url == '/contacto/' %}
+      <a href="/contacto/" class="{{ active if isContacto else idle }}">Contacto</a>
+
+      {% set isCita = page.url == '/pide_tu_cita.html' or page.url == '/pide-tu-cita/' %}
+      <a href="/pide-tu-cita/" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-lg {{ 'ring-2 ring-green-300' if isCita }}">
+        Pide tu cita
+      </a>
     </div>
+
+    <!-- Mobile button -->
+    <div class="md:hidden">
+      <button id="menu-btn" class="text-gray-600 focus:outline-none"
+              aria-controls="mobile-menu" aria-expanded="false">
+        <span class="sr-only">Abrir menú</span>
+        <i data-lucide="menu" class="w-6 h-6"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-sm">
+    <nav class="container mx-auto px-6 py-2 space-y-1" role="menu" aria-label="Menú móvil">
+      <a href="/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Inicio</a>
+      <a href="/servicios/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Servicios</a>
+      <a href="/recetas/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Recetas</a>
+      <a href="/contacto/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Contacto</a>
+      <a href="/pide-tu-cita/" class="block py-2 text-sm font-semibold text-green-700 hover:bg-green-50" role="menuitem">
+        Pide tu cita
+      </a>
+    </nav>
+  </div>
 </header>
+
+<script>
+  // Toggle menú móvil accesible
+  (function () {
+    const btn = document.getElementById('menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    if (!btn || !menu) return;
+
+    function closeMenu() {
+      btn.setAttribute('aria-expanded', 'false');
+      menu.classList.add('hidden');
+    }
+    function openMenu() {
+      btn.setAttribute('aria-expanded', 'true');
+      menu.classList.remove('hidden');
+    }
+
+    btn.addEventListener('click', () => {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      expanded ? closeMenu() : openMenu();
+    });
+
+    // Cerrar al pulsar Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeMenu();
+        btn.focus();
+      }
+    });
+
+    // Cerrar al hacer click en un enlace del menú
+    menu.addEventListener('click', (e) => {
+      const target = e.target.closest('a');
+      if (target) closeMenu();
+    });
+  })();
+</script>
