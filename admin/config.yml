@@ -1,6 +1,6 @@
 backend:
   name: git-gateway
-  branch: refactor-ssg   # ← cámbialo si tu rama es otra (p.ej., main)
+  branch: refactor-ssg
 
 media_folder: "assets/uploads"
 public_folder: "/assets/uploads"
@@ -11,7 +11,6 @@ locale: "es"
 collections:
   - name: "recetas"
     label: "Recetas"
-    label_singular: "Receta"
     folder: "recetas"
     create: true
     slug: "{{slug}}"
@@ -21,16 +20,18 @@ collections:
     fields:
       - { label: "Layout", name: "layout", widget: "hidden", default: "recipe.njk" }
       - { label: "Etiquetas", name: "tags", widget: "hidden", default: ["recetas"] }
+      - { label: "Permalink", name: "permalink", widget: "hidden", default: "recetas/{{slug}}/index.html" }
       - { label: "Título", name: "title", widget: "string" }
       - { label: "Fecha", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
-      - { label: "Descripción", name: "description", widget: "text", hint: "Resumen corto para la tarjeta y SEO" }
-      - { label: "Imagen principal", name: "image", widget: "image", allow_multiple: false, hint: "Ideal ~1200×800" }
+      - { label: "Descripción", name: "description", widget: "text" }
+      - { label: "Imagen principal", name: "image", widget: "image" }
       - { label: "Categoría", name: "category", widget: "select", options: ["Plato principal","Desayuno","Ensalada","Sopa/Crema","Snack","Postre","Bebida"], default: "Plato principal" }
-      - { label: "Raciones", name: "servings", widget: "number", value_type: "int", min: 1, default: 2 }
-      - { label: "Tiempo (min)", name: "time", widget: "number", value_type: "int", min: 0, default: 15 }
+      - { label: "Raciones", name: "servings", widget: "number", min: 1, default: 2 }
+      - { label: "Tiempo (min)", name: "time", widget: "number", min: 0, default: 15 }
       - { label: "Dificultad", name: "difficulty", widget: "select", options: ["Fácil","Media","Difícil"], default: "Fácil" }
       - label: "Ingredientes"
         name: "ingredients"
         widget: "list"
         field: { label: "Ingrediente", name: "item", widget: "string" }
       - { label: "Preparación", name: "body", widget: "markdown" }
+
