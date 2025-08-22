@@ -5,84 +5,34 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Panel de edición | Nuria</title>
 
-    <!-- 1) Netlify Identity -->
+    <!-- Identity primero -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
-    <!-- 2) Contenedor del CMS (para evitar blanco) -->
-    <style>
-      html, body { height: 100%; margin: 0; }
-      #nc-root { min-height: 100vh; }
-      #diag { position: fixed; left: 8px; bottom: 8px; background: #111; color: #0f0; padding: 8px 10px; font: 12px/1.4 monospace; border-radius: 6px; max-width: 90vw; z-index: 99999; }
-      #diag b { color: #9cf; }
-      #diag .err { color: #f66; }
-    </style>
+    <!-- ⚠️ MUY IMPORTANTE: manual init ANTES de cargar Decap -->
+    <script>
+      window.CMS_MANUAL_INIT = true;
+      window.CMS_DEBUG = true;
+    </script>
+
+    <!-- Decap CMS (una sola vez) -->
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   </head>
   <body>
     <noscript>Necesitas activar JavaScript para usar este panel.</noscript>
-    <div id="nc-root"></div>
-    <div id="diag">⏳ Cargando…</div>
 
     <script>
-      // Diagnóstico simple en pantalla
-      const diag = (msg, cls) => {
-        const box = document.getElementById('diag');
-        box.innerHTML = (box.innerHTML ? box.innerHTML + '<br>' : '') + (cls ? `<span class="${cls}">${msg}</span>` : msg);
-        console.log("[CMS]", msg);
-      };
-      window.onerror = function (msg, src, line, col, err) {
-        diag(`❌ Error global: ${msg} @ ${src}:${line}:${col}`, 'err');
-      };
-    </script>
-
-    <!-- 3) Decap CMS (primero intentamos 3.x) -->
-    <script id="decap-main" src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js" onload="diag('✅ decap-cms 3.x cargado');" onerror="diag('❌ No cargó decap-cms 3.x', 'err');"></script>
-
-    <script>
-      // 4) Fallback automático a 2.x si CMS no aparece
-      function ensureDecapLoaded(next) {
-        setTimeout(function(){
-          if (window.CMS) { diag('✅ window.CMS existe'); next(); return; }
-          diag('⚠️ window.CMS no existe aún. Probando fallback 2.x…');
-          const s = document.createElement('script');
-          s.src = 'https://unpkg.com/decap-cms@2.10.192/dist/decap-cms.js';
-          s.onload = function(){ diag('✅ Cargó fallback 2.x'); next(); };
-          s.onerror = function(){ diag('❌ Falló fallback 2.x', 'err'); };
-          document.body.appendChild(s);
-        }, 400);
-      }
-
-      // 5) Inicialización manual con logs detallados
-      window.CMS_DEBUG = true;
-      window.CMS_MANUAL_INIT = true;
-
-      function initCMS() {
-        try {
-          if (!window.CMS) { diag('❌ CMS sigue sin estar disponible', 'err'); return; }
-          diag('<b>Inicializando CMS…</b>');
-          CMS.init({ config: '/admin/config.yml' });
-          // Al cargar config con éxito, Decap monta UI en #nc-root
-        } catch (e) {
-          diag('❌ Excepción en CMS.init(): ' + (e && e.message ? e.message : e), 'err');
-          console.error(e);
-        }
-      }
-
-      // 6) Integración con Netlify Identity (reload tras login)
+      // Recarga tras login
       if (window.netlifyIdentity) {
-        window.netlifyIdentity.on('init', (user) => {
-          diag('ℹ️ Identity init: ' + (user ? 'logueado' : 'no logueado'));
+        window.netlifyIdentity.on("init", (user) => {
           if (!user) {
-            window.netlifyIdentity.on('login', () => { diag('🔁 Login → reload'); location.reload(); });
+            window.netlifyIdentity.on("login", () => window.location.reload());
           }
         });
-      } else {
-        diag('⚠️ netlifyIdentity no disponible (aún)');
       }
 
-      // 7) Secuencia de arranque
-      document.addEventListener('DOMContentLoaded', function(){
-        diag('<b>DOM listo</b>');
-        ensureDecapLoaded(initCMS);
+      // Inicialización única del CMS
+      document.addEventListener("DOMContentLoaded", function () {
+        CMS.init({ config: "/admin/config.yml" });
       });
     </script>
   </body>
