@@ -93,6 +93,7 @@ collections:
   # 2) Recetas (colección)
   - name: "recetas"
     label: "Recetas"
+    label_singular: "Receta"
     folder: "recetas"
     create: true
     slug: "{{slug}}"
