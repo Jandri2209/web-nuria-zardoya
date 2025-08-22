@@ -108,14 +108,19 @@ collections:
     fields:
       - { label: "Título", name: "title", widget: "string" }
       - { label: "Fecha", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
-      - { label: "Descripción", name: "description", widget: "text", required: false }
-      - { label: "Imagen principal", name: "image", widget: "image", required: false }
-      - { label: "Categoría", name: "category", widget: "select", options: ["Plato principal","Desayuno","Ensalada","Sopa/Crema","Snack","Postre","Bebida"], required: false }
-      - { label: "Raciones", name: "servings", widget: "number", min: 1, required: false }
-      - { label: "Tiempo (min)", name: "time", widget: "number", min: 0, required: false }
-      - { label: "Dificultad", name: "difficulty", widget: "select", options: ["Fácil","Media","Difícil"], required: false }
+      - { label: "Descripción", name: "description", widget: "text", hint: "Frase breve que aparecerá bajo el título." }
+      - { label: "Imagen principal", name: "image", widget: "image" }
+      - { label: "Categoría", name: "category", widget: "select", options: ["Plato principal","Desayuno","Ensalada","Sopa/Crema","Snack","Postre","Bebida"] }
+      - { label: "Raciones", name: "servings", widget: "number", min: 1 }
+      - { label: "Tiempo (min)", name: "time", widget: "number", min: 0 }
+      - { label: "Dificultad", name: "difficulty", widget: "select", options: ["Fácil","Media","Difícil"] }
+
       - label: "Ingredientes"
         name: "ingredients"
         widget: "list"
         field: { label: "Ingrediente", name: "item", widget: "string" }
-      - { label: "Preparación", name: "body", widget: "markdown" }
+
+      - label: "Preparación (pasos)"
+        name: "steps"
+        widget: "list"
+        field: { label: "Paso", name: "step", widget: "text" }
