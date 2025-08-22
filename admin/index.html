@@ -28,5 +28,12 @@
       // CMS.registerPreviewStyle("/assets/css/site.css");
       // CMS.registerPreviewTemplate("recetas", YourPreviewComponent);
     </script>
+    <script>window.CMS_MANUAL_INIT = true;</script>
+    <script>
+      // Inicializa el CMS de forma explícita
+      document.addEventListener('DOMContentLoaded', function () {
+        CMS.init({ config: '/admin/config.yml' });
+      });
+    </script>
   </body>
 </html>
