@@ -1,26 +1,47 @@
 ---
-# Layout de receta
+# Layout de receta (Eleventy + Nunjucks)
 ---
+
 <article class="container mx-auto px-6 max-w-3xl py-10">
   <header class="mb-8">
-    <h1 class="text-4xl font-bold mb-2">{{ title }}</h1>
-    {% if description %}<p class="text-lg text-gray-600">{{ description }}</p>{% endif %}
-    <div class="mt-4 text-sm text-gray-500">
-      {% if date %}<span>📅 {{ date | date("yyyy-MM-dd") }}</span>{% endif %}
-      {% if servings %}<span class="ml-4">🍽️ {{ servings }} raciones</span>{% endif %}
-      {% if time %}<span class="ml-4">⏱️ {{ time }} min</span>{% endif %}
-      {% if difficulty %}<span class="ml-4">🔥 {{ difficulty }}</span>{% endif %}
+    <h1 class="text-4xl font-bold mb-2">{{ title or page.fileSlug }}</h1>
+
+    {% if description %}
+      <p class="text-lg text-gray-600">{{ description }}</p>
+    {% endif %}
+
+    <div class="mt-4 text-sm text-gray-500 space-x-4">
+      {% if date %}
+        {# 👉 con el filtro date (Intl): formato largo en español #}
+        <span>📅
+          <time datetime="{{ date | date('es-ES', { year:'numeric', month:'2-digit', day:'2-digit' }) }}">
+            {{ date | date('es-ES', { year:'numeric', month:'long', day:'2-digit' }) }}
+          </time>
+        </span>
+        {# Si instalas Luxon y tu filtro acepta patrones, podrías usar:
+           <time datetime="{{ date | date('yyyy-LL-dd') }}">{{ date | date("d 'de' LLLL 'de' yyyy") }}</time>
+        #}
+      {% endif %}
+
+      {% if servings %}<span>🍽️ {{ servings }} raciones</span>{% endif %}
+      {% if time %}<span>⏱️ {{ time }} min</span>{% endif %}
+      {% if difficulty %}<span>🔥 {{ difficulty }}</span>{% endif %}
     </div>
-    {% if image %}<img src="{{ image }}" alt="{{ title }}" class="mt-6 rounded-xl shadow"/>{% endif %}
+
+    {% if image %}
+      <img src="{{ image }}" alt="Imagen de {{ title or page.fileSlug }}" class="mt-6 rounded-xl shadow"/>
+    {% endif %}
   </header>
 
-  {% if ingredients %}
-  <section class="mb-8">
-    <h2 class="text-2xl font-semibold mb-3">Ingredientes</h2>
-    <ul class="list-disc list-inside leading-8">
-      {% for i in ingredients %}<li>{{ i.item or i }}</li>{% endfor %}
-    </ul>
-  </section>
+  {% if ingredients and ingredients.length %}
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold mb-3">Ingredientes</h2>
+      <ul class="list-disc list-inside leading-8">
+        {% for i in ingredients %}
+          <li>{{ i.item or i }}</li>
+        {% endfor %}
+      </ul>
+    </section>
   {% endif %}
 
   <section class="prose max-w-none">

@@ -1,13 +1,27 @@
+// .eleventy.js
 const site = require("./_data/site.json");
 const pluginSitemap = require("@quasibit/eleventy-plugin-sitemap");
 
 module.exports = function(eleventyConfig) {
+  // Archivos que pasan tal cual
   eleventyConfig.addPassthroughCopy("admin");
   eleventyConfig.addPassthroughCopy("assets");
   eleventyConfig.addPassthroughCopy("images");
 
+  // Sitemap
   eleventyConfig.addPlugin(pluginSitemap, {
     sitemap: { hostname: site.url }
+  });
+
+  // ✅ Filtro 'date' para Nunjucks/Liquid: sin dependencias externas
+  eleventyConfig.addFilter("date", (value, locale = "es-ES", options = {}) => {
+    if (!value) return "";
+    const d = value instanceof Date ? value : new Date(value);
+    if (isNaN(d)) return "";
+    const opts = Object.keys(options).length
+      ? options
+      : { year: "numeric", month: "long", day: "2-digit" };
+    return new Intl.DateTimeFormat(locale, opts).format(d);
   });
 
   return {
@@ -18,7 +32,7 @@ module.exports = function(eleventyConfig) {
       data: "_data",
       output: "_site"
     },
-    templateFormats: ["html","njk","md"],
+    templateFormats: ["html", "njk", "md"],
     htmlTemplateEngine: "njk",
     markdownTemplateEngine: "njk"
   };
