@@ -90,7 +90,7 @@ collections:
           - { label: "Título", name: "title", widget: "string" }
           - { label: "Contenido", name: "body", widget: "markdown", required: false }
 
-  # 2) Recetas (colección que crece)
+  # 2) Recetas (colección)
   - name: "recetas"
     label: "Recetas"
     folder: "recetas"
