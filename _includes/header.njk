@@ -12,7 +12,7 @@
          class="{% if isInicio %}{{ active }}{% else %}{{ idle }}{% endif %}"
          {% if isInicio %}aria-current="page"{% endif %}>Inicio</a>
 
-      {# Quién soy: soporta /quien_soy/ y /quien-soy/ #}
+      {# Quién soy: soporta /quien_soy/ #}
       {% set isQuienSoy = page.url == '/quien_soy/' %}
       <a href="/quien_soy/"
          class="{% if isQuienSoy %}{{ active }}{% else %}{{ idle }}{% endif %}"

@@ -12,7 +12,7 @@ permalink: "/quien_soy/"
 
     <!-- Hero compacto -->
     <div class="flex flex-col md:flex-row items-center gap-8 mb-12">
-      <img src="https://i.imgur.com/fTyNpqg.jpeg" alt="Foto de Nuria Zardoya"
+      <img src="/images/hero.jpeg" alt="Foto de Nuria Zardoya"
            class="rounded-full shadow-2xl w-40 h-40 object-cover" width="240" height="240" loading="lazy" decoding="async">
       <div>
         <h2 class="text-2xl font-semibold mb-2">Hola, soy Nuria Zardoya</h2>
@@ -43,22 +43,22 @@ permalink: "/quien_soy/"
     <!-- Historia breve -->
     <div class="mb-12">
       <h3 class="text-xl font-semibold mb-3">Mi camino</h3>
-      <p class="text-gray-700">
+      <p class="text-gray-700 mb-4">
         Me dedico a acercar la nutrición a la vida real: aprender a comer, entender tus señales
         y construir una relación más amable con la comida.
-        <p class="text-gray-700 mb-4">
-          Soy una apasionada por la ciencia de la nutrición y por ayudar a las personas a alcanzar sus objetivos de <strong>salud nutricional</strong> de una forma realista e individualizada.
-        </p>
-        <p class="text-gray-700 mb-4">
-          Mi objetivo es enseñarte a comer y a entender las señales de tu cuerpo, para que puedas <strong>aprender</strong> a tomar decisiones <strong>alimentarias</strong> con seguridad… y disfrutando del proceso.
-        </p>
-        <p class="text-gray-700 mb-4">
-          Juntos crearemos un plan totalmente <strong>personalizado</strong>, adaptado a tus gustos, tu estilo de vida y tus necesidades.
-        </p>
+      </p>
+      <p class="text-gray-700 mb-4">
+        Soy una apasionada por la ciencia de la nutrición y por ayudar a las personas a alcanzar sus objetivos de <strong>salud nutricional</strong> de una forma realista e individualizada.
+      </p>
+      <p class="text-gray-700 mb-4">
+        Mi objetivo es enseñarte a comer y a entender las señales de tu cuerpo, para que puedas <strong>aprender</strong> a tomar decisiones <strong>alimentarias</strong> con seguridad… y disfrutando del proceso.
+      </p>
+      <p class="text-gray-700 mb-4">
+        Juntos crearemos un plan totalmente <strong>personalizado</strong>, adaptado a tus gustos, tu estilo de vida y tus necesidades.
       </p>
     </div>
 
-    <!-- Cómo trabajo (traído desde la home) -->
+    <!-- Cómo trabajo -->
     <div class="mb-12">
       <h3 class="text-xl font-semibold mb-3">Cómo trabajo</h3>
       <ol class="space-y-3">
@@ -81,13 +81,45 @@ permalink: "/quien_soy/"
       </ol>
     </div>
 
+    <!-- Mini-galería -->
+    <div class="mb-12" aria-label="Galería de imágenes de la consulta y ejemplos">
+      <h3 class="text-xl font-semibold mb-3">Un vistazo a mi consulta</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <!-- Img 1: Consulta -->
+        <figure class="overflow-hidden rounded-xl border border-gray-200">
+          <img src="/images/consulta.jpeg"
+               alt="Consulta de nutrición personalizada"
+               class="w-full h-48 object-cover"
+               width="600" height="400" loading="lazy" decoding="async">
+          <figcaption class="sr-only">Consulta de nutrición personalizada</figcaption>
+        </figure>
+
+        <!-- Img 2: Ingredientes/planificación -->
+        <figure class="overflow-hidden rounded-xl border border-gray-200">
+          <img src="/images/planificación.jpeg"
+               alt="Ingredientes y planificación de menús"
+               class="w-full h-48 object-cover"
+               width="600" height="400" loading="lazy" decoding="async">
+          <figcaption class="sr-only">Ingredientes y planificación de menús</figcaption>
+        </figure>
+
+        <!-- Img 3: Plato sencillo -->
+        <figure class="overflow-hidden rounded-xl border border-gray-200">
+          <img src="/images/plato.jpeg"
+               alt="Plato saludable y sencillo"
+               class="w-full h-48 object-cover"
+               width="600" height="400" loading="lazy" decoding="async">
+          <figcaption class="sr-only">Plato saludable y sencillo</figcaption>
+        </figure>
+      </div>
+    </div>
+
     <!-- Acreditaciones / pertenencias -->
     <div class="mb-12">
       <h3 class="text-xl font-semibold mb-3">Acreditaciones</h3>
       <ul class="list-disc pl-6 text-gray-700 space-y-1">
         <li>Colegiada en CODINNA (NA00504).</li>
         <li>Graduada en Nutrición Humana y Dietética – Universidad de Navarra.</li>
-        <!-- Añade formaciones/cursos cuando quieras -->
       </ul>
     </div>
 
@@ -99,7 +131,7 @@ permalink: "/quien_soy/"
   </div>
 </section>
 
-<!-- Datos estructurados Person (muévelos aquí desde la home) -->
+<!-- Datos estructurados Person -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -110,7 +142,7 @@ permalink: "/quien_soy/"
   "medicalSpecialty": "Nutrition",
   "areaServed": "Navarra, España",
   "image": "{{ site.socialImage }}",
-  "url": "{{ site.url }}/quien-soy/",
+  "url": "{{ site.url }}/quien_soy/",
   "worksFor": { "@id": "{{ site.businessId }}" },
   "sameAs": [
     "https://www.instagram.com/nuriazardoyaa?igsh=MWp0bmIyMGI3eHBpMg==",
