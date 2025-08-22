@@ -8,8 +8,13 @@ public_folder: "/assets/uploads"
 publish_mode: editorial_workflow
 locale: "es"
 
+slug:
+  encoding: "ascii"
+  clean_accents: true
+  sanitize_replacement: "-"
+
 collections:
-  # 1) Páginas fijas (archivos sueltos)
+  # 1) Páginas fijas
   - name: "paginas"
     label: "Páginas"
     delete: false
@@ -96,22 +101,19 @@ collections:
     label_singular: "Receta"
     folder: "recetas"
     create: true
-    slug: "{{slug}}"
     extension: "md"
     format: "frontmatter"
+    slug: "{{slug}}"
     preview_path: "recetas/{{slug}}/"
     fields:
-      - { label: "Layout", name: "layout", widget: "hidden", default: "recipe.njk" }
-      - { label: "Etiquetas", name: "tags", widget: "hidden", default: ["recetas"] }
-      - { label: "Permalink", name: "permalink", widget: "hidden", default: "recetas/{{slug}}/index.html" }
       - { label: "Título", name: "title", widget: "string" }
-      - { label: "Fecha", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
-      - { label: "Descripción", name: "description", widget: "text" }
-      - { label: "Imagen principal", name: "image", widget: "image" }
-      - { label: "Categoría", name: "category", widget: "select", options: ["Plato principal","Desayuno","Ensalada","Sopa/Crema","Snack","Postre","Bebida"], default: "Plato principal" }
-      - { label: "Raciones", name: "servings", widget: "number", min: 1, default: 2 }
-      - { label: "Tiempo (min)", name: "time", widget: "number", min: 0, default: 15 }
-      - { label: "Dificultad", name: "difficulty", widget: "select", options: ["Fácil","Media","Difícil"], default: "Fácil" }
+      - { label: "Fecha", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
+      - { label: "Descripción", name: "description", widget: "text", required: false }
+      - { label: "Imagen principal", name: "image", widget: "image", required: false }
+      - { label: "Categoría", name: "category", widget: "select", options: ["Plato principal","Desayuno","Ensalada","Sopa/Crema","Snack","Postre","Bebida"], required: false }
+      - { label: "Raciones", name: "servings", widget: "number", min: 1, required: false }
+      - { label: "Tiempo (min)", name: "time", widget: "number", min: 0, required: false }
+      - { label: "Dificultad", name: "difficulty", widget: "select", options: ["Fácil","Media","Difícil"], required: false }
       - label: "Ingredientes"
         name: "ingredients"
         widget: "list"
