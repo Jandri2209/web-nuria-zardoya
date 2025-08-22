@@ -9,6 +9,88 @@ publish_mode: editorial_workflow
 locale: "es"
 
 collections:
+  # 1) Páginas fijas (archivos sueltos)
+  - name: "paginas"
+    label: "Páginas"
+    delete: false
+    files:
+      - label: "Inicio"
+        name: "index"
+        file: "index.html"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Descripción", name: "description", widget: "text", required: false }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Quién soy"
+        name: "quien_soy"
+        file: "quien_soy.html"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Descripción", name: "description", widget: "text", required: false }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Servicios"
+        name: "servicios"
+        file: "servicios.html"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Descripción", name: "description", widget: "text", required: false }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Contacto"
+        name: "contacto"
+        file: "contacto.html"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Descripción", name: "description", widget: "text", required: false }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Pide tu cita"
+        name: "cita"
+        file: "pide_tu_cita.html"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Descripción", name: "description", widget: "text", required: false }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Blog"
+        name: "blog"
+        file: "blog.html"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Descripción", name: "description", widget: "text", required: false }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Aviso Legal"
+        name: "legal"
+        file: "legal.html"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Privacidad"
+        name: "privacidad"
+        file: "privacidad.html"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Cookies"
+        name: "cookies"
+        file: "cookies.html"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Gracias"
+        name: "gracias"
+        file: "gracias.html"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+  # 2) Recetas (colección que crece)
   - name: "recetas"
     label: "Recetas"
     folder: "recetas"
@@ -34,4 +116,3 @@ collections:
         widget: "list"
         field: { label: "Ingrediente", name: "item", widget: "string" }
       - { label: "Preparación", name: "body", widget: "markdown" }
-
