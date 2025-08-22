@@ -1,6 +1,6 @@
 ---
 title: Ensalada mediterránea de garbanzos
-date: 2025-08-22
+date: 2025-08-21
 description: Ensalada muy saludable ideal para el verano.
 image: /assets/uploads/plato.jpeg
 category: Ensalada
