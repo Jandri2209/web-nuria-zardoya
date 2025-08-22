@@ -8,7 +8,7 @@
     <!-- Netlify Identity -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
-    <!-- Manual init antes de cargar Decap -->
+    <!-- Manual init (antes de cargar Decap) -->
     <script>
       window.CMS_MANUAL_INIT = true;
       window.CMS_DEBUG = true;
@@ -16,6 +16,9 @@
 
     <!-- Decap CMS -->
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+
+    <!-- 🧩 Paquete de traducciones oficiales -->
+    <script src="https://unpkg.com/decap-cms-locales@^3.0.0/dist/index.js"></script>
   </head>
   <body>
     <noscript>Necesitas activar JavaScript para usar este panel.</noscript>
@@ -31,12 +34,17 @@
       }
 
       document.addEventListener("DOMContentLoaded", function () {
-        // 1) Sobrescribe la cadena para que diga "Nueva ..."
+        // 1) Registrar el locale español (usa el bundle oficial)
+        if (window.DecapCmsLocales && window.DecapCmsLocales.es) {
+          CMS.registerLocale('es', window.DecapCmsLocales.es);
+        }
+
+        // 2) Opcional: arregla el botón "Nueva ..."
         CMS.registerLocale('es', {
           collections: { new: 'Nueva %{collectionLabel}' }
         });
 
-        // 2) Inicia el CMS en español (clave)
+        // 3) Inicia el CMS forzando el idioma
         CMS.init({
           config: "/admin/config.yml",
           locale: "es"
