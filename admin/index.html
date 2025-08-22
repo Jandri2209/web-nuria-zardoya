@@ -8,7 +8,7 @@
     <!-- Netlify Identity -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
-    <!-- ⚠️ Manual init antes de cargar Decap -->
+    <!-- Manual init antes de cargar Decap -->
     <script>
       window.CMS_MANUAL_INIT = true;
       window.CMS_DEBUG = true;
@@ -30,16 +30,17 @@
         });
       }
 
-      // Inicialización del CMS y traducción custom
       document.addEventListener("DOMContentLoaded", function () {
-        // 👇 sobreescribir traducción antes de init
+        // 1) Sobrescribe la cadena para que diga "Nueva ..."
         CMS.registerLocale('es', {
-          collections: {
-            new: 'Nueva %{collectionLabel}'   // fuerza "Nueva"
-          }
+          collections: { new: 'Nueva %{collectionLabel}' }
         });
 
-        CMS.init({ config: "/admin/config.yml" });
+        // 2) Inicia el CMS en español (clave)
+        CMS.init({
+          config: "/admin/config.yml",
+          locale: "es"
+        });
       });
     </script>
   </body>
