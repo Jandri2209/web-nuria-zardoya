@@ -13,18 +13,18 @@ permalink: "/contacto/"
 
     <div class="max-w-xl mx-auto">
       <form name="contact" method="POST" action="/gracias/"
-            data-netlify="true" netlify-honeypot="bot-field"
+            data-netlify="true" netlify-honeypot="bot-field" accept-charset="UTF-8"
             class="bg-white text-gray-800 p-8 rounded-lg shadow-inner">
         <input type="hidden" name="form-name" value="contact" />
         <input type="hidden" name="subject" value="Nuevo Mensaje desde la Web de Nuria Zardoya" />
 
+        <!-- Honeypot antispam -->
         <p class="hidden">
           <label>
             <span class="sr-only">Deja este campo vacío</span>
             <input type="text" name="bot-field" tabindex="-1" autocomplete="off">
           </label>
         </p>
-
 
         <div class="mb-4">
           <label for="name" class="block text-gray-700 font-bold mb-2">Nombre</label>
@@ -54,6 +54,9 @@ permalink: "/contacto/"
           <textarea id="message" name="message" rows="5" required
                     class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
         </div>
+
+        <!-- reCAPTCHA de Netlify -->
+        <div data-netlify-recaptcha="true" class="mb-6"></div>
 
         <div class="text-center">
           <button type="submit"

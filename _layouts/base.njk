@@ -7,7 +7,7 @@
   {# SEO centralizado #}
   {% include "seo.njk" %}
 
-  <link rel="icon" type="image/jpeg" href="https://i.imgur.com/fTyNpqg.jpeg">
+  <link rel="icon" type="image/jpeg" href="/images/hero.jpeg">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -47,5 +47,20 @@
 
   {# Banner/modal de cookies #}
   {% include "cookies.njk" %}
+
+  <!-- Netlify Identity + redirect de tokens (poner SIEMPRE al final del body) -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script>
+    (function () {
+      var h = window.location.hash || "";
+      // Si el enlace de email trae #invite_token o #recovery_token,
+      // redirige al panel para que el CMS lo procese.
+      if (h.includes("invite_token") || h.includes("recovery_token")) {
+        if (!location.pathname.startsWith("/admin")) {
+          location.assign("/admin/" + h);
+        }
+      }
+    })();
+  </script>
 </body>
 </html>

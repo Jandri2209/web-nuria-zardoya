@@ -5,14 +5,30 @@
     {% set active = "text-green-600 font-semibold" %}
     {% set idle = "text-gray-600 hover:text-green-600" %}
 
-    <!-- Desktop nav -->
-    <div class="hidden md:flex space-x-6 items-center">
+    <!-- Desktop nav + buscador -->
+    <div class="hidden md:flex items-center space-x-6">
+      <!-- Buscador (lupa que expande) -->
+      <div class="flex items-center gap-2" id="header-search" data-search>
+        <button class="text-gray-600 hover:text-green-600 focus:outline-none"
+                aria-label="Abrir búsqueda" aria-expanded="false" aria-controls="search-input">
+          <i data-lucide="search" class="w-5 h-5"></i>
+        </button>
+        <form action="/buscador.html" method="get" class="search-form m-0" role="search">
+          <input id="search-input" name="q" type="search" placeholder="Buscar…"
+                 class="w-0 opacity-0 transition-all duration-200
+                        px-4 py-2 border border-gray-300 rounded-full
+                        focus:outline-none focus:ring-2 focus:ring-green-500
+                        bg-white text-sm text-gray-800"
+                 autocomplete="off" />
+        </form>
+      </div>
+
       {% set isInicio = page.url == '/' %}
       <a href="/"
          class="{% if isInicio %}{{ active }}{% else %}{{ idle }}{% endif %}"
          {% if isInicio %}aria-current="page"{% endif %}>Inicio</a>
 
-      {# Quién soy: soporta /quien_soy/ y /quien-soy/ #}
+      {# Quién soy: soporta /quien_soy/ #}
       {% set isQuienSoy = page.url == '/quien_soy/' %}
       <a href="/quien_soy/"
          class="{% if isQuienSoy %}{{ active }}{% else %}{{ idle }}{% endif %}"
@@ -40,8 +56,14 @@
       </a>
     </div>
 
-    <!-- Mobile button -->
-    <div class="md:hidden">
+    <!-- Mobile buttons -->
+    <div class="md:hidden flex items-center gap-3">
+      <!-- Lupa en móvil (abre cajón de búsqueda) -->
+      <button id="search-btn-mobile" class="text-gray-600 focus:outline-none" aria-controls="mobile-search" aria-expanded="false">
+        <span class="sr-only">Abrir búsqueda</span>
+        <i data-lucide="search" class="w-6 h-6"></i>
+      </button>
+
       <button id="menu-btn" class="text-gray-600 focus:outline-none"
               aria-controls="mobile-menu" aria-expanded="false">
         <span class="sr-only">Abrir menú</span>
@@ -49,6 +71,18 @@
       </button>
     </div>
   </nav>
+
+  <!-- Cajón de búsqueda móvil -->
+  <div id="mobile-search" class="hidden md:hidden bg-white border-t border-gray-100 shadow-sm">
+    <div class="container mx-auto px-6 py-3">
+      <form action="/buscador.html" method="get" role="search" class="flex gap-2">
+        <input type="search" name="q" placeholder="Buscar…"
+               class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
+               autocomplete="off" />
+        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-full">Buscar</button>
+      </form>
+    </div>
+  </div>
 
   <!-- Mobile menu -->
   <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-sm">
@@ -66,38 +100,74 @@
 </header>
 
 <script>
-  // Toggle menú móvil accesible
+  // ===== Menú móvil (igual que tenías) =====
   (function () {
     const btn = document.getElementById('menu-btn');
     const menu = document.getElementById('mobile-menu');
     if (!btn || !menu) return;
 
-    function closeMenu() {
-      btn.setAttribute('aria-expanded', 'false');
-      menu.classList.add('hidden');
-    }
-    function openMenu() {
-      btn.setAttribute('aria-expanded', 'true');
-      menu.classList.remove('hidden');
-    }
+    function closeMenu() { btn.setAttribute('aria-expanded', 'false'); menu.classList.add('hidden'); }
+    function openMenu() { btn.setAttribute('aria-expanded', 'true');  menu.classList.remove('hidden'); }
 
     btn.addEventListener('click', () => {
       const expanded = btn.getAttribute('aria-expanded') === 'true';
       expanded ? closeMenu() : openMenu();
     });
 
-    // Cerrar al pulsar Escape
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeMenu();
-        btn.focus();
-      }
+      if (e.key === 'Escape') { closeMenu(); btn.focus(); }
     });
 
-    // Cerrar al hacer click en un enlace del menú
     menu.addEventListener('click', (e) => {
-      const target = e.target.closest('a');
-      if (target) closeMenu();
+      const target = e.target.closest('a'); if (target) closeMenu();
     });
+  })();
+
+  // ===== Buscador desktop: toggle con lupa =====
+  (function () {
+    const wrap = document.querySelector('#header-search');
+    if (!wrap) return;
+    const btn = wrap.querySelector('button[aria-controls="search-input"]');
+    const input = wrap.querySelector('#search-input');
+    const form = wrap.querySelector('form');
+
+    function open() {
+      btn.setAttribute('aria-expanded', 'true');
+      input.classList.remove('w-0','opacity-0');
+      input.classList.add('w-56','opacity-100'); // ancho visible en desktop
+      setTimeout(() => input.focus(), 80);
+    }
+    function close() {
+      btn.setAttribute('aria-expanded', 'false');
+      input.classList.add('w-0','opacity-0');
+      input.classList.remove('w-56','opacity-100');
+    }
+
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      expanded ? close() : open();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') close();
+    });
+
+    form.addEventListener('submit', (e) => {
+      if (!input.value.trim()) e.preventDefault();
+    });
+  })();
+
+  // ===== Buscador móvil: cajón =====
+  (function () {
+    const btn = document.getElementById('search-btn-mobile');
+    const panel = document.getElementById('mobile-search');
+    if (!btn || !panel) return;
+
+    function open() { btn.setAttribute('aria-expanded', 'true'); panel.classList.remove('hidden'); setTimeout(() => panel.querySelector('input')?.focus(), 50); }
+    function close() { btn.setAttribute('aria-expanded', 'false'); panel.classList.add('hidden'); }
+
+    btn.addEventListener('click', (e) => { e.preventDefault(); const ex = btn.getAttribute('aria-expanded') === 'true'; ex ? close() : open(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
   })();
 </script>

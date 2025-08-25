@@ -1,0 +1,59 @@
+---
+title: "Buscador"
+layout: base.njk
+---
+
+<h1>Buscar en el sitio</h1>
+<input id="searchBox" type="text" placeholder="Escribe para buscar..." />
+<ul id="results"></ul>
+
+<script src="https://unpkg.com/lunr/lunr.js"></script>
+<script>
+  let idx = null, documents = [];
+
+  function getQuery() {
+    const p = new URLSearchParams(location.search);
+    return (p.get("q") || "").trim();
+  }
+
+  async function initSearch() {
+    const res = await fetch("/search.json");
+    documents = await res.json();
+
+    idx = lunr(function () {
+      this.ref("url");
+      this.field("title");
+      this.field("description");
+      documents.forEach(d => this.add(d));
+    });
+
+    // Si viene ?q= del header, busca al cargar
+    const q = getQuery();
+    const input = document.getElementById("searchBox");
+    if (q) {
+      input.value = q;
+      doSearch(q);
+    }
+
+    input.addEventListener("input", (e) => {
+      const v = e.target.value.trim();
+      if (v.length > 1) doSearch(v);
+      else document.getElementById("results").innerHTML = "";
+    });
+  }
+
+  function doSearch(query) {
+    const results = idx.search(query);
+    const list = document.getElementById("results");
+    list.innerHTML = "";
+    results.forEach(r => {
+      const m = documents.find(d => d.url === r.ref);
+      if (!m) return;
+      const li = document.createElement("li");
+      li.innerHTML = `<a href="${m.url}">${m.title}</a> – ${m.description || ""}`;
+      list.appendChild(li);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", initSearch);
+</script>

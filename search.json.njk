@@ -1,0 +1,20 @@
+---
+permalink: /search.json
+eleventyExcludeFromCollections: true
+---
+[
+{%- for page in collections.recetas %}
+  {
+    "title": {{ page.data.title | dump }},
+    "url": {{ page.url | dump }},
+    "description": {{ page.data.description | dump }}
+  }{% if not loop.last or collections.blog.length > 0 %},{% endif %}
+{%- endfor -%}
+{%- for page in collections.blog %}
+  {
+    "title": {{ page.data.title | dump }},
+    "url": {{ page.url | dump }},
+    "description": {{ page.data.description | dump }}
+  }{% if not loop.last %},{% endif %}
+{%- endfor -%}
+]

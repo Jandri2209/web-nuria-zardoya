@@ -1,6 +1,6 @@
 backend:
   name: git-gateway
-  branch: refactor-ssg   # ← cámbialo si tu rama es otra (p.ej., main)
+  branch: refactor-ssg
 
 media_folder: "assets/uploads"
 public_folder: "/assets/uploads"
@@ -8,29 +8,129 @@ public_folder: "/assets/uploads"
 publish_mode: editorial_workflow
 locale: "es"
 
+slug:
+  encoding: "ascii"
+  clean_accents: true
+  sanitize_replacement: "-"
+
 collections:
+  # 1) Páginas fijas
+  - name: "paginas"
+    label: "Páginas"
+    delete: false
+    files:
+      - label: "Inicio"
+        name: "index"
+        file: "index.html"
+        preview_path: "/"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Descripción", name: "description", widget: "text", required: false }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Quién soy"
+        name: "quien_soy"
+        file: "quien_soy.html"
+        preview_path: "quien_soy/"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Descripción", name: "description", widget: "text", required: false }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Servicios"
+        name: "servicios"
+        file: "servicios.html"
+        preview_path: "servicios/"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Descripción", name: "description", widget: "text", required: false }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Contacto"
+        name: "contacto"
+        file: "contacto.html"
+        preview_path: "contacto/"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Descripción", name: "description", widget: "text", required: false }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Pide tu cita"
+        name: "cita"
+        file: "pide_tu_cita.html"
+        preview_path: "pide-tu-cita/"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Descripción", name: "description", widget: "text", required: false }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Blog"
+        name: "blog"
+        file: "blog.html"
+        preview_path: "blog/"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Descripción", name: "description", widget: "text", required: false }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Aviso Legal"
+        name: "legal"
+        file: "legal.html"
+        preview_path: "legal/"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Privacidad"
+        name: "privacidad"
+        file: "privacidad.html"
+        preview_path: "privacidad/"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Cookies"
+        name: "cookies"
+        file: "cookies.html"
+        preview_path: "cookies/"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+      - label: "Gracias"
+        name: "gracias"
+        file: "gracias.html"
+        preview_path: "gracias/"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Contenido", name: "body", widget: "markdown", required: false }
+
+  # 2) Recetas (colección)
   - name: "recetas"
     label: "Recetas"
     label_singular: "Receta"
     folder: "recetas"
     create: true
-    slug: "{{slug}}"
     extension: "md"
     format: "frontmatter"
+    slug: "{{slug}}"
     preview_path: "recetas/{{slug}}/"
     fields:
-      - { label: "Layout", name: "layout", widget: "hidden", default: "recipe.njk" }
-      - { label: "Etiquetas", name: "tags", widget: "hidden", default: ["recetas"] }
       - { label: "Título", name: "title", widget: "string" }
-      - { label: "Fecha", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
-      - { label: "Descripción", name: "description", widget: "text", hint: "Resumen corto para la tarjeta y SEO" }
-      - { label: "Imagen principal", name: "image", widget: "image", allow_multiple: false, hint: "Ideal ~1200×800" }
-      - { label: "Categoría", name: "category", widget: "select", options: ["Plato principal","Desayuno","Ensalada","Sopa/Crema","Snack","Postre","Bebida"], default: "Plato principal" }
-      - { label: "Raciones", name: "servings", widget: "number", value_type: "int", min: 1, default: 2 }
-      - { label: "Tiempo (min)", name: "time", widget: "number", value_type: "int", min: 0, default: 15 }
-      - { label: "Dificultad", name: "difficulty", widget: "select", options: ["Fácil","Media","Difícil"], default: "Fácil" }
+      - { label: "Fecha", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
+      - { label: "Descripción", name: "description", widget: "text", hint: "Frase breve que aparecerá bajo el título." }
+      - { label: "Imagen principal", name: "image", widget: "image" }
+      - { label: "Categoría", name: "category", widget: "select", options: ["Plato principal","Desayuno","Ensalada","Sopa/Crema","Snack","Postre","Bebida"] }
+      - { label: "Raciones", name: "servings", widget: "number", min: 1 }
+      - { label: "Tiempo (min)", name: "time", widget: "number", min: 0 }
+      - { label: "Dificultad", name: "difficulty", widget: "select", options: ["Fácil","Media","Difícil"] }
+
       - label: "Ingredientes"
         name: "ingredients"
         widget: "list"
         field: { label: "Ingrediente", name: "item", widget: "string" }
-      - { label: "Preparación", name: "body", widget: "markdown" }
+
+      - label: "Preparación (pasos)"
+        name: "steps"
+        widget: "list"
+        field: { label: "Paso", name: "step", widget: "text" }

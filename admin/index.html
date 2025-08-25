@@ -5,17 +5,29 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Panel de edición | Nuria</title>
 
-    <!-- Netlify Identity (login/registro) -->
+    <!-- Netlify Identity -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
-    <!-- Decap (Netlify) CMS -->
+    <!-- Manual init (antes de cargar Decap) -->
+    <script>
+      window.CMS_MANUAL_INIT = true;
+      window.CMS_DEBUG = true;
+    </script>
+
+    <!-- Decap CMS -->
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+
+    <!-- 🧩 Paquete de traducciones oficiales -->
+    <script src="https://unpkg.com/decap-cms-locales@^3.0.0/dist/index.js"></script>
   </head>
   <body>
     <noscript>Necesitas activar JavaScript para usar este panel.</noscript>
 
+    <!-- PREVIEW: carga tu script de preview ANTES de CMS.init -->
+    <script src="/admin/preview.js"></script>
+
     <script>
-      // Evita bucles: tras login, recarga el panel
+      // Recarga tras login
       if (window.netlifyIdentity) {
         window.netlifyIdentity.on("init", (user) => {
           if (!user) {
@@ -24,9 +36,23 @@
         });
       }
 
-      // (Opcional) Aquí puedes registrar estilos o previews del CMS:
-      // CMS.registerPreviewStyle("/assets/css/site.css");
-      // CMS.registerPreviewTemplate("recetas", YourPreviewComponent);
+      document.addEventListener("DOMContentLoaded", function () {
+        // 1) Registrar el locale español (usa el bundle oficial)
+        if (window.DecapCmsLocales && window.DecapCmsLocales.es) {
+          CMS.registerLocale('es', window.DecapCmsLocales.es);
+        }
+
+        // 2) Opcional: arregla el botón "Nueva ..."
+        CMS.registerLocale('es', {
+          collections: { new: 'Nueva %{collectionLabel}' }
+        });
+
+        // 3) Inicia el CMS forzando el idioma
+        CMS.init({
+          config: "/admin/config.yml",
+          locale: "es"
+        });
+      });
     </script>
   </body>
 </html>
