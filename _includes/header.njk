@@ -127,7 +127,7 @@
 </header>
 
 <script>
-  // ===== Menú móvil (igual que tenías) =====
+  // ===== Menú móvil =====
   (function () {
     const btn = document.getElementById('menu-btn');
     const menu = document.getElementById('mobile-menu');
@@ -161,7 +161,7 @@
     function open() {
       btn.setAttribute('aria-expanded', 'true');
       input.classList.remove('w-0','opacity-0');
-      input.classList.add('w-56','opacity-100'); // ancho visible en desktop
+      input.classList.add('w-56','opacity-100');
       setTimeout(() => input.focus(), 80);
     }
     function close() {
@@ -198,30 +198,59 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
   })();
 
-  // ===== Enlaces de auto-traducción (ES/EN/FR/EU) =====
+  // ===== Enlaces de auto-traducción robustos (ES/EN/FR/EU) =====
   (function () {
-    try {
-      var here = window.location.href.split('#')[0]; // sin ancla
-      var u = encodeURIComponent(here);
-      var base = "https://translate.google.com/translate?sl=es&u=" + u;
+    function getCanonical() {
+      var link = document.querySelector('link[rel="canonical"]');
+      return link && link.href ? link.href : null;
+    }
+    function getOriginalUrl() {
+      var loc = window.location;
+      var hrefNoHash = loc.href.split('#')[0];
+      var can = getCanonical();
+      if (can) return can;
+      try {
+        var u = new URL(hrefNoHash).searchParams.get('u');
+        if (u) return u;
+      } catch (_) {}
+      if ((loc.hostname || '').endsWith('.translate.goog')) {
+        var rawHost = loc.hostname.replace('.translate.goog', '');
+        return 'https://' + rawHost + loc.pathname + loc.search;
+      }
+      return hrefNoHash;
+    }
 
-      var map = {
-        // Desktop
-        "lang-es": here,                         // vuelve a la original (ES)
-        "lang-en": base + "&tl=en&hl=en",
-        "lang-fr": base + "&tl=fr&hl=fr",
-        "lang-eu": base + "&tl=eu&hl=eu",
-        // Móvil
-        "mlang-es": here,
-        "mlang-en": base + "&tl=en&hl=en",
-        "mlang-fr": base + "&tl=fr&hl=fr",
-        "mlang-eu": base + "&tl=eu&hl=eu"
-      };
+    var original = getOriginalUrl();
 
-      Object.keys(map).forEach(function (id) {
-        var el = document.getElementById(id);
-        if (el) el.href = map[id];
-      });
-    } catch (e) { /* no-op */ }
+    function withNoLang(url) {
+      var sep = url.indexOf('?') > -1 ? '&' : '?';
+      return url + sep + '_nolang=1';
+    }
+
+    var base = 'https://translate.google.com/translate?sl=es&u=' + encodeURIComponent(original);
+    var map = {
+      "lang-es":  withNoLang(original),
+      "lang-en":  base + '&tl=en&hl=en',
+      "lang-fr":  base + '&tl=fr&hl=fr',
+      "lang-eu":  base + '&tl=eu&hl=eu',
+      "mlang-es": withNoLang(original),
+      "mlang-en": base + '&tl=en&hl=en',
+      "mlang-fr": base + '&tl=fr&hl=fr',
+      "mlang-eu": base + '&tl=eu&hl=eu'
+    };
+
+    Object.keys(map).forEach(function (id) {
+      var a = document.getElementById(id);
+      if (a) a.setAttribute('href', map[id]);
+    });
+
+    function setPrefCookie() {
+      try { document.cookie = 'langpref=es; Path=/; Max-Age=2592000; SameSite=Lax'; } catch (e) {}
+    }
+    ['lang-es','mlang-es'].forEach(function (id) {
+      var a = document.getElementById(id);
+      if (a) a.addEventListener('click', setPrefCookie);
+    });
   })();
 </script>
+
