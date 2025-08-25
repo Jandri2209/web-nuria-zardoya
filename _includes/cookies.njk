@@ -96,7 +96,6 @@
   }
 
   function getConsent() {
-    // 1) Param _cc (para Google Translate)
     const sp = new URLSearchParams(location.search);
     if (sp.has("_cc")) {
       try {
@@ -105,12 +104,10 @@
         return obj;
       } catch {}
     }
-    // 2) localStorage
     try {
       const raw = localStorage.getItem(LS_KEY);
       if (raw) return JSON.parse(raw);
     } catch {}
-    // 3) cookie
     try {
       const c = readCookie(LS_KEY);
       if (c) return JSON.parse(c);
@@ -119,13 +116,12 @@
   }
 
   function setConsent(consent) {
-    // Normaliza
     const value = { necessary: true, analytics: !!consent.analytics, marketing: !!consent.marketing };
     try { localStorage.setItem(LS_KEY, JSON.stringify(value)); } catch {}
     writeCookie(LS_KEY, JSON.stringify(value));
     window.cookiePrefs = value;
     window.dispatchEvent(new CustomEvent("cookie-preferences:updated", { detail: value }));
-    propagateCc(value); // actualiza enlaces con _cc si procede
+    propagateCc(value);
   }
 
   function applyConsent(consent) {
@@ -137,7 +133,7 @@
   function openModal()  { modal?.classList.remove("hidden"); document.body.style.overflow = "hidden"; }
   function closeModal() { modal?.classList.add("hidden");    document.body.style.overflow = ""; }
 
-  // === Propagación _cc entre páginas (solo bajo translate.goog) ===
+  // === Propagación _cc (solo en translate.goog) ===
   function ccEncode(consent) {
     const v = { necessary: true, analytics: !!consent.analytics, marketing: !!consent.marketing };
     try { return btoa(JSON.stringify(v)); } catch { return ""; }
@@ -197,7 +193,7 @@
 
   // Init
   document.addEventListener("DOMContentLoaded", () => {
-    // Garantiza que banner y modal NO queden dentro de formularios
+    // Salvavidas: banner/modal fuera de <form>
     (function __ensureOutsideForms() {
       const b = document.getElementById("cookie-banner");
       const m = document.getElementById("cookie-modal");
@@ -217,8 +213,7 @@
   const overlayEl = modal?.querySelector('[aria-hidden="true"]');
   overlayEl?.addEventListener("click", closeModal);
 
-  // Delegado global para abrir preferencias desde cualquier parte:
-  // <button id="open-cookie-preferences"> o [data-open-cookie-preferences]
+  // Delegado global para abrir preferencias
   document.addEventListener("click", (e) => {
     const t = e.target?.closest?.('#open-cookie-preferences, [data-open-cookie-preferences]');
     if (!t) return;
@@ -226,7 +221,7 @@
     if (typeof window.openCookiePreferences === "function") window.openCookiePreferences();
   });
 
-  // Fallback idioma: añade _cc a enlaces de idioma si faltara (cuando NO es translate.goog)
+  // Fallback idioma: añade _cc en enlaces de idioma (fuera de translate.goog)
   (function () {
     if (IS_TRANSLATE) return;
     let cc = "";
@@ -243,5 +238,17 @@
       a.setAttribute("href", href + sep + "_cc=" + cc);
     });
   })();
+
+  // Solo en Google Translate: bloquea submits del banner/modal (no de forms reales)
+  if (IS_TRANSLATE) {
+    document.addEventListener("submit", (e) => {
+      const f = e.target;
+      if (f && f.closest('#cookie-banner, #cookie-modal')) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }, true);
+  }
+
 })();
 </script>

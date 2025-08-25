@@ -58,7 +58,7 @@
       <!-- Selector de idioma (desktop) -->
       <div class="relative" id="lang-switch-desktop">
         <details class="group">
-          <summary class="cursor-pointer flex items-center gap-2 text-gray-600 hover:text-green-600 list-none select-none">
+          <summary class="relative cursor-pointer flex items-center gap-2 text-gray-600 hover:text-green-600 list-none select-none">
             <i data-lucide="globe" class="w-5 h-5"></i>
             <span class="hidden lg:inline">Idioma</span>
           </summary>
@@ -303,34 +303,67 @@
     });
   })();
 
-  // ===== Desplegable idioma desktop estable (hover/focus) =====
+  <script>
+  // ===== Desplegable idioma desktop estable (hover/focus con gracia) =====
   (function () {
     const wrap = document.getElementById('lang-switch-desktop');
     if (!wrap) return;
     const det = wrap.querySelector('details');
-    if (!det) return;
+    const summary = det?.querySelector('summary');
+    if (!det || !summary) return;
 
-    let hoverOpen = false;
+    let leaveTimer = null;
+    let isHovering = false;
 
-    function open() { if (!det.hasAttribute('open')) det.setAttribute('open',''); }
-    function close() { if (det.hasAttribute('open') && !hoverOpen) det.removeAttribute('open'); }
+    function open() {
+      if (!det.hasAttribute('open')) det.setAttribute('open', '');
+    }
+    function reallyClose() {
+      if (!wrap.matches(':hover') && !wrap.contains(document.activeElement)) {
+        det.removeAttribute('open');
+      }
+    }
+    function scheduleClose() {
+      clearTimeout(leaveTimer);
+      leaveTimer = setTimeout(reallyClose, 160);
+    }
 
-    wrap.addEventListener('mouseenter', () => { hoverOpen = true; open(); });
-    wrap.addEventListener('mouseleave', () => { hoverOpen = false; close(); });
-
-    // Mantén abierto si se hace focus dentro
-    wrap.addEventListener('focusin', open);
-    wrap.addEventListener('focusout', (e) => {
-      if (!wrap.contains(e.relatedTarget)) { hoverOpen = false; close(); }
+    // Hover: abre al entrar, programa cierre al salir
+    wrap.addEventListener('mouseenter', () => {
+      isHovering = true;
+      clearTimeout(leaveTimer);
+      open();
+    });
+    wrap.addEventListener('mouseleave', () => {
+      isHovering = false;
+      scheduleClose();
     });
 
-    // Escape cierra
+    // Foco por teclado: mantener abierto mientras haya focus dentro
+    wrap.addEventListener('focusin', () => {
+      clearTimeout(leaveTimer);
+      open();
+    });
+    wrap.addEventListener('focusout', (e) => {
+      if (!wrap.contains(e.relatedTarget)) scheduleClose();
+    });
+
+    // Escape cierra y devuelve foco al trigger
     wrap.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && det.hasAttribute('open')) {
-        hoverOpen = false;
-        close();
-        wrap.querySelector('summary')?.focus();
+        det.removeAttribute('open');
+        summary.focus();
         e.preventDefault();
+      }
+    });
+
+    // Evita el toggle nativo y hazlo predecible en click
+    summary.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (det.hasAttribute('open')) {
+        scheduleClose();
+      } else {
+        open();
       }
     });
   })();
