@@ -70,17 +70,5 @@
       }
     })();
   </script>
-  <!-- Twemoji fallback para banderas -->
-  <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
-  <script>
-    // Convierte sólo los spans con .emoji-flag en SVG
-    twemoji.parse(document.body, {
-      folder: "svg",
-      ext: ".svg",
-      className: "twemoji",
-      callback: (icon, options) => icon
-    });
-  </script>
-
 </body>
 </html>

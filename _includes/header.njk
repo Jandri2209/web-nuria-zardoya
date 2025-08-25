@@ -1,5 +1,6 @@
 <header id="site-header" class="bg-white/90 backdrop-blur shadow-md fixed w-full top-0 z-50">
   <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+    <!-- Branding -->
     <a href="/" class="text-2xl font-bold text-green-600">Nuria Zardoya</a>
 
     {% set active = "text-green-600 font-semibold" %}
@@ -13,7 +14,7 @@
                 aria-label="Abrir búsqueda" aria-expanded="false" aria-controls="search-input">
           <i data-lucide="search" class="w-5 h-5"></i>
         </button>
-        <form action="/buscador.html" method="get" class="search-form m-0" role="search">
+        <form action="/buscador/" method="get" class="search-form m-0" role="search">
           <input id="search-input" name="q" type="search" placeholder="Buscar…"
                  class="w-0 opacity-0 transition-all duration-200
                         px-4 py-2 border border-gray-300 rounded-full
@@ -28,7 +29,6 @@
          class="{% if isInicio %}{{ active }}{% else %}{{ idle }}{% endif %}"
          {% if isInicio %}aria-current="page"{% endif %}>Inicio</a>
 
-      {# Quién soy: soporta /quien_soy/ #}
       {% set isQuienSoy = page.url == '/quien_soy/' %}
       <a href="/quien_soy/"
          class="{% if isQuienSoy %}{{ active }}{% else %}{{ idle }}{% endif %}"
@@ -56,42 +56,43 @@
       </a>
 
       <!-- Selector de idioma (desktop) -->
-      <div class="relative hidden md:block" id="lang-switch-desktop">
+      <div class="relative" id="lang-switch-desktop">
         <details class="group">
-          <summary class="cursor-pointer flex items-center gap-2 text-gray-600 hover:text-green-600 list-none">
+          <summary class="cursor-pointer flex items-center gap-2 text-gray-600 hover:text-green-600 list-none select-none">
             <i data-lucide="globe" class="w-5 h-5"></i>
             <span class="hidden lg:inline">Idioma</span>
           </summary>
 
+          <!-- MENÚ: usa PNGs en vez de emojis -->
           <ul class="absolute right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg w-48 p-2 space-y-1 z-[60]">
             <li>
               <a id="lang-es" hreflang="es" data-lang="es"
-                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
-                href="#">
-                <span class="emoji-flag" role="img" aria-label="Bandera de España">🇪🇸</span>
+                 class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
+                 href="#">
+                <img src="/images/flag-es.png" alt="Bandera de España" class="w-5 h-5 rounded-sm">
                 <span>Español (ES)</span>
               </a>
             </li>
             <li>
               <a id="lang-en" hreflang="en" data-lang="en"
-                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
-                href="#">
-                <span class="emoji-flag" role="img" aria-label="Bandera del Reino Unido">🇬🇧</span>
+                 class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
+                 href="#">
+                <img src="/images/flag-gb.png" alt="Bandera del Reino Unido" class="w-5 h-5 rounded-sm">
                 <span>English (EN)</span>
               </a>
             </li>
             <li>
               <a id="lang-fr" hreflang="fr" data-lang="fr"
-                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
-                href="#">
-                <span class="emoji-flag" role="img" aria-label="Bandera de Francia">🇫🇷</span>
+                 class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
+                 href="#">
+                <img src="/images/flag-fr.png" alt="Bandera de Francia" class="w-5 h-5 rounded-sm">
                 <span>Français (FR)</span>
               </a>
             </li>
             <li>
               <a id="lang-eu" hreflang="eu" data-lang="eu"
-                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
-                href="#">
+                 class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
+                 href="#">
                 <img src="/images/ikurrina.png" alt="Ikurriña (País Vasco)" class="w-5 h-5 rounded-sm">
                 <span>Euskara (EU)</span>
               </a>
@@ -99,11 +100,10 @@
           </ul>
         </details>
       </div>
+    </div>
 
-
-    <!-- Mobile buttons -->
+    <!-- Botones móviles -->
     <div class="md:hidden flex items-center gap-3">
-      <!-- Lupa en móvil (abre cajón de búsqueda) -->
       <button id="search-btn-mobile" class="text-gray-600 focus:outline-none" aria-controls="mobile-search" aria-expanded="false">
         <span class="sr-only">Abrir búsqueda</span>
         <i data-lucide="search" class="w-6 h-6"></i>
@@ -120,7 +120,7 @@
   <!-- Cajón de búsqueda móvil -->
   <div id="mobile-search" class="hidden md:hidden bg-white border-t border-gray-100 shadow-sm">
     <div class="container mx-auto px-6 py-3">
-      <form action="/buscador.html" method="get" role="search" class="flex gap-2">
+      <form action="/buscador/" method="get" role="search" class="flex gap-2">
         <input type="search" name="q" placeholder="Buscar…"
                class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
                autocomplete="off" />
@@ -129,7 +129,7 @@
     </div>
   </div>
 
-  <!-- Mobile menu -->
+  <!-- Menú móvil -->
   <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-sm">
     <nav class="container mx-auto px-6 py-2 space-y-1" role="menu" aria-label="Menú móvil">
       <a href="/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Inicio</a>
@@ -137,67 +137,17 @@
       <a href="/recetas/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Recetas</a>
       <a href="/quien_soy/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Quién soy</a>
       <a href="/contacto/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Contacto</a>
-      <a href="/pide-tu-cita/" class="block py-2 text-sm font-semibold text-green-700 hover:bg-green-50" role="menuitem">
-        Pide tu cita
-      </a>
+      <a href="/pide-tu-cita/" class="block py-2 text-sm font-semibold text-green-700 hover:bg-green-50" role="menuitem">Pide tu cita</a>
 
-      <!-- Selector de idioma (móvil) -->
-      <div class="block md:hidden w-full" id="lang-switch-mobile">
-        <div class="border border-gray-200 rounded-xl">
-          <button type="button"
-                  class="w-full flex items-center justify-between px-4 py-3 text-gray-700"
-                  aria-controls="lang-menu-mobile" aria-expanded="false"
-                  onclick="
-                    const m=document.getElementById('lang-menu-mobile');
-                    const exp=this.getAttribute('aria-expanded')==='true';
-                    this.setAttribute('aria-expanded', String(!exp));
-                    m.classList.toggle('hidden');
-                  ">
-            <span class="flex items-center gap-2">
-              <i data-lucide="globe" class="w-5 h-5"></i>
-              <span>Idioma</span>
-            </span>
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="2" d="M6 9l6 6 6-6"/></svg>
-          </button>
-
-          <ul id="lang-menu-mobile" class="hidden p-2 space-y-1">
-            <li>
-              <a id="lang-es-m" hreflang="es" data-lang="es"
-                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
-                href="#">
-                <span class="emoji-flag" role="img" aria-label="Bandera de España">🇪🇸</span>
-                <span>Español (ES)</span>
-              </a>
-            </li>
-            <li>
-              <a id="lang-en-m" hreflang="en" data-lang="en"
-                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
-                href="#">
-                <span class="emoji-flag" role="img" aria-label="Bandera del Reino Unido">🇬🇧</span>
-                <span>English (EN)</span>
-              </a>
-            </li>
-            <li>
-              <a id="lang-fr-m" hreflang="fr" data-lang="fr"
-                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
-                href="#">
-                <span class="emoji-flag" role="img" aria-label="Bandera de Francia">🇫🇷</span>
-                <span>Français (FR)</span>
-              </a>
-            </li>
-            <li>
-              <a id="lang-eu-m" hreflang="eu" data-lang="eu"
-                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
-                href="#">
-                <img src="/images/ikurrina.png" alt="Ikurriña (País Vasco)" class="w-5 h-5 rounded-sm">
-                <span>Euskara (EU)</span>
-              </a>
-            </li>
-          </ul>
+      <!-- Idioma (móvil) como antes: 4 botones -->
+      <div class="mt-1 pt-2 border-t border-gray-100">
+        <p class="px-1 pb-1 text-xs uppercase tracking-wide text-gray-500">Idioma</p>
+        <div class="grid grid-cols-2 gap-2">
+          <a id="mlang-es" class="block py-2 text-sm text-center rounded-lg border hover:bg-green-50">Español</a>
+          <a id="mlang-en" class="block py-2 text-sm text-center rounded-lg border hover:bg-green-50">English</a>
+          <a id="mlang-fr" class="block py-2 text-sm text-center rounded-lg border hover:bg-green-50">Français</a>
+          <a id="mlang-eu" class="block py-2 text-sm text-center rounded-lg border hover:bg-green-50">Euskara</a>
         </div>
-      </div>
-
-      </div>
       </div>
     </nav>
   </div>
@@ -275,7 +225,7 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
   })();
 
-  // ===== Enlaces de auto-traducción robustos (ES/EN/FR/EU) + _cc =====
+  // ===== Enlaces de auto-traducción (ES/EN/FR/EU) + _cc =====
   (function () {
     function getCanonical() {
       var link = document.querySelector('link[rel="canonical"]');
@@ -330,7 +280,7 @@
       if (a) a.setAttribute('href', map[id]);
     });
 
-    // Preferencia ES (igual que antes)
+    // Preferencia ES (cookie simple)
     function setPrefCookie() {
       try { document.cookie = 'langpref=es; Path=/; Max-Age=2592000; SameSite=Lax'; } catch (e) {}
     }
@@ -339,36 +289,43 @@
       if (a) a.addEventListener('click', setPrefCookie);
     });
   })();
-</script>
 
-<script>
-// Hover/focus abre el desplegable de idioma (desktop)
-(function () {
-  const wrap = document.getElementById('lang-switch-desktop');
-  if (!wrap) return;
-  const det = wrap.querySelector('details');
-  if (!det) return;
+  // ===== Desplegable idioma desktop estable (hover/focus) =====
+  (function () {
+    const wrap = document.getElementById('lang-switch-desktop');
+    if (!wrap) return;
+    const det = wrap.querySelector('details');
+    if (!det) return;
 
-  let hoverOpen = false;
+    let hoverOpen = false;
 
-  function open() { if (!det.hasAttribute('open')) det.setAttribute('open',''); }
-  function close() { if (det.hasAttribute('open') && !hoverOpen) det.removeAttribute('open'); }
+    function open() { if (!det.hasAttribute('open')) det.setAttribute('open',''); }
+    function close() { if (det.hasAttribute('open') && !hoverOpen) det.removeAttribute('open'); }
 
-  wrap.addEventListener('mouseenter', () => { hoverOpen = true; open(); });
-  wrap.addEventListener('mouseleave', () => { hoverOpen = false; close(); });
-  wrap.addEventListener('focusin', open);
-  wrap.addEventListener('focusout', (e) => {
-    if (!wrap.contains(e.relatedTarget)) { hoverOpen = false; close(); }
-  });
+    wrap.addEventListener('mouseenter', () => { hoverOpen = true; open(); });
+    wrap.addEventListener('mouseleave', () => { hoverOpen = false; close(); });
 
-  // Escape cierra
-  wrap.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && det.hasAttribute('open')) {
-      hoverOpen = false;
-      close();
-      wrap.querySelector('summary')?.focus();
-      e.preventDefault();
+    // Mantén abierto si se hace focus dentro
+    wrap.addEventListener('focusin', open);
+    wrap.addEventListener('focusout', (e) => {
+      if (!wrap.contains(e.relatedTarget)) { hoverOpen = false; close(); }
+    });
+
+    // Escape cierra
+    wrap.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && det.hasAttribute('open')) {
+        hoverOpen = false;
+        close();
+        wrap.querySelector('summary')?.focus();
+        e.preventDefault();
+      }
+    });
+  })();
+
+  // ===== Lucide: asegura que se pintan los iconos =====
+  (function () {
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+      window.lucide.createIcons();
     }
-  });
-})();
+  })();
 </script>
