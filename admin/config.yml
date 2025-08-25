@@ -14,6 +14,7 @@ slug:
   sanitize_replacement: "-"
 
 collections:
+  # 1) Páginas fijas
   - name: "paginas"
     label: "Páginas"
     delete: false
@@ -103,7 +104,6 @@ collections:
         fields:
           - { label: "Título", name: "title", widget: "string" }
           - { label: "Contenido", name: "body", widget: "markdown", required: false }
-
 
   # 2) Recetas (colección)
   - name: "recetas"
