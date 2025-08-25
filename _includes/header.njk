@@ -56,36 +56,50 @@
       </a>
 
       <!-- Selector de idioma (desktop) -->
-      <div class="relative" id="lang-switch-desktop">
+      <div class="relative hidden md:block" id="lang-switch-desktop">
         <details class="group">
           <summary class="cursor-pointer flex items-center gap-2 text-gray-600 hover:text-green-600 list-none">
             <i data-lucide="globe" class="w-5 h-5"></i>
             <span class="hidden lg:inline">Idioma</span>
           </summary>
+
           <ul class="absolute right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg w-48 p-2 space-y-1 z-[60]">
             <li>
-              <a id="lang-es" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50" href="#">
-                🇪🇸 <span>Español (ES)</span>
+              <a id="lang-es" hreflang="es" data-lang="es"
+                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
+                href="#">
+                <span role="img" aria-label="Bandera de España">🇪🇸</span>
+                <span>Español (ES)</span>
               </a>
             </li>
             <li>
-              <a id="lang-en" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50" href="#">
-                🇬🇧 <span>English (EN)</span>
+              <a id="lang-en" hreflang="en" data-lang="en"
+                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
+                href="#">
+                <span role="img" aria-label="Bandera del Reino Unido">🇬🇧</span>
+                <span>English (EN)</span>
               </a>
             </li>
             <li>
-              <a id="lang-fr" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50" href="#">
-                🇫🇷 <span>Français (FR)</span>
+              <a id="lang-fr" hreflang="fr" data-lang="fr"
+                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
+                href="#">
+                <span role="img" aria-label="Bandera de Francia">🇫🇷</span>
+                <span>Français (FR)</span>
               </a>
             </li>
             <li>
-              <a id="lang-eu" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50" href="#">
-                <img src="/images/ikurrina.png" alt="Ikurriña (País Vasco)" class="w-5 h-5 rounded-sm"> <span>Euskara (EU)</span>
+              <a id="lang-eu" hreflang="eu" data-lang="eu"
+                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
+                href="#">
+                <img src="/images/ikurrina.png" alt="Ikurriña (País Vasco)" class="w-5 h-5 rounded-sm">
+                <span>Euskara (EU)</span>
               </a>
             </li>
           </ul>
         </details>
       </div>
+
 
     <!-- Mobile buttons -->
     <div class="md:hidden flex items-center gap-3">
@@ -128,22 +142,61 @@
       </a>
 
       <!-- Selector de idioma (móvil) -->
-      <div class="mt-1 pt-2 border-t border-gray-100">
-        <p class="px-1 pb-1 text-xs uppercase tracking-wide text-gray-500">Idioma</p>
-        <div class="grid grid-cols-2 gap-2">
-          <a id="mlang-es" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
-            🇪🇸 <span>ES</span>
-          </a>
-          <a id="mlang-en" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
-            🇬🇧 <span>EN</span>
-          </a>
-          <a id="mlang-fr" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
-            🇫🇷 <span>FR</span>
-          </a>
-          <a id="mlang-eu" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
-            <img src="/images/ikurrina.png" alt="Ikurriña (País Vasco)" class="w-5 h-5 rounded-sm"> <span>EU</span>
-          </a>
+      <div class="block md:hidden w-full" id="lang-switch-mobile">
+        <div class="border border-gray-200 rounded-xl">
+          <button type="button"
+                  class="w-full flex items-center justify-between px-4 py-3 text-gray-700"
+                  aria-controls="lang-menu-mobile" aria-expanded="false"
+                  onclick="
+                    const m=document.getElementById('lang-menu-mobile');
+                    const exp=this.getAttribute('aria-expanded')==='true';
+                    this.setAttribute('aria-expanded', String(!exp));
+                    m.classList.toggle('hidden');
+                  ">
+            <span class="flex items-center gap-2">
+              <i data-lucide="globe" class="w-5 h-5"></i>
+              <span>Idioma</span>
+            </span>
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="2" d="M6 9l6 6 6-6"/></svg>
+          </button>
+
+          <ul id="lang-menu-mobile" class="hidden p-2 space-y-1">
+            <li>
+              <a id="lang-es-m" hreflang="es" data-lang="es"
+                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
+                href="#">
+                <span role="img" aria-label="Bandera de España">🇪🇸</span>
+                <span>Español (ES)</span>
+              </a>
+            </li>
+            <li>
+              <a id="lang-en-m" hreflang="en" data-lang="en"
+                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
+                href="#">
+                <span role="img" aria-label="Bandera del Reino Unido">🇬🇧</span>
+                <span>English (EN)</span>
+              </a>
+            </li>
+            <li>
+              <a id="lang-fr-m" hreflang="fr" data-lang="fr"
+                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
+                href="#">
+                <span role="img" aria-label="Bandera de Francia">🇫🇷</span>
+                <span>Français (FR)</span>
+              </a>
+            </li>
+            <li>
+              <a id="lang-eu-m" hreflang="eu" data-lang="eu"
+                class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
+                href="#">
+                <img src="/images/ikurrina.png" alt="Ikurriña (País Vasco)" class="w-5 h-5 rounded-sm">
+                <span>Euskara (EU)</span>
+              </a>
+            </li>
+          </ul>
         </div>
+      </div>
+
       </div>
       </div>
     </nav>

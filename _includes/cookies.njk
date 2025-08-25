@@ -248,6 +248,27 @@
       a.setAttribute("href", href + sep + "_cc=" + cc);
     });
   })();
+  /* === Anti-overlay Translate: evitar submits y burbujeo en el modal === */
+  // 2A) Botones del modal/banners: corta burbujeo por si hay <form> antecesor
+  [btnSave, btnCancel, btnCloseX, btnAcceptAll, btnRejectAll, btnOpenPrefs]
+    .filter(Boolean)
+    .forEach(el => el.addEventListener('click', ev => ev.stopPropagation(), { capture: true }));
+
+  // 2B) Si estamos en *.translate.goog, anulamos cualquier submit y mandamos a la URL original
+  if (IS_TRANSLATE) {
+    document.addEventListener('submit', (e) => {
+      e.preventDefault(); e.stopPropagation();
+      // URL original de esta página
+      const loc = window.location;
+      let original = 'https://' + loc.hostname.replace('.translate.goog', '') + loc.pathname + loc.search + loc.hash;
+      // Adjuntamos _nolang=1 y el _cc con la preferencia actual
+      let cc = '';
+      try { const ls = localStorage.getItem(LS_KEY); if (ls) cc = '_cc=' + encodeURIComponent(btoa(ls)); } catch {}
+      const hasQuery = original.includes('?');
+      original += (hasQuery ? '&' : '?') + '_nolang=1' + (cc ? '&' + cc : '');
+      window.location.href = original;
+    }, true);
+  }
 
 })();
 </script>
