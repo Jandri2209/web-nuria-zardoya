@@ -5,7 +5,7 @@
     {% set active = "text-green-600 font-semibold" %}
     {% set idle = "text-gray-600 hover:text-green-600" %}
 
-    <!-- Desktop nav + buscador -->
+    <!-- Desktop nav + buscador + idiomas -->
     <div class="hidden md:flex items-center space-x-6">
       <!-- Buscador (lupa que expande) -->
       <div class="flex items-center gap-2" id="header-search" data-search>
@@ -21,6 +21,22 @@
                         bg-white text-sm text-gray-800"
                  autocomplete="off" />
         </form>
+      </div>
+
+      <!-- Selector de idioma (desktop) -->
+      <div class="relative" id="lang-switch-desktop">
+        <details class="group">
+          <summary class="cursor-pointer flex items-center gap-2 text-gray-600 hover:text-green-600 list-none">
+            <i data-lucide="globe" class="w-5 h-5"></i>
+            <span class="hidden lg:inline">Idioma</span>
+          </summary>
+          <ul class="absolute right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg w-44 p-2 space-y-1 z-[60]">
+            <li><a id="lang-es" class="block px-3 py-2 rounded-lg hover:bg-green-50" href="#">Español</a></li>
+            <li><a id="lang-en" class="block px-3 py-2 rounded-lg hover:bg-green-50" href="#">English</a></li>
+            <li><a id="lang-fr" class="block px-3 py-2 rounded-lg hover:bg-green-50" href="#">Français</a></li>
+            <li><a id="lang-eu" class="block px-3 py-2 rounded-lg hover:bg-green-50" href="#">Euskara</a></li>
+          </ul>
+        </details>
       </div>
 
       {% set isInicio = page.url == '/' %}
@@ -95,6 +111,17 @@
       <a href="/pide-tu-cita/" class="block py-2 text-sm font-semibold text-green-700 hover:bg-green-50" role="menuitem">
         Pide tu cita
       </a>
+
+      <!-- Selector de idioma (móvil) -->
+      <div class="mt-1 pt-2 border-t border-gray-100">
+        <p class="px-1 pb-1 text-xs uppercase tracking-wide text-gray-500">Idioma</p>
+        <div class="grid grid-cols-2 gap-2">
+          <a id="mlang-es" class="block py-2 text-sm text-center rounded-lg border hover:bg-green-50">Español</a>
+          <a id="mlang-en" class="block py-2 text-sm text-center rounded-lg border hover:bg-green-50">English</a>
+          <a id="mlang-fr" class="block py-2 text-sm text-center rounded-lg border hover:bg-green-50">Français</a>
+          <a id="mlang-eu" class="block py-2 text-sm text-center rounded-lg border hover:bg-green-50">Euskara</a>
+        </div>
+      </div>
     </nav>
   </div>
 </header>
@@ -169,5 +196,32 @@
 
     btn.addEventListener('click', (e) => { e.preventDefault(); const ex = btn.getAttribute('aria-expanded') === 'true'; ex ? close() : open(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  })();
+
+  // ===== Enlaces de auto-traducción (ES/EN/FR/EU) =====
+  (function () {
+    try {
+      var here = window.location.href.split('#')[0]; // sin ancla
+      var u = encodeURIComponent(here);
+      var base = "https://translate.google.com/translate?sl=es&u=" + u;
+
+      var map = {
+        // Desktop
+        "lang-es": here,                         // vuelve a la original (ES)
+        "lang-en": base + "&tl=en&hl=en",
+        "lang-fr": base + "&tl=fr&hl=fr",
+        "lang-eu": base + "&tl=eu&hl=eu",
+        // Móvil
+        "mlang-es": here,
+        "mlang-en": base + "&tl=en&hl=en",
+        "mlang-fr": base + "&tl=fr&hl=fr",
+        "mlang-eu": base + "&tl=eu&hl=eu"
+      };
+
+      Object.keys(map).forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.href = map[id];
+      });
+    } catch (e) { /* no-op */ }
   })();
 </script>
