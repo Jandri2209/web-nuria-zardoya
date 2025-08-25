@@ -4,7 +4,7 @@
     <a href="/" class="text-2xl font-bold text-green-600">Nuria Zardoya</a>
 
     {% set active = "text-green-600 font-semibold" %}
-    {% set idle = "text-gray-600 hover:text-green-600" %}
+    {% set idle   = "text-gray-600 hover:text-green-600" %}
 
     <!-- Desktop nav + buscador + idiomas -->
     <div class="hidden md:flex items-center space-x-6">
@@ -56,49 +56,54 @@
       </a>
 
       <!-- Selector de idioma (desktop) -->
-      <div class="relative" id="lang-switch-desktop">
-        <details class="group">
-          <summary class="relative cursor-pointer flex items-center gap-2 text-gray-600 hover:text-green-600 list-none select-none">
-            <i data-lucide="globe" class="w-5 h-5"></i>
-            <span class="hidden lg:inline">Idioma</span>
-          </summary>
+      <div class="relative group" id="lang-switch-desktop">
+        <!-- Botón (click abre/cierra). En desktop, el hover del contenedor también abre -->
+        <button id="lang-btn"
+                class="cursor-pointer flex items-center gap-2 text-gray-600 hover:text-green-600"
+                aria-haspopup="true" aria-expanded="false" aria-controls="lang-menu">
+          <i data-lucide="globe" class="w-5 h-5"></i>
+          <span class="hidden lg:inline">Idioma</span>
+        </button>
 
-          <!-- MENÚ: usa PNGs en vez de emojis -->
-          <ul class="absolute right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg w-48 p-2 space-y-1 z-[60]">
-            <li>
-              <a id="lang-es" hreflang="es" data-lang="es"
-                 class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
-                 href="#">
-                <img src="/images/flag-es.png" alt="Bandera de España" class="w-5 h-5 rounded-sm">
-                <span>Castellano (ES)</span>
-              </a>
-            </li>
-            <li>
-              <a id="lang-en" hreflang="en" data-lang="en"
-                 class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
-                 href="#">
-                <img src="/images/flag-gb.png" alt="Bandera del Reino Unido" class="w-5 h-5 rounded-sm">
-                <span>English (EN)</span>
-              </a>
-            </li>
-            <li>
-              <a id="lang-fr" hreflang="fr" data-lang="fr"
-                 class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
-                 href="#">
-                <img src="/images/flag-fr.png" alt="Bandera de Francia" class="w-5 h-5 rounded-sm">
-                <span>Français (FR)</span>
-              </a>
-            </li>
-            <li>
-              <a id="lang-eu" hreflang="eu" data-lang="eu"
-                 class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
-                 href="#">
-                <img src="/images/ikurrina.png" alt="Ikurriña (País Vasco)" class="w-5 h-5 rounded-sm">
-                <span>Euskara (EU)</span>
-              </a>
-            </li>
-          </ul>
-        </details>
+        <!-- MENÚ -->
+        <ul id="lang-menu"
+            class="absolute right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg w-48 p-2 space-y-1 z-[60]
+                   transition ease-out duration-150
+                   invisible opacity-0 translate-y-1
+                   group-hover:visible group-hover:opacity-100 group-hover:translate-y-0">
+          <li>
+            <a id="lang-es" hreflang="es" data-lang="es"
+               class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
+               href="#">
+              <img src="/images/flag-es.png" alt="Bandera de España" class="w-5 h-5 rounded-sm">
+              <span>Castellano (ES)</span>
+            </a>
+          </li>
+          <li>
+            <a id="lang-en" hreflang="en" data-lang="en"
+               class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
+               href="#">
+              <img src="/images/flag-gb.png" alt="Bandera del Reino Unido" class="w-5 h-5 rounded-sm">
+              <span>English (EN)</span>
+            </a>
+          </li>
+          <li>
+            <a id="lang-fr" hreflang="fr" data-lang="fr"
+               class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
+               href="#">
+              <img src="/images/flag-fr.png" alt="Bandera de Francia" class="w-5 h-5 rounded-sm">
+              <span>Français (FR)</span>
+            </a>
+          </li>
+          <li>
+            <a id="lang-eu" hreflang="eu" data-lang="eu"
+               class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
+               href="#">
+              <img src="/images/ikurrina.png" alt="Ikurriña (País Vasco)" class="w-5 h-5 rounded-sm">
+              <span>Euskara (EU)</span>
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
 
@@ -161,7 +166,6 @@
           </a>
         </div>
       </div>
-
     </nav>
   </div>
 </header>
@@ -174,7 +178,7 @@
     if (!btn || !menu) return;
 
     function closeMenu() { btn.setAttribute('aria-expanded', 'false'); menu.classList.add('hidden'); }
-    function openMenu() { btn.setAttribute('aria-expanded', 'true');  menu.classList.remove('hidden'); }
+    function openMenu()  { btn.setAttribute('aria-expanded', 'true');  menu.classList.remove('hidden'); }
 
     btn.addEventListener('click', () => {
       const expanded = btn.getAttribute('aria-expanded') === 'true';
@@ -231,7 +235,7 @@
     const panel = document.getElementById('mobile-search');
     if (!btn || !panel) return;
 
-    function open() { btn.setAttribute('aria-expanded', 'true'); panel.classList.remove('hidden'); setTimeout(() => panel.querySelector('input')?.focus(), 50); }
+    function open()  { btn.setAttribute('aria-expanded', 'true');  panel.classList.remove('hidden'); setTimeout(() => panel.querySelector('input')?.focus(), 50); }
     function close() { btn.setAttribute('aria-expanded', 'false'); panel.classList.add('hidden'); }
 
     btn.addEventListener('click', (e) => { e.preventDefault(); const ex = btn.getAttribute('aria-expanded') === 'true'; ex ? close() : open(); });
@@ -303,68 +307,39 @@
     });
   })();
 
-  <script>
-  // ===== Desplegable idioma desktop estable (hover/focus con gracia) =====
+  // ===== Idioma desktop: hover para abrir + click para fijar =====
   (function () {
     const wrap = document.getElementById('lang-switch-desktop');
     if (!wrap) return;
-    const det = wrap.querySelector('details');
-    const summary = det?.querySelector('summary');
-    if (!det || !summary) return;
+    const btn  = document.getElementById('lang-btn');
+    const menu = document.getElementById('lang-menu');
 
-    let leaveTimer = null;
-    let isHovering = false;
+    // En desktop, el hover del contenedor (clase group) ya muestra el menú vía CSS.
+    // Añadimos soporte por click (útil con touchpad o si prefieres fijarlo abierto).
+    let forcedOpen = false;
 
-    function open() {
-      if (!det.hasAttribute('open')) det.setAttribute('open', '');
-    }
-    function reallyClose() {
-      if (!wrap.matches(':hover') && !wrap.contains(document.activeElement)) {
-        det.removeAttribute('open');
-      }
-    }
-    function scheduleClose() {
-      clearTimeout(leaveTimer);
-      leaveTimer = setTimeout(reallyClose, 160);
+    function setOpen(on) {
+      forcedOpen = on;
+      btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+      // Forzamos visibilidad con una clase cuando está abierto por click
+      menu.classList.toggle('!visible', on);
+      menu.classList.toggle('!opacity-100', on);
+      menu.classList.toggle('!translate-y-0', on);
     }
 
-    // Hover: abre al entrar, programa cierre al salir
-    wrap.addEventListener('mouseenter', () => {
-      isHovering = true;
-      clearTimeout(leaveTimer);
-      open();
-    });
-    wrap.addEventListener('mouseleave', () => {
-      isHovering = false;
-      scheduleClose();
-    });
-
-    // Foco por teclado: mantener abierto mientras haya focus dentro
-    wrap.addEventListener('focusin', () => {
-      clearTimeout(leaveTimer);
-      open();
-    });
-    wrap.addEventListener('focusout', (e) => {
-      if (!wrap.contains(e.relatedTarget)) scheduleClose();
-    });
-
-    // Escape cierra y devuelve foco al trigger
-    wrap.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && det.hasAttribute('open')) {
-        det.removeAttribute('open');
-        summary.focus();
-        e.preventDefault();
-      }
-    });
-
-    // Evita el toggle nativo y hazlo predecible en click
-    summary.addEventListener('click', (e) => {
+    btn.addEventListener('click', (e) => {
       e.preventDefault();
-      if (det.hasAttribute('open')) {
-        scheduleClose();
-      } else {
-        open();
-      }
+      setOpen(!forcedOpen);
+    });
+
+    // Cerrar al hacer click fuera
+    document.addEventListener('click', (e) => {
+      if (!wrap.contains(e.target) && forcedOpen) setOpen(false);
+    });
+
+    // Cerrar con Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && forcedOpen) { setOpen(false); btn.focus(); }
     });
   })();
 
