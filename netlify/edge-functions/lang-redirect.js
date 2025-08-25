@@ -1,5 +1,5 @@
-// Redirección 1ª visita según Accept-Language (no redirige si hay español)
-const SUPPORTED = new Set(["en","fr","eu"]); // idiomas a los que sí redirigir
+// Redirección 1ª visita según Accept-Language (con _cc si existe)
+const SUPPORTED = new Set(["en", "fr", "eu"]); // idiomas a los que sí redirigir
 const STATIC_RX = [
   /^\/admin\//, /^\/assets\//, /^\/images\//, /^\/favicon\./,
   /\.(css|js|json|xml|txt|ico|png|jpg|jpeg|webp|svg|map)$/i
@@ -28,8 +28,21 @@ export default async (req) => {
     .find(code => SUPPORTED.has(code));
   if (!first) return;
 
-  const target = "https://translate.google.com/translate?sl=es&tl="
-    + first + "&u=" + encodeURIComponent(url.toString());
+  // Lee cookie-consent y añade como _cc si existe
+  let cc = "";
+  try {
+    const m = cookies.match(/(?:^|;\s*)cookie-consent=([^;]+)/);
+    if (m) {
+      // Ojo: ya viene como JSON -> lo pasamos tal cual a btoa
+      cc = "&_cc=" + encodeURIComponent(btoa(decodeURIComponent(m[1])));
+    }
+  } catch (_) {}
+
+  const target =
+    "https://translate.google.com/translate?sl=es&tl=" +
+    first +
+    "&u=" + encodeURIComponent(url.toString()) +
+    cc;
 
   return Response.redirect(target, 302);
 };

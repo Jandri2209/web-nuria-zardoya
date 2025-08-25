@@ -68,3 +68,13 @@ permalink: "/contacto/"
     </div>
   </div>
 </div>
+
+<!-- Salvavidas: asegura que el banner/modal de cookies no queden dentro del form -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const banner = document.getElementById("cookie-banner");
+  const modal  = document.getElementById("cookie-modal");
+  if (banner && banner.closest("form")) document.body.appendChild(banner);
+  if (modal  && modal.closest("form"))  document.body.appendChild(modal);
+});
+</script>

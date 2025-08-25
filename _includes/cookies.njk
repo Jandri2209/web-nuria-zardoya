@@ -13,9 +13,9 @@
         </p>
       </div>
       <div class="mt-3 md:mt-0 flex-shrink-0 flex gap-2">
-        <button id="cookie-reject-all" class="px-4 py-2 rounded-xl border text-gray-700">Rechazar</button>
-        <button id="cookie-open-prefs" class="px-4 py-2 rounded-xl border text-gray-700">Preferencias</button>
-        <button id="cookie-accept-all" class="px-4 py-2 rounded-xl bg-green-700 text-white">Aceptar</button>
+        <button type="button" id="cookie-reject-all" class="px-4 py-2 rounded-xl border text-gray-700">Rechazar</button>
+        <button type="button" id="cookie-open-prefs" class="px-4 py-2 rounded-xl border text-gray-700">Preferencias</button>
+        <button type="button" id="cookie-accept-all" class="px-4 py-2 rounded-xl bg-green-700 text-white">Aceptar</button>
       </div>
     </div>
   </div>
@@ -57,11 +57,11 @@
     </div>
 
     <div class="mt-6 flex justify-end gap-2">
-      <button id="cookie-cancel" class="px-4 py-2 rounded-xl border text-gray-700">Cancelar</button>
-      <button id="cookie-save" class="px-4 py-2 rounded-xl bg-green-700 text-white">Guardar preferencias</button>
+      <button type="button" id="cookie-cancel" class="px-4 py-2 rounded-xl border text-gray-700">Cancelar</button>
+      <button type="button" id="cookie-save" class="px-4 py-2 rounded-xl bg-green-700 text-white">Guardar preferencias</button>
     </div>
 
-    <!-- Botón de cierre (opcional) -->
+    <!-- Botón de cierre -->
     <button type="button" class="absolute top-2 right-2 p-2 rounded hover:bg-gray-100" id="cookie-close-x" aria-label="Cerrar">✕</button>
   </div>
 </div>
@@ -69,6 +69,7 @@
 <script>
 (() => {
   const LS_KEY = "cookie-consent";
+  const IS_TRANSLATE = /\.translate\.goog$/.test(location.hostname);
 
   const $ = (sel) => document.querySelector(sel);
   const banner = $("#cookie-banner");
@@ -83,122 +84,127 @@
   const btnCancel    = $("#cookie-cancel");
   const btnCloseX    = $("#cookie-close-x");
 
-  function getConsent() {
+  /* === Helpers cookies/localStorage === */
+  function writeCookie(name, value, maxAgeSecs = 31536000) {
+    try { document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAgeSecs}; SameSite=Lax`; } catch {}
+  }
+  function readCookie(name) {
     try {
-      const raw = localStorage.getItem(LS_KEY);
-      if (!raw) return null;
-      return JSON.parse(raw);
+      const m = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+      return m ? decodeURIComponent(m[1]) : null;
     } catch { return null; }
   }
+
+  function getConsent() {
+    const sp = new URLSearchParams(location.search);
+    if (sp.has("_cc")) {
+      try {
+        const obj = JSON.parse(atob(sp.get("_cc")));
+        setConsent(obj);
+        return obj;
+      } catch {}
+    }
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    try {
+      const c = readCookie(LS_KEY);
+      if (c) return JSON.parse(c);
+    } catch {}
+    return null;
+  }
+
   function setConsent(consent) {
-    // Normaliza el objeto
-    const value = {
-      necessary: true,
-      analytics: !!consent.analytics,
-      marketing: !!consent.marketing
-    };
-    // Guarda en localStorage
-    localStorage.setItem(LS_KEY, JSON.stringify(value));
-    // Expone variable global sencilla
+    const value = { necessary: true, analytics: !!consent.analytics, marketing: !!consent.marketing };
+    try { localStorage.setItem(LS_KEY, JSON.stringify(value)); } catch {}
+    writeCookie(LS_KEY, JSON.stringify(value));
     window.cookiePrefs = value;
-    // Dispara evento para que otras páginas reaccionen (p. ej. /pide-tu-cita/)
     window.dispatchEvent(new CustomEvent("cookie-preferences:updated", { detail: value }));
+    propagateCc(value); // ⬅️ añadimos propagación tras guardar
   }
 
   function applyConsent(consent) {
-    // Aquí podrías activar/desactivar integraciones de analítica sin cookies, etc.
-    // Este snippet no carga nada automáticamente; solo deja el estado preparado.
-    window.cookiePrefs = {
-      necessary: true,
-      analytics: !!consent.analytics,
-      marketing: !!consent.marketing
-    };
+    window.cookiePrefs = { necessary: true, analytics: !!consent.analytics, marketing: !!consent.marketing };
   }
 
   function showBanner() { banner?.classList.remove("hidden"); }
   function hideBanner() { banner?.classList.add("hidden"); }
-  function openModal() {
-  modal?.classList.remove("hidden");
-  document.body.style.overflow = "hidden";
-}
-function closeModal() {
-  modal?.classList.add("hidden");
-  document.body.style.overflow = "";
-}
+  function openModal()  { modal?.classList.remove("hidden"); document.body.style.overflow = "hidden"; }
+  function closeModal() { modal?.classList.add("hidden");    document.body.style.overflow = ""; }
 
+  // === NUEVO: Propagación _cc entre páginas (solo bajo translate.goog) ===
+  function ccEncode(consent) {
+    const v = { necessary: true, analytics: !!consent.analytics, marketing: !!consent.marketing };
+    try { return btoa(JSON.stringify(v)); } catch { return ""; }
+  }
+  function addCcToUrl(u, cc) {
+    try {
+      const url = new URL(u, location.origin);
+      url.searchParams.set("_cc", cc);
+      return url.pathname + url.search + url.hash;
+    } catch {
+      return u;
+    }
+  }
+  function propagateCc(consent) {
+    if (!IS_TRANSLATE || !consent) return;
+    const cc = ccEncode(consent);
+    document.querySelectorAll('a[href^="/"]').forEach(a => {
+      a.href = addCcToUrl(a.getAttribute("href"), cc);
+    });
+    document.querySelectorAll('form[action^="/"]').forEach(f => {
+      f.action = addCcToUrl(f.getAttribute("action"), cc);
+    });
+  }
 
-  // Exponer función global para abrir preferencias desde el footer o la política
-  window.openCookiePreferences = function (focusCategory) {
+  // Exponer función global
+  window.openCookiePreferences = function () {
     const current = getConsent() || { necessary: true, analytics: false, marketing: false };
     if (ckAnalytics) ckAnalytics.checked = !!current.analytics;
     if (ckMarketing) ckMarketing.checked = !!current.marketing;
     openModal();
-    // Si quieres enfocar visualmente la categoría, podrías hacer scroll a ese bloque aquí.
+    (ckAnalytics || ckMarketing || btnSave)?.focus();
   };
 
   // Botones del banner
-  btnAcceptAll?.addEventListener("click", () => {
+  btnAcceptAll?.addEventListener("click", (e) => {
+    e.preventDefault();
     setConsent({ analytics: true, marketing: true });
     applyConsent({ analytics: true, marketing: true });
     hideBanner();
   });
-  btnRejectAll?.addEventListener("click", () => {
+  btnRejectAll?.addEventListener("click", (e) => {
+    e.preventDefault();
     setConsent({ analytics: false, marketing: false });
     applyConsent({ analytics: false, marketing: false });
     hideBanner();
   });
-  btnOpenPrefs?.addEventListener("click", () => {
-    const current = getConsent() || { necessary: true, analytics: false, marketing: false };
-    if (ckAnalytics) ckAnalytics.checked = !!current.analytics;
-    if (ckMarketing) ckMarketing.checked = !!current.marketing;
-    openModal();
-  });
+  btnOpenPrefs?.addEventListener("click", (e) => { e.preventDefault(); window.openCookiePreferences(); });
 
   // Botones del modal
-  btnSave?.addEventListener("click", () => {
-    const consent = {
-      analytics: ckAnalytics?.checked || false,
-      marketing: ckMarketing?.checked || false
-    };
+  btnSave?.addEventListener("click", (e) => {
+    e.preventDefault();
+    const consent = { analytics: ckAnalytics?.checked || false, marketing: ckMarketing?.checked || false };
     setConsent(consent);
     applyConsent(consent);
-    closeModal();
-    hideBanner();
+    closeModal(); hideBanner();
   });
-  btnCancel?.addEventListener("click", closeModal);
-  btnCloseX?.addEventListener("click", closeModal);
+  btnCancel?.addEventListener("click", (e) => { e.preventDefault(); closeModal(); });
+  btnCloseX?.addEventListener("click", (e) => { e.preventDefault(); closeModal(); });
 
-  // Enlace genérico: <button id="open-cookie-preferences">Preferencias…</button>
-  document.addEventListener("click", (e) => {
-    if (e.target && e.target.id === "open-cookie-preferences") {
-      window.openCookiePreferences();
-    }
-  });
-
-  // Al cargar la página
+  // Init
   document.addEventListener("DOMContentLoaded", () => {
     const consent = getConsent();
     if (!consent) showBanner(); else applyConsent(consent);
+    propagateCc(consent); // ⬅️ aseguramos propagación en carga inicial
   });
 
-    /* === Mejora A11y/UX: cerrar con ESC y clic en el overlay === */
-  // Cerrar con la tecla ESC (solo si el modal está visible)
+  // Accesibilidad
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !modal?.classList.contains("hidden")) {
-      closeModal();
-    }
+    if (e.key === "Escape" && !modal?.classList.contains("hidden")) closeModal();
   });
-
-  // Cerrar al hacer clic en la capa oscura (overlay)
   const overlayEl = modal?.querySelector('[aria-hidden="true"]');
   overlayEl?.addEventListener("click", closeModal);
-
-  /* === Mejora A11y: foco inicial al abrir preferencias (wrapper sin tocar tu función) === */
-  const __openCookiePreferences = window.openCookiePreferences;
-  window.openCookiePreferences = function (focusCategory) {
-    __openCookiePreferences(focusCategory);
-    // Enfoca el primer control disponible dentro del modal
-    (ckAnalytics || ckMarketing || btnSave)?.focus();
-  };
 })();
 </script>
