@@ -193,7 +193,6 @@
 
   // Init
   document.addEventListener("DOMContentLoaded", () => {
-    // Salvavidas: banner/modal fuera de <form>
     (function __ensureOutsideForms() {
       const b = document.getElementById("cookie-banner");
       const m = document.getElementById("cookie-modal");
@@ -221,7 +220,7 @@
     if (typeof window.openCookiePreferences === "function") window.openCookiePreferences();
   });
 
-  // Fallback idioma: añade _cc en enlaces de idioma (fuera de translate.goog)
+  // Fallback idioma
   (function () {
     if (IS_TRANSLATE) return;
     let cc = "";
@@ -239,7 +238,7 @@
     });
   })();
 
-  // Solo en Google Translate: bloquea submits del banner/modal (no de forms reales)
+  // Solo en Google Translate: bloquea submits del banner/modal
   if (IS_TRANSLATE) {
     document.addEventListener("submit", (e) => {
       const f = e.target;
@@ -248,6 +247,36 @@
         e.stopPropagation();
       }
     }, true);
+
+    // Anti-Translate: intercepta clics de los botones del banner/modal
+    const safeClick = (el, handler) => {
+      if (!el) return;
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        try { handler(e); } catch {}
+      }, true);
+    };
+
+    safeClick(btnOpenPrefs, () => { window.openCookiePreferences && window.openCookiePreferences(); });
+    safeClick(btnAcceptAll, () => {
+      setConsent({ analytics: true, marketing: true });
+      applyConsent({ analytics: true, marketing: true });
+      hideBanner();
+    });
+    safeClick(btnRejectAll, () => {
+      setConsent({ analytics: false, marketing: false });
+      applyConsent({ analytics: false, marketing: false });
+      hideBanner();
+    });
+    safeClick(btnSave, () => {
+      const consent = { analytics: ckAnalytics?.checked || false, marketing: ckMarketing?.checked || false };
+      setConsent(consent);
+      applyConsent(consent);
+      closeModal(); hideBanner();
+    });
+    safeClick(btnCancel, () => { closeModal(); });
+    safeClick(btnCloseX, () => { closeModal(); });
   }
 
 })();
