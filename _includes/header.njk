@@ -23,22 +23,6 @@
         </form>
       </div>
 
-      <!-- Selector de idioma (desktop) -->
-      <div class="relative" id="lang-switch-desktop">
-        <details class="group">
-          <summary class="cursor-pointer flex items-center gap-2 text-gray-600 hover:text-green-600 list-none">
-            <i data-lucide="globe" class="w-5 h-5"></i>
-            <span class="hidden lg:inline">Idioma</span>
-          </summary>
-          <ul class="absolute right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg w-44 p-2 space-y-1 z-[60]">
-            <li><a id="lang-es" class="block px-3 py-2 rounded-lg hover:bg-green-50" href="#">Español</a></li>
-            <li><a id="lang-en" class="block px-3 py-2 rounded-lg hover:bg-green-50" href="#">English</a></li>
-            <li><a id="lang-fr" class="block px-3 py-2 rounded-lg hover:bg-green-50" href="#">Français</a></li>
-            <li><a id="lang-eu" class="block px-3 py-2 rounded-lg hover:bg-green-50" href="#">Euskara</a></li>
-          </ul>
-        </details>
-      </div>
-
       {% set isInicio = page.url == '/' %}
       <a href="/"
          class="{% if isInicio %}{{ active }}{% else %}{{ idle }}{% endif %}"
@@ -70,7 +54,38 @@
          class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-lg {% if isCita %}ring-2 ring-green-300{% endif %}">
         Pide tu cita
       </a>
-    </div>
+
+      <!-- Selector de idioma (desktop) -->
+      <div class="relative" id="lang-switch-desktop">
+        <details class="group">
+          <summary class="cursor-pointer flex items-center gap-2 text-gray-600 hover:text-green-600 list-none">
+            <i data-lucide="globe" class="w-5 h-5"></i>
+            <span class="hidden lg:inline">Idioma</span>
+          </summary>
+          <ul class="absolute right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg w-48 p-2 space-y-1 z-[60]">
+            <li>
+              <a id="lang-es" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50" href="#">
+                🇪🇸 <span>Español (ES)</span>
+              </a>
+            </li>
+            <li>
+              <a id="lang-en" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50" href="#">
+                🇬🇧 <span>English (EN)</span>
+              </a>
+            </li>
+            <li>
+              <a id="lang-fr" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50" href="#">
+                🇫🇷 <span>Français (FR)</span>
+              </a>
+            </li>
+            <li>
+              <a id="lang-eu" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50" href="#">
+                <img src="/images/ikurrina.png" alt="Ikurriña (País Vasco)" class="w-5 h-5 rounded-sm"> <span>Euskara (EU)</span>
+              </a>
+            </li>
+          </ul>
+        </details>
+      </div>
 
     <!-- Mobile buttons -->
     <div class="md:hidden flex items-center gap-3">
@@ -116,11 +131,20 @@
       <div class="mt-1 pt-2 border-t border-gray-100">
         <p class="px-1 pb-1 text-xs uppercase tracking-wide text-gray-500">Idioma</p>
         <div class="grid grid-cols-2 gap-2">
-          <a id="mlang-es" class="block py-2 text-sm text-center rounded-lg border hover:bg-green-50">Español</a>
-          <a id="mlang-en" class="block py-2 text-sm text-center rounded-lg border hover:bg-green-50">English</a>
-          <a id="mlang-fr" class="block py-2 text-sm text-center rounded-lg border hover:bg-green-50">Français</a>
-          <a id="mlang-eu" class="block py-2 text-sm text-center rounded-lg border hover:bg-green-50">Euskara</a>
+          <a id="mlang-es" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
+            🇪🇸 <span>ES</span>
+          </a>
+          <a id="mlang-en" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
+            🇬🇧 <span>EN</span>
+          </a>
+          <a id="mlang-fr" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
+            🇫🇷 <span>FR</span>
+          </a>
+          <a id="mlang-eu" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
+            <img src="/images/ikurrina.png" alt="Ikurriña (País Vasco)" class="w-5 h-5 rounded-sm"> <span>EU</span>
+          </a>
         </div>
+      </div>
       </div>
     </nav>
   </div>
@@ -198,7 +222,7 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
   })();
 
-    // ===== Enlaces de auto-traducción robustos (ES/EN/FR/EU) + _cc =====
+  // ===== Enlaces de auto-traducción robustos (ES/EN/FR/EU) + _cc =====
   (function () {
     function getCanonical() {
       var link = document.querySelector('link[rel="canonical"]');
@@ -262,6 +286,36 @@
       if (a) a.addEventListener('click', setPrefCookie);
     });
   })();
-
 </script>
 
+<script>
+// Hover/focus abre el desplegable de idioma (desktop)
+(function () {
+  const wrap = document.getElementById('lang-switch-desktop');
+  if (!wrap) return;
+  const det = wrap.querySelector('details');
+  if (!det) return;
+
+  let hoverOpen = false;
+
+  function open() { if (!det.hasAttribute('open')) det.setAttribute('open',''); }
+  function close() { if (det.hasAttribute('open') && !hoverOpen) det.removeAttribute('open'); }
+
+  wrap.addEventListener('mouseenter', () => { hoverOpen = true; open(); });
+  wrap.addEventListener('mouseleave', () => { hoverOpen = false; close(); });
+  wrap.addEventListener('focusin', open);
+  wrap.addEventListener('focusout', (e) => {
+    if (!wrap.contains(e.relatedTarget)) { hoverOpen = false; close(); }
+  });
+
+  // Escape cierra
+  wrap.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && det.hasAttribute('open')) {
+      hoverOpen = false;
+      close();
+      wrap.querySelector('summary')?.focus();
+      e.preventDefault();
+    }
+  });
+})();
+</script>

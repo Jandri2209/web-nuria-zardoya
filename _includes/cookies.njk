@@ -206,5 +206,48 @@
   });
   const overlayEl = modal?.querySelector('[aria-hidden="true"]');
   overlayEl?.addEventListener("click", closeModal);
+
+  /* === AÑADIDO 1: Delegado global para abrir preferencias desde cualquier parte ===
+     Soporta: <button id="open-cookie-preferences"> o [data-open-cookie-preferences] */
+  document.addEventListener("click", (e) => {
+    const t = e.target?.closest?.('#open-cookie-preferences, [data-open-cookie-preferences]');
+    if (!t) return;
+    e.preventDefault();
+    if (typeof window.openCookiePreferences === "function") {
+      window.openCookiePreferences();
+    }
+  });
+
+  /* === AÑADIDO 2: Salvavidas DOM: evita que banner/modal queden dentro de <form> === */
+  function __ensureOutsideForms() {
+    const b = document.getElementById("cookie-banner");
+    const m = document.getElementById("cookie-modal");
+    if (b && b.closest("form")) document.body.appendChild(b);
+    if (m && m.closest("form")) document.body.appendChild(m);
+  }
+  document.addEventListener("DOMContentLoaded", __ensureOutsideForms);
+
+  /* === AÑADIDO 3: Fallback de idioma: añade _cc a enlaces de idioma si faltara (solo dominio) === */
+  (function () {
+    if (IS_TRANSLATE) return; // no tocar dentro de translate.goog
+    let cc = "";
+    try {
+      const ls = localStorage.getItem('cookie-consent');
+      if (ls) cc = encodeURIComponent(btoa(ls));
+    } catch {}
+    if (!cc) return;
+
+    const ids = ["lang-en","lang-fr","lang-eu","mlang-en","mlang-fr","mlang-eu"];
+    ids.forEach((id) => {
+      const a = document.getElementById(id);
+      if (!a) return;
+      const href = a.getAttribute("href") || "";
+      if (!href || href.indexOf("translate.google.com/translate") === -1) return;
+      if (href.includes("_cc=")) return;
+      const sep = href.includes("?") ? "&" : "?";
+      a.setAttribute("href", href + sep + "_cc=" + cc);
+    });
+  })();
+
 })();
 </script>
