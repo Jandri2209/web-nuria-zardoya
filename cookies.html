@@ -1,11 +1,109 @@
-<!-- Twemoji fallback para banderas -->
-<script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
-<script>
-  // Convierte sólo los spans con .emoji-flag en SVG
-  twemoji.parse(document.body, {
-    folder: "svg",
-    ext: ".svg",
-    className: "twemoji",
-    callback: (icon, options) => icon
-  });
-</script>
+---
+layout: base.njk
+title: "Política de Cookies - Nuria Zardoya"
+description: "Política de Cookies del sitio web de Nuria Zardoya. Información sobre el uso de cookies en este sitio."
+permalink: "/cookies/"
+---
+<div class="container mx-auto px-6 max-w-4xl">
+  <h1 class="text-4xl font-bold text-center mb-8">Política de Cookies</h1>
+
+  <div class="bg-white p-8 rounded-lg shadow-lg legal-content">
+    <style>
+      /* Estilo coherente con legal/privacidad */
+      .legal-content h2 {
+        font-size: 1.5rem;            /* ~text-2xl */
+        font-weight: 600;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        color: #166534;               /* verde principal */
+      }
+      /* Subapartados (2.1, 4.1, …) */
+      .legal-content h3 {
+        font-size: 1.25rem;           /* ~text-xl */
+        font-weight: 600;
+        margin-top: 1.25rem;
+        margin-bottom: .75rem;
+        color: #14532d;               /* un pelín más oscuro */
+      }
+      .legal-content p,
+      .legal-content ul {
+        margin-bottom: 1rem;
+        line-height: 1.75;
+      }
+      .legal-content ul {
+        list-style-position: inside;
+        list-style-type: disc;
+        margin-left: 0;               /* bullets alineados al contenido */
+      }
+      .legal-content li + li { margin-top: .35rem; }
+      .legal-content a { color: #15803d; text-decoration: underline; }
+    </style>
+
+    <p><strong>Última actualización:</strong> 25 de agosto de 2025</p>
+
+    <h2>1. ¿Qué son las cookies?</h2>
+    <p>
+      Las cookies son pequeños archivos que se almacenan en su navegador y permiten, por ejemplo, recordar sus preferencias
+      o mostrar contenidos de terceros. Tecnologías similares (como el almacenamiento local del navegador) pueden tener fines parecidos.
+    </p>
+
+    <h2>2. Cookies utilizadas en este sitio web</h2>
+    <p>Este sitio web utiliza:</p>
+    <ul>
+      <li><strong>Cookies técnicas o necesarias</strong>: imprescindibles para el funcionamiento básico del sitio (seguridad, carga de la página, formularios). <em>No se usan con fines publicitarios ni de analítica.</em></li>
+      <li><strong>Cookies de analítica (opcionales)</strong>: ayudan a comprender cómo se utiliza el sitio de forma agregada y anónima, con el fin de mejorarlo. Solo se activan con su consentimiento.</li>
+      <li><strong>Cookies de terceros (Calendly)</strong>: permiten mostrar e interactuar con el calendario de reservas de Calendly. <strong>No se cargarán</strong> salvo que usted lo solicite y/o otorgue su consentimiento de marketing en el panel de preferencias.</li>
+    </ul>
+
+    <h3>2.1. Cookies y almacenamiento utilizados</h3>
+    <ul>
+      <li>
+        <strong>cookie-consent</strong> (1 año, propia): guarda su elección de consentimiento (necesarias / analítica / marketing).
+        Se usa para recordar su preferencia y aplicarla en todo el sitio.
+      </li>
+      <li>
+        <strong>langpref</strong> (30 días, propia): recuerda que prefiere ver el sitio en español (o permanecer en la versión sin traducción)
+        cuando selecciona esa opción.
+      </li>
+      <li>
+        <strong>Almacenamiento local del navegador (localStorage)</strong> (propio): se emplea como tecnología similar para recordar su
+        preferencia de cookies y ciertas configuraciones de la sesión. Puede eliminar este almacenamiento desde la configuración de su navegador.
+      </li>
+    </ul>
+
+    <h2>3. Base jurídica</h2>
+    <p>
+      La base jurídica para el uso de cookies no técnicas es su <strong>consentimiento</strong>, que puede otorgar, rechazar o configurar en cualquier momento desde
+      <button type="button" class="underline text-green-700" onclick="window.openCookiePreferences && window.openCookiePreferences()">Gestionar cookies</button>.
+    </p>
+
+    <h2>4. Terceros y transferencias</h2>
+    <p>
+      Al aceptar la categoría correspondiente o al solicitar expresamente el servicio (por ejemplo, al intentar cargar el calendario en
+      <em>Pide tu cita</em>), podrá cargarse el servicio de <strong>Calendly</strong>, que puede establecer sus propias cookies y realizar transferencias
+      internacionales de datos. Consulte su documentación para más información:
+    </p>
+    <ul>
+      <li>
+        Calendly — <a href="https://calendly.com/legal/privacy-notice" target="_blank" rel="noopener">Privacy Notice</a> y
+        <a href="https://help.calendly.com/hc/en-us/articles/4418236309399-Calendly-cookie-management-and-banner" target="_blank" rel="noopener">Cookie management</a>.
+      </li>
+    </ul>
+
+    <h3>4.1. Visualización mediante Google Translate</h3>
+    <p>
+      Si visualiza el sitio mediante Google Translate, la preferencia de cookies se replica en ese entorno para evitar que vuelva a mostrarse el banner.
+      En ese contexto pueden aplicarse cookies/tecnologías de Google. Consulte las políticas de Google para más información.
+    </p>
+
+    <h2>5. ¿Cómo modificar o revocar su consentimiento?</h2>
+    <p>
+      Puede cambiar sus preferencias en cualquier momento desde
+      <button type="button" class="underline text-green-700" onclick="window.openCookiePreferences && window.openCookiePreferences()">Gestionar cookies</button>.
+      También puede configurar su navegador para bloquear o eliminar cookies.
+    </p>
+
+    <h2>6. Actualizaciones de esta política</h2>
+    <p>Podemos actualizar esta política para reflejar cambios legales o técnicos. Revise la fecha de “Última actualización”.</p>
+  </div>
+</div>
