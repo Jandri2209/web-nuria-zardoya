@@ -25,8 +25,8 @@
 <div id="cookie-modal" class="fixed inset-0 z-50 hidden">
   <div class="absolute inset-0 bg-black/40" aria-hidden="true"></div>
   <div role="dialog" aria-modal="true" aria-labelledby="cookie-modal-title"
-     class="mx-auto max-w-xl mt-24 rounded-2xl border bg-white shadow-2xl p-6 relative
-            max-h-[80vh] overflow-y-auto">
+       class="mx-auto max-w-xl mt-24 rounded-2xl border bg-white shadow-2xl p-6 relative
+              max-h-[80vh] overflow-y-auto">
     <h3 id="cookie-modal-title" class="text-xl font-semibold mb-2">Preferencias de cookies</h3>
     <p class="text-sm text-gray-600 mb-4">Puedes activar o desactivar categorías no esenciales.</p>
 
@@ -96,6 +96,7 @@
   }
 
   function getConsent() {
+    // 1) Param _cc (para Google Translate)
     const sp = new URLSearchParams(location.search);
     if (sp.has("_cc")) {
       try {
@@ -104,10 +105,12 @@
         return obj;
       } catch {}
     }
+    // 2) localStorage
     try {
       const raw = localStorage.getItem(LS_KEY);
       if (raw) return JSON.parse(raw);
     } catch {}
+    // 3) cookie
     try {
       const c = readCookie(LS_KEY);
       if (c) return JSON.parse(c);
@@ -116,12 +119,13 @@
   }
 
   function setConsent(consent) {
+    // Normaliza
     const value = { necessary: true, analytics: !!consent.analytics, marketing: !!consent.marketing };
     try { localStorage.setItem(LS_KEY, JSON.stringify(value)); } catch {}
     writeCookie(LS_KEY, JSON.stringify(value));
     window.cookiePrefs = value;
     window.dispatchEvent(new CustomEvent("cookie-preferences:updated", { detail: value }));
-    propagateCc(value); // ⬅️ añadimos propagación tras guardar
+    propagateCc(value); // actualiza enlaces con _cc si procede
   }
 
   function applyConsent(consent) {
@@ -133,7 +137,7 @@
   function openModal()  { modal?.classList.remove("hidden"); document.body.style.overflow = "hidden"; }
   function closeModal() { modal?.classList.add("hidden");    document.body.style.overflow = ""; }
 
-  // === NUEVO: Propagación _cc entre páginas (solo bajo translate.goog) ===
+  // === Propagación _cc entre páginas (solo bajo translate.goog) ===
   function ccEncode(consent) {
     const v = { necessary: true, analytics: !!consent.analytics, marketing: !!consent.marketing };
     try { return btoa(JSON.stringify(v)); } catch { return ""; }
@@ -143,9 +147,7 @@
       const url = new URL(u, location.origin);
       url.searchParams.set("_cc", cc);
       return url.pathname + url.search + url.hash;
-    } catch {
-      return u;
-    }
+    } catch { return u; }
   }
   function propagateCc(consent) {
     if (!IS_TRANSLATE || !consent) return;
@@ -195,9 +197,17 @@
 
   // Init
   document.addEventListener("DOMContentLoaded", () => {
+    // Garantiza que banner y modal NO queden dentro de formularios
+    (function __ensureOutsideForms() {
+      const b = document.getElementById("cookie-banner");
+      const m = document.getElementById("cookie-modal");
+      if (b && b.closest("form")) document.body.appendChild(b);
+      if (m && m.closest("form")) document.body.appendChild(m);
+    })();
+
     const consent = getConsent();
     if (!consent) showBanner(); else applyConsent(consent);
-    propagateCc(consent); // ⬅️ aseguramos propagación en carga inicial
+    propagateCc(consent);
   });
 
   // Accesibilidad
@@ -207,36 +217,21 @@
   const overlayEl = modal?.querySelector('[aria-hidden="true"]');
   overlayEl?.addEventListener("click", closeModal);
 
-  /* === AÑADIDO 1: Delegado global para abrir preferencias desde cualquier parte ===
-     Soporta: <button id="open-cookie-preferences"> o [data-open-cookie-preferences] */
+  // Delegado global para abrir preferencias desde cualquier parte:
+  // <button id="open-cookie-preferences"> o [data-open-cookie-preferences]
   document.addEventListener("click", (e) => {
     const t = e.target?.closest?.('#open-cookie-preferences, [data-open-cookie-preferences]');
     if (!t) return;
     e.preventDefault();
-    if (typeof window.openCookiePreferences === "function") {
-      window.openCookiePreferences();
-    }
+    if (typeof window.openCookiePreferences === "function") window.openCookiePreferences();
   });
 
-  /* === AÑADIDO 2: Salvavidas DOM: evita que banner/modal queden dentro de <form> === */
-  function __ensureOutsideForms() {
-    const b = document.getElementById("cookie-banner");
-    const m = document.getElementById("cookie-modal");
-    if (b && b.closest("form")) document.body.appendChild(b);
-    if (m && m.closest("form")) document.body.appendChild(m);
-  }
-  document.addEventListener("DOMContentLoaded", __ensureOutsideForms);
-
-  /* === AÑADIDO 3: Fallback de idioma: añade _cc a enlaces de idioma si faltara (solo dominio) === */
+  // Fallback idioma: añade _cc a enlaces de idioma si faltara (cuando NO es translate.goog)
   (function () {
-    if (IS_TRANSLATE) return; // no tocar dentro de translate.goog
+    if (IS_TRANSLATE) return;
     let cc = "";
-    try {
-      const ls = localStorage.getItem('cookie-consent');
-      if (ls) cc = encodeURIComponent(btoa(ls));
-    } catch {}
+    try { const ls = localStorage.getItem(LS_KEY); if (ls) cc = encodeURIComponent(btoa(ls)); } catch {}
     if (!cc) return;
-
     const ids = ["lang-en","lang-fr","lang-eu","mlang-en","mlang-fr","mlang-eu"];
     ids.forEach((id) => {
       const a = document.getElementById(id);
@@ -248,27 +243,5 @@
       a.setAttribute("href", href + sep + "_cc=" + cc);
     });
   })();
-  /* === Anti-overlay Translate: evitar submits y burbujeo en el modal === */
-  // 2A) Botones del modal/banners: corta burbujeo por si hay <form> antecesor
-  [btnSave, btnCancel, btnCloseX, btnAcceptAll, btnRejectAll, btnOpenPrefs]
-    .filter(Boolean)
-    .forEach(el => el.addEventListener('click', ev => ev.stopPropagation(), { capture: true }));
-
-  // 2B) Si estamos en *.translate.goog, anulamos cualquier submit y mandamos a la URL original
-  if (IS_TRANSLATE) {
-    document.addEventListener('submit', (e) => {
-      e.preventDefault(); e.stopPropagation();
-      // URL original de esta página
-      const loc = window.location;
-      let original = 'https://' + loc.hostname.replace('.translate.goog', '') + loc.pathname + loc.search + loc.hash;
-      // Adjuntamos _nolang=1 y el _cc con la preferencia actual
-      let cc = '';
-      try { const ls = localStorage.getItem(LS_KEY); if (ls) cc = '_cc=' + encodeURIComponent(btoa(ls)); } catch {}
-      const hasQuery = original.includes('?');
-      original += (hasQuery ? '&' : '?') + '_nolang=1' + (cc ? '&' + cc : '');
-      window.location.href = original;
-    }, true);
-  }
-
 })();
 </script>
