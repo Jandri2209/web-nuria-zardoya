@@ -12,9 +12,26 @@ function trimAndLimit(str = "", max = 800) {
 }
 function nowStamp() {
   const d = new Date();
-  const pad = (n) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}`;
+  const fmt = new Intl.DateTimeFormat("es-ES", {
+    timeZone: "Europe/Madrid",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  });
+
+  // Esto devuelve algo tipo "25/08/2025 11:44"
+  const parts = fmt.formatToParts(d).reduce((acc, p) => {
+    acc[p.type] = p.value;
+    return acc;
+  }, {});
+
+  // Reordenamos a AAAAMMDD-HHMM
+  return `${parts.year}${parts.month}${parts.day}-${parts.hour}${parts.minute}`;
 }
+
 
 exports.handler = async (event) => {
   try {
@@ -68,7 +85,7 @@ exports.handler = async (event) => {
       ${safeMessage ? `<p style="margin:0"><strong>Mensaje:</strong> “${safeMessage}”</p>` : ``}
     </div>` : ``}
 
-    <p>Si quieres acelerar el proceso, puedes <strong>pedir cita directamente</strong> y ver mi calendario desde aquí:</p>
+    <p>Si quieres <strong>pedir cita directamente</strong> o simplemente ver mi calendario puedes hacerlo desde aquí:</p>
 
     <div style="text-align:center;margin:20px 0">
       <a href="https://nuriazardoyalasheras.netlify.app/pide-tu-cita/"
