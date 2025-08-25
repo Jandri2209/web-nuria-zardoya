@@ -96,6 +96,7 @@
   }
 
   function getConsent() {
+    // Permite cargar preferencias recibidas por query (?_cc=...)
     const sp = new URLSearchParams(location.search);
     if (sp.has("_cc")) {
       try {
@@ -104,10 +105,12 @@
         return obj;
       } catch {}
     }
+    // localStorage
     try {
       const raw = localStorage.getItem(LS_KEY);
       if (raw) return JSON.parse(raw);
     } catch {}
+    // cookie http
     try {
       const c = readCookie(LS_KEY);
       if (c) return JSON.parse(c);
@@ -121,7 +124,7 @@
     writeCookie(LS_KEY, JSON.stringify(value));
     window.cookiePrefs = value;
     window.dispatchEvent(new CustomEvent("cookie-preferences:updated", { detail: value }));
-    propagateCc(value);
+    propagateCc(value); // añade _cc a enlaces internos si estamos en translate
   }
 
   function applyConsent(consent) {
@@ -193,6 +196,7 @@
 
   // Init
   document.addEventListener("DOMContentLoaded", () => {
+    // Salvavidas: banner/modal fuera de <form>
     (function __ensureOutsideForms() {
       const b = document.getElementById("cookie-banner");
       const m = document.getElementById("cookie-modal");
@@ -220,25 +224,31 @@
     if (typeof window.openCookiePreferences === "function") window.openCookiePreferences();
   });
 
-  // Fallback idioma
+  // ===== Añadir _cc a enlaces de idioma DESDE el dominio original =====
   (function () {
-    if (IS_TRANSLATE) return;
+    if (IS_TRANSLATE) return; // solo queremos hacerlo desde tu dominio
     let cc = "";
-    try { const ls = localStorage.getItem(LS_KEY); if (ls) cc = encodeURIComponent(btoa(ls)); } catch {}
+    try {
+      const ls = localStorage.getItem(LS_KEY);
+      if (ls) cc = encodeURIComponent(btoa(ls));
+    } catch {}
     if (!cc) return;
+
+    // IDs de enlaces de idioma (desktop + móvil) que apuntan a translate.google.com
     const ids = ["lang-en","lang-fr","lang-eu","mlang-en","mlang-fr","mlang-eu"];
     ids.forEach((id) => {
       const a = document.getElementById(id);
       if (!a) return;
       const href = a.getAttribute("href") || "";
-      if (!href || href.indexOf("translate.google.com/translate") === -1) return;
+      if (!href) return;
       if (href.includes("_cc=")) return;
       const sep = href.includes("?") ? "&" : "?";
       a.setAttribute("href", href + sep + "_cc=" + cc);
     });
   })();
 
-  // Solo en Google Translate: bloquea submits del banner/modal
+  // ===== Solo en Google Translate =====
+  // 1) Bloquea submits del banner/modal (no de formularios reales)
   if (IS_TRANSLATE) {
     document.addEventListener("submit", (e) => {
       const f = e.target;
@@ -248,16 +258,18 @@
       }
     }, true);
 
-    // Anti-Translate: intercepta clics de los botones del banner/modal
+    // 2) Intercepta CLICS en fase de captura y corta cualquier burbujeo
     const safeClick = (el, handler) => {
       if (!el) return;
       el.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
+        e.stopImmediatePropagation(); // blindaje extra
         try { handler(e); } catch {}
-      }, true);
+      }, true); // CAPTURA
     };
 
+    // Banner
     safeClick(btnOpenPrefs, () => { window.openCookiePreferences && window.openCookiePreferences(); });
     safeClick(btnAcceptAll, () => {
       setConsent({ analytics: true, marketing: true });
@@ -269,6 +281,8 @@
       applyConsent({ analytics: false, marketing: false });
       hideBanner();
     });
+
+    // Modal
     safeClick(btnSave, () => {
       const consent = { analytics: ckAnalytics?.checked || false, marketing: ckMarketing?.checked || false };
       setConsent(consent);
