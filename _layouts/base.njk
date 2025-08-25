@@ -11,27 +11,17 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
-
   <style>
     body { font-family: 'Poppins', sans-serif; }
-
-    /* Fallback tipográfico para emojis de banderas */
+  </style>
+  <style>
     .emoji-flag {
       font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif !important;
-      font-variant-emoji: emoji;
+      font-variant-emoji: emoji; /* navegadores que lo soporten */
       line-height: 1;
     }
-
-    /* “Puente” invisible bajo el summary del switch de idioma (evita cierres al bajar con el ratón) */
-    #lang-switch-desktop summary { position: relative; } /* asegura posicionamiento */
-    #lang-switch-desktop summary::after {
-      content: "";
-      position: absolute;
-      left: 0; right: 0;
-      top: 100%;
-      height: 8px;
-    }
   </style>
+
 </head>
 <body class="bg-gray-50 text-gray-800">
 
@@ -44,27 +34,23 @@
   {% include "footer.njk" %}
 
   <script>
-    // Lucide: render seguro (evita error si aún no está disponible)
-    if (window.lucide && typeof window.lucide.createIcons === "function") {
-      window.lucide.createIcons();
+    lucide.createIcons();
+
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
     }
 
-    // Menú móvil (toggle)
-    (function () {
-      const menuBtn = document.getElementById('menu-btn');
-      const mobileMenu = document.getElementById('mobile-menu');
-      if (!menuBtn || !mobileMenu) return;
-      menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-    })();
-
-    // Año dinámico en footer
-    (function () {
-      const yearSpan = document.getElementById('year');
-      if (yearSpan) yearSpan.textContent = new Date().getFullYear();
-    })();
+    const yearSpan = document.getElementById('year');
+    if (yearSpan) {
+      yearSpan.textContent = new Date().getFullYear();
+    }
   </script>
 
-  {# Datos estructurados del negocio (usa site.businessId y site.url) #}
+  {# Datos estructurados del negocio (globales) #}
   {% include "ld-localbusiness.njk" %}
 
   {# Banner/modal de cookies #}
