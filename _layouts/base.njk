@@ -8,20 +8,26 @@
   {% include "seo.njk" %}
 
   <link rel="icon" type="image/jpeg" href="/images/hero.jpeg">
-  <script src="https://cdn.tailwindcss.com"></script>
+
+  {# Tailwind compilado (generado a /assets/styles.css en el build) #}
+  <link rel="stylesheet" href="/assets/styles.css">
+
+  {# Fuentes #}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest"></script>
+
+  {# Iconos #}
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+
   <style>
     body { font-family: 'Poppins', sans-serif; }
-  </style>
-  <style>
     .emoji-flag {
       font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif !important;
-      font-variant-emoji: emoji; /* navegadores que lo soporten */
+      font-variant-emoji: emoji;
       line-height: 1;
     }
   </style>
-
 </head>
 <body class="bg-gray-50 text-gray-800">
 
@@ -34,20 +40,28 @@
   {% include "footer.njk" %}
 
   <script>
-    lucide.createIcons();
+    // Asegura iconos una vez que lucide y el DOM están listos
+    (function () {
+      function initIcons(){ try { window.lucide && window.lucide.createIcons(); } catch(e){} }
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initIcons);
+      } else { initIcons(); }
+    })();
 
-    const menuBtn = document.getElementById('menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-    if (menuBtn && mobileMenu) {
-      menuBtn.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-      });
-    }
+    // Menú móvil
+    (function () {
+      const menuBtn = document.getElementById('menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (!menuBtn || !mobileMenu) return;
+      menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') mobileMenu.classList.add('hidden'); });
+    })();
 
-    const yearSpan = document.getElementById('year');
-    if (yearSpan) {
-      yearSpan.textContent = new Date().getFullYear();
-    }
+    // Año en footer
+    (function () {
+      const yearSpan = document.getElementById('year');
+      if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+    })();
   </script>
 
   {# Datos estructurados del negocio (globales) #}
@@ -55,20 +69,5 @@
 
   {# Banner/modal de cookies #}
   {% include "cookies.njk" %}
-
-  <!-- Netlify Identity + redirect de tokens (poner SIEMPRE al final del body) -->
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-  <script>
-    (function () {
-      var h = window.location.hash || "";
-      // Si el enlace de email trae #invite_token o #recovery_token,
-      // redirige al panel para que el CMS lo procese.
-      if (h.includes("invite_token") || h.includes("recovery_token")) {
-        if (!location.pathname.startsWith("/admin")) {
-          location.assign("/admin/" + h);
-        }
-      }
-    })();
-  </script>
 </body>
 </html>

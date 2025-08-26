@@ -33,8 +33,11 @@ layout: base.njk
     </div>
 
     <div>
-      <img src="{{ Img }}" alt="Imagen de {{ T }}"
-           class="rounded-xl shadow-lg w-full max-h-[400px] object-cover"/>
+      <img
+        src="{{ Img }}"
+        alt="Imagen de {{ T }}"
+        class="rounded-xl shadow-lg w-full max-h-[400px] object-cover"
+        loading="lazy" decoding="async" />
     </div>
   </div>
 </section>
@@ -109,7 +112,6 @@ layout: base.njk
 {# ====== Toast + Copiar ====== #}
 <style>
   @media print {
-    /* Opcional: oculta botones al imprimir */
     a[href="/recetas/"], button[onclick^="window.print"], #toast { display: none !important; }
   }
 </style>
@@ -117,12 +119,9 @@ layout: base.njk
   function copyIngredients() {
     const list = document.querySelectorAll("#ingredients-list li");
     const text = Array.from(list).map(li => "• " + li.innerText).join("\n");
-
-    navigator.clipboard.writeText(text).then(() => {
-      showToast("Ingredientes copiados ✅");
-    }).catch(() => {
-      showToast("No se pudo copiar ❌");
-    });
+    navigator.clipboard.writeText(text)
+      .then(() => showToast("Ingredientes copiados ✅"))
+      .catch(() => showToast("No se pudo copiar ❌"));
   }
 
   function showToast(msg) {
@@ -130,10 +129,11 @@ layout: base.njk
     if (!toast) {
       toast = document.createElement("div");
       toast.id = "toast";
-      toast.className =
-        "fixed bottom-6 right-6 bg-green-600 text-white py-3 px-5 rounded-xl shadow-lg text-sm font-semibold transition-opacity";
+      toast.className = "fixed bottom-6 right-6 bg-green-600 text-white py-3 px-5 rounded-xl shadow-lg text-sm font-semibold transition-opacity";
       toast.style.opacity = 0;
       toast.style.pointerEvents = "none";
+      toast.setAttribute("role", "status");
+      toast.setAttribute("aria-live", "polite");
       document.body.appendChild(toast);
     }
     toast.textContent = msg;

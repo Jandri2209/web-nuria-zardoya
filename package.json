@@ -3,11 +3,13 @@
   "private": true,
   "scripts": {
     "dev": "npx @11ty/eleventy --serve",
-    "build": "npx @11ty/eleventy"
+    "build:css": "npx tailwindcss -c tailwind.config.js -i ./_styles/input.css -o ./assets/styles.css --minify",
+    "build": "npm run build:css && npx @11ty/eleventy"
   },
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1",
-    "@quasibit/eleventy-plugin-sitemap": "^2.2.0"
+    "@quasibit/eleventy-plugin-sitemap": "^2.2.0",
+    "tailwindcss": "^3.4.10"
   },
   "dependencies": {
     "nodemailer": "^6.9.0"
