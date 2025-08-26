@@ -10,7 +10,7 @@
     <div class="hidden md:flex items-center space-x-6">
       <!-- Buscador (lupa que expande) -->
       <div class="flex items-center gap-2" id="header-search" data-search>
-        <button class="text-gray-600 hover:text-green-600 focus:outline-none"
+        <button type="button" class="text-gray-600 hover:text-green-600 focus:outline-none"
                 aria-label="Abrir búsqueda" aria-expanded="false" aria-controls="search-input">
           <i data-lucide="search" class="w-5 h-5"></i>
         </button>
@@ -57,8 +57,7 @@
 
       <!-- Selector de idioma (desktop) -->
       <div class="relative group" id="lang-switch-desktop">
-        <!-- Botón (click abre/cierra). En desktop, el hover del contenedor también abre -->
-        <button id="lang-btn"
+        <button id="lang-btn" type="button"
                 class="cursor-pointer flex items-center gap-2 text-gray-600 hover:text-green-600"
                 aria-haspopup="true" aria-expanded="false" aria-controls="lang-menu">
           <i data-lucide="globe" class="w-5 h-5"></i>
@@ -72,36 +71,32 @@
                    invisible opacity-0 translate-y-1
                    group-hover:visible group-hover:opacity-100 group-hover:translate-y-0">
           <li>
-            <a id="lang-es" hreflang="es" data-lang="es"
-               class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
-               href="#">
+            <button id="lang-es" type="button" hreflang="es" data-lang="es"
+                    class="w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50">
               <img src="/images/flag-es.png" alt="Bandera de España" class="w-5 h-5 rounded-sm">
               <span>Castellano (ES)</span>
-            </a>
+            </button>
           </li>
           <li>
-            <a id="lang-en" hreflang="en" data-lang="en"
-               class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
-               href="#">
+            <button id="lang-en" type="button" hreflang="en" data-lang="en"
+                    class="w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50">
               <img src="/images/flag-gb.png" alt="Bandera del Reino Unido" class="w-5 h-5 rounded-sm">
               <span>English (EN)</span>
-            </a>
+            </button>
           </li>
           <li>
-            <a id="lang-fr" hreflang="fr" data-lang="fr"
-               class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
-               href="#">
+            <button id="lang-fr" type="button" hreflang="fr" data-lang="fr"
+                    class="w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50">
               <img src="/images/flag-fr.png" alt="Bandera de Francia" class="w-5 h-5 rounded-sm">
               <span>Français (FR)</span>
-            </a>
+            </button>
           </li>
           <li>
-            <a id="lang-eu" hreflang="eu" data-lang="eu"
-               class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50"
-               href="#">
+            <button id="lang-eu" type="button" hreflang="eu" data-lang="eu"
+                    class="w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50">
               <img src="/images/ikurrina.png" alt="Ikurriña (País Vasco)" class="w-5 h-5 rounded-sm">
               <span>Euskara (EU)</span>
-            </a>
+            </button>
           </li>
         </ul>
       </div>
@@ -109,12 +104,13 @@
 
     <!-- Botones móviles -->
     <div class="md:hidden flex items-center gap-3">
-      <button id="search-btn-mobile" class="text-gray-600 focus:outline-none" aria-controls="mobile-search" aria-expanded="false">
+      <button id="search-btn-mobile" type="button" class="text-gray-600 focus:outline-none"
+              aria-controls="mobile-search" aria-expanded="false">
         <span class="sr-only">Abrir búsqueda</span>
         <i data-lucide="search" class="w-6 h-6"></i>
       </button>
 
-      <button id="menu-btn" class="text-gray-600 focus:outline-none"
+      <button id="menu-btn" type="button" class="text-gray-600 focus:outline-none"
               aria-controls="mobile-menu" aria-expanded="false">
         <span class="sr-only">Abrir menú</span>
         <i data-lucide="menu" class="w-6 h-6"></i>
@@ -148,22 +144,22 @@
       <div class="mt-1 pt-2 border-t border-gray-100">
         <p class="px-1 pb-1 text-xs uppercase tracking-wide text-gray-500">Idioma</p>
         <div class="grid grid-cols-2 gap-2">
-          <a id="mlang-es" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
+          <button id="mlang-es" type="button" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
             <img src="/images/flag-es.png" alt="" class="w-5 h-5 rounded-sm" loading="lazy" decoding="async">
             <span>Castellano</span>
-          </a>
-          <a id="mlang-en" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
+          </button>
+          <button id="mlang-en" type="button" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
             <img src="/images/flag-gb.png" alt="" class="w-5 h-5 rounded-sm" loading="lazy" decoding="async">
             <span>English</span>
-          </a>
-          <a id="mlang-fr" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
+          </button>
+          <button id="mlang-fr" type="button" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
             <img src="/images/flag-fr.png" alt="" class="w-5 h-5 rounded-sm" loading="lazy" decoding="async">
             <span>Français</span>
-          </a>
-          <a id="mlang-eu" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
+          </button>
+          <button id="mlang-eu" type="button" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
             <img src="/images/ikurrina.png" alt="" class="w-5 h-5 rounded-sm" loading="lazy" decoding="async">
             <span>Euskara</span>
-          </a>
+          </button>
         </div>
       </div>
     </nav>
@@ -171,6 +167,14 @@
 </header>
 
 <script>
+  // ===== Guardia global anti anchors vacíos ('#') =====
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a');
+    if (!a) return;
+    const href = a.getAttribute('href');
+    if (!href || href === '#') { e.preventDefault(); e.stopPropagation(); }
+  }, true);
+
   // ===== Menú móvil =====
   (function () {
     const btn = document.getElementById('menu-btn');
@@ -189,6 +193,7 @@
       if (e.key === 'Escape') { closeMenu(); btn.focus(); }
     });
 
+    // Cerrar al tocar un enlace del menú
     menu.addEventListener('click', (e) => {
       const target = e.target.closest('a'); if (target) closeMenu();
     });
@@ -196,11 +201,11 @@
 
   // ===== Buscador desktop: toggle con lupa =====
   (function () {
-    const wrap = document.querySelector('#header-search');
+    const wrap  = document.querySelector('#header-search');
     if (!wrap) return;
-    const btn = wrap.querySelector('button[aria-controls="search-input"]');
+    const btn   = wrap.querySelector('button[aria-controls="search-input"]');
     const input = wrap.querySelector('#search-input');
-    const form = wrap.querySelector('form');
+    const form  = wrap.querySelector('form');
 
     function open() {
       btn.setAttribute('aria-expanded', 'true');
@@ -220,18 +225,13 @@
       expanded ? close() : open();
     });
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') close();
-    });
-
-    form.addEventListener('submit', (e) => {
-      if (!input.value.trim()) e.preventDefault();
-    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    form.addEventListener('submit', (e) => { if (!input.value.trim()) e.preventDefault(); });
   })();
 
   // ===== Buscador móvil: cajón =====
   (function () {
-    const btn = document.getElementById('search-btn-mobile');
+    const btn   = document.getElementById('search-btn-mobile');
     const panel = document.getElementById('mobile-search');
     if (!btn || !panel) return;
 
@@ -242,108 +242,90 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
   })();
 
-  // ===== Enlaces de auto-traducción (ES/EN/FR/EU) + _cc =====
+  // ===== Auto-traducción: construir URLs seguras (sin navegación fantasma) =====
   (function () {
     function getCanonical() {
-      var link = document.querySelector('link[rel="canonical"]');
+      const link = document.querySelector('link[rel="canonical"]');
       return link && link.href ? link.href : null;
     }
     function getOriginalUrl() {
-      var loc = window.location;
-      var hrefNoHash = loc.href.split('#')[0];
-      var can = getCanonical();
+      const loc = window.location;
+      const hrefNoHash = loc.href.split('#')[0];
+      const can = getCanonical();
       if (can) return can;
       try {
-        var u = new URL(hrefNoHash).searchParams.get('u');
+        const u = new URL(hrefNoHash).searchParams.get('u');
         if (u) return u;
       } catch (_) {}
       if ((loc.hostname || '').endsWith('.translate.goog')) {
-        var rawHost = loc.hostname.replace('.translate.goog', '');
+        const rawHost = loc.hostname.replace('.translate.goog', '');
         return 'https://' + rawHost + loc.pathname + loc.search;
-      }
+        }
       return hrefNoHash;
     }
+    const original = getOriginalUrl();
 
-    var original = getOriginalUrl();
-
-    // Lee tu consentimiento actual y lo compacta para pasarlo a Translate
-    var cc = '';
+    // Consentimiento compactado a _cc
+    let cc = '';
     try {
-      var ls = localStorage.getItem('cookie-consent');
+      const ls = localStorage.getItem('cookie-consent');
       if (ls) cc = '&_cc=' + encodeURIComponent(btoa(ls));
     } catch (e) {}
 
     function withNoLang(url) {
-      var sep = url.indexOf('?') > -1 ? '&' : '?';
-      return url + sep + '_nolang=1' + cc; // arrastra _cc si existe
+      const sep = url.indexOf('?') > -1 ? '&' : '?';
+      return url + sep + '_nolang=1' + cc; // quedarse en ES, arrastrando consentimiento
     }
 
-    var base = 'https://translate.google.com/translate?sl=es&u=' + encodeURIComponent(original);
-    var map = {
-      // Desktop
-      "lang-es":  withNoLang(original),
-      "lang-en":  base + '&tl=en&hl=en' + cc,
-      "lang-fr":  base + '&tl=fr&hl=fr' + cc,
-      "lang-eu":  base + '&tl=eu&hl=eu' + cc,
-      // Móvil
-      "mlang-es": withNoLang(original),
-      "mlang-en": base + '&tl=en&hl=en' + cc,
-      "mlang-fr": base + '&tl=fr&hl=fr' + cc,
-      "mlang-eu": base + '&tl=eu&hl=eu' + cc
+    const base = 'https://translate.google.com/translate?sl=es&u=' + encodeURIComponent(original);
+    const urls = {
+      es: withNoLang(original),
+      en: base + '&tl=en&hl=en' + cc,
+      fr: base + '&tl=fr&hl=fr' + cc,
+      eu: base + '&tl=eu&hl=eu' + cc
     };
 
-    Object.keys(map).forEach(function (id) {
-      var a = document.getElementById(id);
-      if (a) a.setAttribute('href', map[id]);
-    });
-
-    // Preferencia ES (cookie simple)
-    function setPrefCookie() {
+    function setPrefCookieES() {
       try { document.cookie = 'langpref=es; Path=/; Max-Age=2592000; SameSite=Lax'; } catch (e) {}
     }
-    ['lang-es','mlang-es'].forEach(function (id) {
-      var a = document.getElementById(id);
-      if (a) a.addEventListener('click', setPrefCookie);
+
+    // Handlers (desktop + móvil)
+    [
+      ['lang-es','es'],['lang-en','en'],['lang-fr','fr'],['lang-eu','eu'],
+      ['mlang-es','es'],['mlang-en','en'],['mlang-fr','fr'],['mlang-eu','eu']
+    ].forEach(([id, code]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        if (code === 'es') setPrefCookieES();
+        window.location.assign(urls[code]);
+      }, { passive:false });
     });
   })();
 
-  // ===== Idioma desktop: hover para abrir + click para fijar =====
+  // ===== Idioma desktop: hover por CSS, click para fijar abierto =====
   (function () {
     const wrap = document.getElementById('lang-switch-desktop');
     if (!wrap) return;
     const btn  = document.getElementById('lang-btn');
     const menu = document.getElementById('lang-menu');
-
-    // En desktop, el hover del contenedor (clase group) ya muestra el menú vía CSS.
-    // Añadimos soporte por click (útil con touchpad o si prefieres fijarlo abierto).
     let forcedOpen = false;
 
     function setOpen(on) {
       forcedOpen = on;
       btn.setAttribute('aria-expanded', on ? 'true' : 'false');
-      // Forzamos visibilidad con una clase cuando está abierto por click
       menu.classList.toggle('!visible', on);
       menu.classList.toggle('!opacity-100', on);
       menu.classList.toggle('!translate-y-0', on);
     }
 
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      setOpen(!forcedOpen);
-    });
-
-    // Cerrar al hacer click fuera
-    document.addEventListener('click', (e) => {
-      if (!wrap.contains(e.target) && forcedOpen) setOpen(false);
-    });
-
-    // Cerrar con Escape
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && forcedOpen) { setOpen(false); btn.focus(); }
-    });
+    btn.addEventListener('click', (e) => { e.preventDefault(); setOpen(!forcedOpen); });
+    document.addEventListener('click', (e) => { if (!wrap.contains(e.target) && forcedOpen) setOpen(false); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && forcedOpen) { setOpen(false); btn.focus(); } });
   })();
 
-  // ===== Lucide: asegura que se pintan los iconos =====
+  // ===== Lucide: render de iconos =====
   (function () {
     if (window.lucide && typeof window.lucide.createIcons === 'function') {
       window.lucide.createIcons();
