@@ -1,15 +1,15 @@
-{# Banner y modal de preferencias de cookies (AEPD-friendly, con i18n ES/EN/FR/EU) #}
+{# Banner y modal de preferencias de cookies (AEPD-friendly) #}
 
 <!-- Banner (primera capa) -->
 <div id="cookie-banner" class="fixed inset-x-0 bottom-0 z-50 hidden">
   <div class="mx-auto max-w-4xl m-4 rounded-2xl border bg-white shadow-xl p-4 md:p-5">
     <div class="md:flex md:items-start md:gap-4">
       <div class="flex-1">
-        <h2 id="i18n-banner-title" class="text-lg font-semibold mb-1">Tu privacidad nos importa</h2>
-        <p id="i18n-banner-desc" class="text-sm text-gray-600">
+        <h2 class="text-lg font-semibold mb-1">Tu privacidad nos importa</h2>
+        <p class="text-sm text-gray-600">
           Usamos cookies necesarias para que el sitio funcione y, opcionalmente, cookies de analítica y marketing para mejorar la experiencia.
           Puedes aceptar, rechazar o configurar tus preferencias. Consulta la
-          <a id="i18n-banner-policy" href="/cookies/" class="underline text-green-700">Política de Cookies</a>.
+          <a href="/cookies/" class="underline text-green-700">Política de Cookies</a>.
         </p>
       </div>
       <div class="mt-3 md:mt-0 flex-shrink-0 flex gap-2">
@@ -28,29 +28,29 @@
        class="mx-auto max-w-xl mt-24 rounded-2xl border bg-white shadow-2xl p-6 relative
               max-h-[80vh] overflow-y-auto">
     <h3 id="cookie-modal-title" class="text-xl font-semibold mb-2">Preferencias de cookies</h3>
-    <p id="i18n-modal-desc" class="text-sm text-gray-600 mb-4">Puedes activar o desactivar categorías no esenciales.</p>
+    <p class="text-sm text-gray-600 mb-4">Puedes activar o desactivar categorías no esenciales.</p>
 
     <div class="space-y-4">
       <div class="flex items-start justify-between gap-4 p-3 rounded-lg border">
         <div>
-          <p id="i18n-cat-necessary-title" class="font-medium">Necesarias</p>
-          <p id="i18n-cat-necessary-desc" class="text-sm text-gray-600">Imprescindibles para el funcionamiento básico (no pueden desactivarse).</p>
+          <p class="font-medium">Necesarias</p>
+          <p class="text-sm text-gray-600">Imprescindibles para el funcionamiento básico (no pueden desactivarse).</p>
         </div>
         <input type="checkbox" checked disabled aria-label="Cookies necesarias">
       </div>
 
       <div class="flex items-start justify-between gap-4 p-3 rounded-lg border">
         <div>
-          <p id="i18n-cat-analytics-title" class="font-medium">Analítica</p>
-          <p id="i18n-cat-analytics-desc" class="text-sm text-gray-600">Medición anónima para mejorar el sitio (sin identificarte).</p>
+          <p class="font-medium">Analítica</p>
+          <p class="text-sm text-gray-600">Medición anónima para mejorar el sitio (sin identificarte).</p>
         </div>
         <input id="ck-analytics" type="checkbox" aria-label="Cookies de analítica">
       </div>
 
       <div class="flex items-start justify-between gap-4 p-3 rounded-lg border">
         <div>
-          <p id="i18n-cat-marketing-title" class="font-medium">Marketing</p>
-          <p id="i18n-cat-marketing-desc" class="text-sm text-gray-600">Servicios de terceros como el calendario embebido de Calendly.</p>
+          <p class="font-medium">Marketing</p>
+          <p class="text-sm text-gray-600">Servicios de terceros como el calendario embebido de Calendly.</p>
         </div>
         <input id="ck-marketing" type="checkbox" aria-label="Cookies de marketing">
       </div>
@@ -70,130 +70,6 @@
 (() => {
   const LS_KEY = "cookie-consent";
   const IS_TRANSLATE = /\.translate\.goog$/.test(location.hostname);
-  const UI_DEFAULT = "es";
-  const UI_SUPPORTED = new Set(["es", "en", "fr", "eu"]);
-
-  /* ===== i18n diccionario ===== */
-  const I18N = {
-    es: {
-      banner: {
-        title: "Tu privacidad nos importa",
-        desc: "Usamos cookies necesarias para que el sitio funcione y, opcionalmente, cookies de analítica y marketing para mejorar la experiencia. Puedes aceptar, rechazar o configurar tus preferencias. Consulta la <a href=\"/cookies/\" class=\"underline text-green-700\">Política de Cookies</a>."
-      },
-      btn: { reject: "Rechazar", prefs: "Preferencias", accept: "Aceptar", cancel: "Cancelar", save: "Guardar preferencias" },
-      modal: {
-        title: "Preferencias de cookies",
-        desc: "Puedes activar o desactivar categorías no esenciales."
-      },
-      cat: {
-        necessary: { title: "Necesarias", desc: "Imprescindibles para el funcionamiento básico (no pueden desactivarse)." },
-        analytics: { title: "Analítica", desc: "Medición anónima para mejorar el sitio (sin identificarte)." },
-        marketing: { title: "Marketing", desc: "Servicios de terceros como el calendario embebido de Calendly." }
-      }
-    },
-    en: {
-      banner: {
-        title: "Your privacy matters to us",
-        desc: "We use necessary cookies for the site to work and, optionally, analytics and marketing cookies to improve your experience. You can accept, reject, or configure your preferences. See our <a href=\"/cookies/\" class=\"underline text-green-700\">Cookie Policy</a>."
-      },
-      btn: { reject: "Reject", prefs: "Preferences", accept: "Accept", cancel: "Cancel", save: "Save preferences" },
-      modal: {
-        title: "Cookie preferences",
-        desc: "You can enable or disable non-essential categories."
-      },
-      cat: {
-        necessary: { title: "Necessary", desc: "Essential for basic operation (cannot be disabled)." },
-        analytics: { title: "Analytics", desc: "Anonymous measurement to improve the site (without identifying you)." },
-        marketing: { title: "Marketing", desc: "Third-party services such as Calendly’s embedded calendar." }
-      }
-    },
-    fr: {
-      banner: {
-        title: "Votre confidentialité nous importe",
-        desc: "Nous utilisons des cookies nécessaires au fonctionnement du site et, en option, des cookies d’analyse et de marketing pour améliorer l’expérience. Vous pouvez accepter, refuser ou configurer vos préférences. Voir la <a href=\"/cookies/\" class=\"underline text-green-700\">Politique de cookies</a>."
-      },
-      btn: { reject: "Refuser", prefs: "Préférences", accept: "Accepter", cancel: "Annuler", save: "Enregistrer les préférences" },
-      modal: {
-        title: "Préférences de cookies",
-        desc: "Vous pouvez activer ou désactiver les catégories non essentielles."
-      },
-      cat: {
-        necessary: { title: "Nécessaires", desc: "Indispensables au fonctionnement de base (ne peuvent pas être désactivés)." },
-        analytics: { title: "Analyse", desc: "Mesure anonyme pour améliorer le site (sans vous identifier)." },
-        marketing: { title: "Marketing", desc: "Services tiers comme le calendrier intégré de Calendly." }
-      }
-    },
-    eu: {
-      banner: {
-        title: "Zure pribatutasuna garrantzitsua da",
-        desc: "Guneak beharrezko cookieak erabiltzen ditu eta, aukeran, analitika eta marketin cookieak esperientzia hobetzeko. Onartu, ukatu edo ezarpenak konfigura ditzakezu. Ikusi <a href=\"/cookies/\" class=\"underline text-green-700\">Cookieen politika</a>."
-      },
-      btn: { reject: "Ukatu", prefs: "Hobespenak", accept: "Onartu", cancel: "Utzi", save: "Hobespenak gorde" },
-      modal: {
-        title: "Cookieen hobespenak",
-        desc: "Beharrezkoak ez diren kategoriak aktibatu edo desaktibatu ditzakezu."
-      },
-      cat: {
-        necessary: { title: "Beharrezkoak", desc: "Funtzionamendurako ezinbestekoak (ezin dira desaktibatu)." },
-        analytics: { title: "Analitika", desc: "Webgunea hobetzeko neurketa anonimoa (zure identifikaziorik gabe)." },
-        marketing: { title: "Marketina", desc: "Hirugarrenen zerbitzuak, adib. Calendly-ren txertatutako egutegia." }
-      }
-    }
-  };
-
-  function sanitizeUi(ui) {
-    ui = (ui || "").toLowerCase().split("-")[0];
-    return UI_SUPPORTED.has(ui) ? ui : UI_DEFAULT;
-  }
-
-  function detectUi() {
-    if (IS_TRANSLATE) {
-      const sp = new URLSearchParams(location.search);
-      return sanitizeUi(sp.get("_x_tr_tl")); // idioma destino de Google Translate
-    }
-    const sp = new URLSearchParams(location.search);
-    return sanitizeUi(sp.get("ui") || UI_DEFAULT);
-  }
-
-  function applyI18n(ui) {
-    const t = I18N[ui] || I18N[UI_DEFAULT];
-    // Banner
-    const h = document.getElementById("i18n-banner-title");
-    const p = document.getElementById("i18n-banner-desc");
-    const a = document.getElementById("i18n-banner-policy");
-    if (h) h.textContent = t.banner.title;
-    if (p) p.innerHTML = t.banner.desc; // incluye el enlace con clases
-    if (a) a.textContent = a.textContent; // el texto ya viene dentro de desc
-    // Botones
-    const B = {
-      reject: document.getElementById("cookie-reject-all"),
-      prefs: document.getElementById("cookie-open-prefs"),
-      accept: document.getElementById("cookie-accept-all"),
-      cancel: document.getElementById("cookie-cancel"),
-      save: document.getElementById("cookie-save")
-    };
-    if (B.reject) B.reject.textContent = t.btn.reject;
-    if (B.prefs) B.prefs.textContent = t.btn.prefs;
-    if (B.accept) B.accept.textContent = t.btn.accept;
-    if (B.cancel) B.cancel.textContent = t.btn.cancel;
-    if (B.save)   B.save.textContent   = t.btn.save;
-    // Modal
-    const mt = document.getElementById("cookie-modal-title");
-    const md = document.getElementById("i18n-modal-desc");
-    if (mt) mt.textContent = t.modal.title;
-    if (md) md.textContent = t.modal.desc;
-    // Categorías
-    const c = t.cat;
-    const map = [
-      ["i18n-cat-necessary-title", c.necessary.title],
-      ["i18n-cat-necessary-desc",  c.necessary.desc],
-      ["i18n-cat-analytics-title", c.analytics.title],
-      ["i18n-cat-analytics-desc",  c.analytics.desc],
-      ["i18n-cat-marketing-title", c.marketing.title],
-      ["i18n-cat-marketing-desc",  c.marketing.desc]
-    ];
-    map.forEach(([id, val]) => { const el = document.getElementById(id); if (el) el.textContent = val; });
-  }
 
   const $ = (sel) => document.querySelector(sel);
   const banner = $("#cookie-banner");
@@ -220,7 +96,7 @@
   }
 
   function getConsent() {
-    // 1) parámetro _cc en la URL
+    // Permite cargar preferencias recibidas por query (?_cc=...)
     const sp = new URLSearchParams(location.search);
     if (sp.has("_cc")) {
       try {
@@ -229,12 +105,12 @@
         return obj;
       } catch {}
     }
-    // 2) localStorage
+    // localStorage
     try {
       const raw = localStorage.getItem(LS_KEY);
       if (raw) return JSON.parse(raw);
     } catch {}
-    // 3) cookie http
+    // cookie http
     try {
       const c = readCookie(LS_KEY);
       if (c) return JSON.parse(c);
@@ -305,18 +181,7 @@
     applyConsent({ analytics: false, marketing: false });
     hideBanner();
   });
-
-  // Botón Preferencias (comportamiento por dominio)
-  btnOpenPrefs?.addEventListener("click", (e) => {
-    e.preventDefault();
-    if (!IS_TRANSLATE) {
-      window.openCookiePreferences();
-      return;
-    }
-    // En translate.goog → redirige al dominio real con auto-open y el idioma UI detectado
-    const ui = detectUi();
-    window.location.href = getOriginalUrl({ _open: "prefs", ui });
-  });
+  btnOpenPrefs?.addEventListener("click", (e) => { e.preventDefault(); window.openCookiePreferences(); });
 
   // Botones del modal
   btnSave?.addEventListener("click", (e) => {
@@ -328,22 +193,6 @@
   });
   btnCancel?.addEventListener("click", (e) => { e.preventDefault(); closeModal(); });
   btnCloseX?.addEventListener("click", (e) => { e.preventDefault(); closeModal(); });
-
-  // Helper: construir URL del dominio original con parámetros
-  function getOriginalUrl(extraQuery = {}) {
-    const loc = window.location;
-    const originalHost = loc.hostname.replace(".translate.goog", "");
-    const url = new URL(loc.href);
-    url.hostname = originalHost;
-    // _cc con preferencia actual
-    try {
-      const ls = localStorage.getItem(LS_KEY);
-      if (ls) url.searchParams.set("_cc", btoa(ls));
-    } catch {}
-    // Parámetros extra (ej. _open=prefs, ui=xx)
-    Object.entries(extraQuery).forEach(([k, v]) => url.searchParams.set(k, v));
-    return url.toString();
-  }
 
   // Init
   document.addEventListener("DOMContentLoaded", () => {
@@ -357,21 +206,7 @@
 
     const consent = getConsent();
     if (!consent) showBanner(); else applyConsent(consent);
-
-    // i18n: aplicar idioma (en dominio real según ?ui=..., en translate tomado de _x_tr_tl)
-    const ui = detectUi();
-    applyI18n(ui);
-
     propagateCc(consent);
-
-    // Auto-open modal si viene ?_open=prefs (y limpiar query para no reabrir al refrescar)
-    const sp = new URLSearchParams(location.search);
-    if (!IS_TRANSLATE && sp.get("_open") === "prefs") {
-      if (typeof window.openCookiePreferences === "function") window.openCookiePreferences();
-      sp.delete("_open");
-      const clean = location.pathname + (sp.toString() ? "?" + sp.toString() : "") + location.hash;
-      history.replaceState(null, "", clean);
-    }
   });
 
   // Accesibilidad
@@ -381,7 +216,7 @@
   const overlayEl = modal?.querySelector('[aria-hidden="true"]');
   overlayEl?.addEventListener("click", closeModal);
 
-  // Delegado global para abrir preferencias desde cualquier parte
+  // Delegado global para abrir preferencias
   document.addEventListener("click", (e) => {
     const t = e.target?.closest?.('#open-cookie-preferences, [data-open-cookie-preferences]');
     if (!t) return;
@@ -389,12 +224,17 @@
     if (typeof window.openCookiePreferences === "function") window.openCookiePreferences();
   });
 
-  // ===== Añadir _cc a enlaces de idioma DESDE el dominio original (opcional, útil si apuntas a Translate) =====
+  // ===== Añadir _cc a enlaces de idioma DESDE el dominio original =====
   (function () {
-    if (IS_TRANSLATE) return;
+    if (IS_TRANSLATE) return; // solo queremos hacerlo desde tu dominio
     let cc = "";
-    try { const ls = localStorage.getItem(LS_KEY); if (ls) cc = encodeURIComponent(btoa(ls)); } catch {}
+    try {
+      const ls = localStorage.getItem(LS_KEY);
+      if (ls) cc = encodeURIComponent(btoa(ls));
+    } catch {}
     if (!cc) return;
+
+    // IDs de enlaces de idioma (desktop + móvil) que apuntan a translate.google.com
     const ids = ["lang-en","lang-fr","lang-eu","mlang-en","mlang-fr","mlang-eu"];
     ids.forEach((id) => {
       const a = document.getElementById(id);
@@ -407,9 +247,9 @@
     });
   })();
 
-  // ===== Solo en Google Translate: blindajes mínimos =====
+  // ===== Solo en Google Translate =====
+  // 1) Bloquea submits del banner/modal (no de formularios reales)
   if (IS_TRANSLATE) {
-    // 1) Bloquear submits dentro de banner/modal (no afecta a formularios reales)
     document.addEventListener("submit", (e) => {
       const f = e.target;
       if (f && f.closest('#cookie-banner, #cookie-modal')) {
@@ -418,16 +258,19 @@
       }
     }, true);
 
-    // 2) Interceptar clics críticos en captura para evitar popup azul si Google los “reconvierte”
+    // 2) Intercepta CLICS en fase de captura y corta cualquier burbujeo
     const safeClick = (el, handler) => {
       if (!el) return;
       el.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        e.stopImmediatePropagation();
+        e.stopImmediatePropagation(); // blindaje extra
         try { handler(e); } catch {}
-      }, true);
+      }, true); // CAPTURA
     };
+
+    // Banner
+    safeClick(btnOpenPrefs, () => { window.openCookiePreferences && window.openCookiePreferences(); });
     safeClick(btnAcceptAll, () => {
       setConsent({ analytics: true, marketing: true });
       applyConsent({ analytics: true, marketing: true });
@@ -438,7 +281,16 @@
       applyConsent({ analytics: false, marketing: false });
       hideBanner();
     });
-    // (El botón de Preferencias ya redirige con ui al dominio real)
+
+    // Modal
+    safeClick(btnSave, () => {
+      const consent = { analytics: ckAnalytics?.checked || false, marketing: ckMarketing?.checked || false };
+      setConsent(consent);
+      applyConsent(consent);
+      closeModal(); hideBanner();
+    });
+    safeClick(btnCancel, () => { closeModal(); });
+    safeClick(btnCloseX, () => { closeModal(); });
   }
 
 })();
