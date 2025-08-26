@@ -1,7 +1,7 @@
 // netlify/edge-functions/lang-redirect.js
 // Redirección de primera visita según Accept-Language,
 // con _cc (consentimiento) INYECTADO dentro de `u`,
-// y exclusión de auditorías/bots (Lighthouse/PSI/Googlebot, etc.).
+// y exclusión de auditorías/bots.
 
 const SUPPORTED = new Set(["en", "fr", "eu"]);
 
@@ -71,5 +71,4 @@ export default async (req) => {
   return Response.redirect(target, 302);
 };
 
-// Declarado en netlify.toml como edge function para todas las rutas
 export const config = { path: "/*" };
