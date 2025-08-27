@@ -75,14 +75,13 @@ body { font-family: 'Poppins', sans-serif; }
   transform: rotateY(180deg);
 }
 
-/* Hover SOLO en desktop. Si el elemento tiene .nohover, se desactiva el hover/focus-within */
+/* Hover SOLO en desktop.
+   Si el elemento tiene .nohover, se desactiva el hover (útil tras cerrar con click). */
 @media (hover:hover) and (pointer:fine) {
-  #nosiyes .flip:not(.nohover):hover .flip__inner,
-  #nosiyes .flip:not(.nohover):focus-within .flip__inner {
+  #nosiyes .flip:not(.nohover):hover .flip__inner {
     transform: rotateY(180deg);
   }
-  #cta-final .flip:not(.nohover):hover .flip__inner,
-  #cta-final .flip:not(.nohover):focus-within .flip__inner {
+  #cta-final .flip:not(.nohover):hover .flip__inner {
     transform: rotateY(180deg);
   }
 }
