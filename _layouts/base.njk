@@ -31,7 +31,7 @@
 
   {% include "header.njk" %}
 
-  <main class="pt-24 md:pt-32 pb-16">
+  <main class="pt-24 md:pt-32 pb-8">
     {{ content | safe }}
   </main>
 
@@ -76,14 +76,25 @@
         el.setAttribute('aria-pressed','false');
 
         const toggle = () => {
-          const on = el.classList.toggle('is-flipped');
+          const on = el.classList.toggle('is-flipped'); // bloquea/desbloquea
           el.setAttribute('aria-pressed', on ? 'true' : 'false');
+
+          // Si lo acabamos de DESactivar, deshabilitamos temporalmente el :hover
+          // para que vuelva a la cara frontal sin tener que salir con el ratón.
+          if (!on) {
+            el.classList.add('nohover');
+          } else {
+            el.classList.remove('nohover');
+          }
         };
 
         el.addEventListener('click', (e) => { e.stopPropagation(); toggle(); });
         el.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
         });
+
+        // En cuanto el puntero salga de la tarjeta, reactivamos el hover normal.
+        el.addEventListener('mouseleave', () => el.classList.remove('nohover'));
       });
     })();
     // ==========================================================================

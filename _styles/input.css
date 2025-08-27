@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Puedes dejar tu tipografía aquí o en tu layout */
+/* =================== Tipografía =================== */
 body { font-family: 'Poppins', sans-serif; }
 
 /* Poppins autoalojada */
@@ -13,7 +13,7 @@ body { font-family: 'Poppins', sans-serif; }
   font-style: normal;
   font-display: swap;
 }
-  @font-face {
+@font-face {
   font-family: "Poppins";
   src: url("/assets/fonts/poppins-500.woff2") format("woff2");
   font-weight: 500;
@@ -35,7 +35,7 @@ body { font-family: 'Poppins', sans-serif; }
   font-display: swap;
 }
 
-/* ============ Muy importante: gana a Preflight ============ */
+/* Muy importante: gana a Preflight */
 @layer base {
   html {
     font-family: "Poppins", ui-sans-serif, system-ui, -apple-system,
@@ -44,9 +44,8 @@ body { font-family: 'Poppins', sans-serif; }
   }
 }
 
-/* ==== Flip cards Nuria ==== */
-
-/* Scopeado a secciones #nosiyes (NO/SÍ) y #cta-final */
+/* =================== Flip cards Nuria =================== */
+/* Scope a #nosiyes (NO/SÍ) y #cta-final */
 #nosiyes .flip,
 #cta-final .flip {
   perspective: 1200px;
@@ -57,7 +56,7 @@ body { font-family: 'Poppins', sans-serif; }
   position: relative;
   height: 100%;
   transform-style: preserve-3d;
-  transition: transform .6s cubic-bezier(.2, .7, .1, 1);
+  transition: transform .6s cubic-bezier(.2,.7,.1,1);
 }
 
 #nosiyes .flip__face,
@@ -68,7 +67,7 @@ body { font-family: 'Poppins', sans-serif; }
   align-items: center;
   justify-content: center;
   backface-visibility: hidden;
-  border-radius: 0.75rem; /* ~rounded-xl */
+  border-radius: .75rem; /* ~rounded-xl */
 }
 
 #nosiyes .flip__back,
@@ -76,20 +75,19 @@ body { font-family: 'Poppins', sans-serif; }
   transform: rotateY(180deg);
 }
 
-/* Solo en dispositivos con hover/puntero fino (ordenador) */
+/* Hover SOLO en desktop. Si el elemento tiene .nohover, se desactiva el hover/focus-within */
 @media (hover:hover) and (pointer:fine) {
-  #nosiyes .flip:hover .flip__inner,
-  #nosiyes .flip:focus-within .flip__inner {
+  #nosiyes .flip:not(.nohover):hover .flip__inner,
+  #nosiyes .flip:not(.nohover):focus-within .flip__inner {
     transform: rotateY(180deg);
   }
-
-  #cta-final .flip:hover .flip__inner,
-  #cta-final .flip:focus-within .flip__inner {
+  #cta-final .flip:not(.nohover):hover .flip__inner,
+  #cta-final .flip:not(.nohover):focus-within .flip__inner {
     transform: rotateY(180deg);
   }
 }
 
-/* Accesibilidad: usuarios con reducción de movimiento */
+/* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
   #nosiyes .flip__inner,
   #cta-final .flip__inner {
@@ -97,12 +95,12 @@ body { font-family: 'Poppins', sans-serif; }
   }
 }
 
-/* Alturas mínimas robustas para las flip-cards (evita depender de min-h-* de Tailwind) */
+/* Alturas mínimas robustas (independientes de Tailwind) */
 #nosiyes .minh-112 { min-height: 112px; } /* ~7rem */
 #nosiyes .minh-160 { min-height: 160px; } /* ~10rem */
 #cta-final .minh-176 { min-height: 176px; } /* ~11rem */
 
-/* Estado persistente al hacer click/teclado */
+/* Estado persistente por click/teclado */
 #nosiyes .is-flipped .flip__inner,
 #cta-final .is-flipped .flip__inner {
   transform: rotateY(180deg);
@@ -115,6 +113,3 @@ body { font-family: 'Poppins', sans-serif; }
   outline-offset: 3px;
   border-radius: .75rem;
 }
-
-
-
