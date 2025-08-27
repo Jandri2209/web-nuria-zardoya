@@ -1,7 +1,7 @@
 // netlify/edge-functions/lang-redirect.js
 // Redirección de primera visita según Accept-Language,
-// con _cc (consentimiento) INYECTADO dentro de `u`,
-// y exclusión de auditorías/bots.
+// INYECTANDO _cc (consentimiento) DENTRO de `u`,
+// y excluyendo auditorías/bots.
 
 const SUPPORTED = new Set(["en", "fr", "eu"]);
 
@@ -27,7 +27,7 @@ export default async (req) => {
 
   const url = new URL(req.url);
 
-  // 1) No tocar estáticos ni el panel
+  // 1) No tocar estáticos ni panel
   if (STATIC_RX.some((rx) => rx.test(url.pathname))) return;
 
   // 2) No redirigir auditorías/bots
@@ -58,7 +58,7 @@ export default async (req) => {
     if (m) {
       const json = decodeURIComponent(m[1]); // la cookie ya es JSON
       const base64 = btoa(json);
-      dest.searchParams.set("_cc", base64);  // <- clave del fix
+      dest.searchParams.set("_cc", base64);  // <- clave del fix (va DENTRO de u)
     }
   } catch (_e) {}
 

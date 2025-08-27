@@ -108,30 +108,52 @@
     window.cookiePrefs = { necessary: true, analytics: !!consent.analytics, marketing: !!consent.marketing };
   }
 
+  // --- NUEVO: lee _cc del referrer (u=...) si no viene en location.search (caso Translate)
+  function getConsentFromReferrer() {
+    try {
+      if (!IS_TRANSLATE || !document.referrer) return null;
+      const ref = new URL(document.referrer);
+      if (!/translate\.google\./.test(ref.hostname)) return null;
+      const u = ref.searchParams.get('u');
+      if (!u) return null;
+      const orig = new URL(u);
+      const cc = orig.searchParams.get('_cc');
+      if (!cc) return null;
+      return JSON.parse(atob(cc));
+    } catch { return null; }
+  }
+
   function getConsent() {
-    // Permite cargar preferencias recibidas por query (?_cc=...) y limpia la URL
     const sp = new URLSearchParams(location.search);
+
+    // 1) Si viene por ?_cc=... úsalo y limpia la URL
     if (sp.has("_cc")) {
       try {
         const obj = JSON.parse(atob(sp.get("_cc")));
         setConsent(obj);
-        // Limpia _cc del address bar (estético/SEO)
         sp.delete("_cc");
         const clean = location.pathname + (sp.toString() ? "?" + sp.toString() : "") + location.hash;
         history.replaceState({}, "", clean);
         return obj;
       } catch {}
     }
-    // localStorage
+
+    // 1.b) Plan B: en traducido, intenta referrer->u->_cc
+    const fromRef = getConsentFromReferrer();
+    if (fromRef) { setConsent(fromRef); return fromRef; }
+
+    // 2) localStorage
     try {
       const raw = localStorage.getItem(LS_KEY);
       if (raw) return JSON.parse(raw);
     } catch {}
-    // cookie http
+
+    // 3) cookie http
     try {
       const c = readCookie(LS_KEY);
       if (c) return JSON.parse(c);
     } catch {}
+
     return null;
   }
 
@@ -146,24 +168,17 @@
     try { return btoa(JSON.stringify(v)); } catch { return ""; }
   }
   function addCcToUrl(u, cc) {
-    try {
-      const url = new URL(u, location.origin);
-      url.searchParams.set("_cc", cc);
-      return url.pathname + url.search + url.hash;
-    } catch { return u; }
+    try { const url = new URL(u, location.origin); url.searchParams.set("_cc", cc); return url.pathname + url.search + url.hash; }
+    catch { return u; }
   }
   function propagateCc(consent) {
     if (!IS_TRANSLATE || !consent) return;
     const cc = ccEncode(consent);
-    document.querySelectorAll('a[href^="/"]').forEach(a => {
-      a.href = addCcToUrl(a.getAttribute("href"), cc);
-    });
-    document.querySelectorAll('form[action^="/"]').forEach(f => {
-      f.action = addCcToUrl(f.getAttribute("action"), cc);
-    });
+    document.querySelectorAll('a[href^="/"]').forEach(a => a.href = addCcToUrl(a.getAttribute("href"), cc));
+    document.querySelectorAll('form[action^="/"]').forEach(f => f.action = addCcToUrl(f.getAttribute("action"), cc));
   }
 
-  // Exponer función global
+  // API pública
   window.openCookiePreferences = function () {
     const current = getConsent() || { necessary: true, analytics: false, marketing: false };
     if (ckAnalytics) ckAnalytics.checked = !!current.analytics;
@@ -172,7 +187,7 @@
     (ckAnalytics || ckMarketing || btnSave)?.focus();
   };
 
-  // Botones del banner
+  // Banner
   btnAcceptAll?.addEventListener("click", (e) => {
     e.preventDefault();
     setConsent({ analytics: true, marketing: true });
@@ -187,7 +202,7 @@
   });
   btnOpenPrefs?.addEventListener("click", (e) => { e.preventDefault(); window.openCookiePreferences(); });
 
-  // Botones del modal
+  // Modal
   btnSave?.addEventListener("click", (e) => {
     e.preventDefault();
     const consent = { analytics: ckAnalytics?.checked || false, marketing: ckMarketing?.checked || false };
@@ -217,10 +232,9 @@
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && !modal?.classList.contains("hidden")) closeModal();
   });
-  const overlayEl = modal?.querySelector('[aria-hidden="true"]');
-  overlayEl?.addEventListener("click", closeModal);
+  modal?.querySelector('[aria-hidden="true"]')?.addEventListener("click", closeModal);
 
-  // Delegado global para abrir preferencias (footer/header)
+  // Delegado global: footer/header abren preferencias
   document.addEventListener("click", (e) => {
     const t = e.target?.closest?.('#open-cookie-preferences, [data-open-cookie-preferences]');
     if (!t) return;
@@ -228,80 +242,45 @@
     if (typeof window.openCookiePreferences === "function") window.openCookiePreferences();
   });
 
-  // ===== Añadir _cc a enlaces de idioma DESDE el dominio original =====
-  (function () {
-    if (IS_TRANSLATE) return; // solo desde tu dominio
-    let cc = "";
-    try {
-      const ls = localStorage.getItem(LS_KEY);
-      if (ls) cc = btoa(ls);
-    } catch {}
-    if (!cc) return;
-
-    const ids = ["lang-en","lang-fr","lang-eu","mlang-en","mlang-fr","mlang-eu"];
-    ids.forEach((id) => {
-      const a = document.getElementById(id);
-      if (!a) return;
-      const href = a.getAttribute("href") || "";
-      if (!href) return;
-      // Si ya está dentro de u=..., no toques nada (lo montamos desde header.njk)
-      if (href.includes("translate.google.com/translate")) {
-        // nada
-      }
-    });
-  })();
-
-  // ===== Solo en Google Translate =====
+  // ===== Solo en Google Translate: blindaje anti pop-up =====
   if (IS_TRANSLATE) {
-    // 1) Bloquea submits del banner/modal (no de formularios reales)
+    // (a) Bloquea submits del banner/modal (no de formularios reales)
     document.addEventListener("submit", (e) => {
       const f = e.target;
       if (f && f.closest('#cookie-banner, #cookie-modal')) {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault(); e.stopPropagation();
       }
     }, true);
 
-    // 2) Intercepta CLICS en fase de captura y corta cualquier burbujeo
-    const safeClick = (el, handler) => {
-      if (!el) return;
-      el.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation(); // blindaje extra
-        try { handler(e); } catch {}
-      }, true); // CAPTURA
-    };
+    // (b) Intercepta pointerdown + click en CAPTURA (incluye el botón del footer)
+    const SEL = '#open-cookie-preferences, [data-open-cookie-preferences], #cookie-accept-all, #cookie-reject-all, #cookie-open-prefs, #cookie-save, #cookie-cancel, #cookie-close-x';
 
-    // Banner
-    safeClick(btnOpenPrefs, () => { window.openCookiePreferences && window.openCookiePreferences(); });
-    safeClick(btnAcceptAll, () => {
-      setConsent({ analytics: true, marketing: true });
-      applyConsent({ analytics: true, marketing: true });
-      hideBanner();
-    });
-    safeClick(btnRejectAll, () => {
-      setConsent({ analytics: false, marketing: false });
-      applyConsent({ analytics: false, marketing: false });
-      hideBanner();
-    });
+    document.addEventListener('pointerdown', (e) => {
+      const t = e.target && e.target.closest(SEL);
+      if (!t) return;
+      e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+    }, true);
 
-    // Modal
-    safeClick(btnSave, () => {
-      const consent = { analytics: ckAnalytics?.checked || false, marketing: ckMarketing?.checked || false };
-      setConsent(consent);
-      applyConsent(consent);
-      closeModal(); hideBanner();
-    });
-    safeClick(btnCancel, () => { closeModal(); });
-    safeClick(btnCloseX, () => { closeModal(); });
+    document.addEventListener('click', (e) => {
+      const t = e.target && e.target.closest(SEL);
+      if (!t) return;
+      e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
 
-    // 3) Footer: "Preferencias de cookies" (evita pop-up)
-    safeClick(document.getElementById('open-cookie-preferences'), () => {
-      window.openCookiePreferences && window.openCookiePreferences();
-    });
+      if (t.id === 'open-cookie-preferences' || t.id === 'cookie-open-prefs') {
+        window.openCookiePreferences && window.openCookiePreferences();
+      } else if (t.id === 'cookie-accept-all') {
+        setConsent({ analytics: true, marketing: true }); applyConsent({ analytics: true, marketing: true }); hideBanner();
+      } else if (t.id === 'cookie-reject-all') {
+        setConsent({ analytics: false, marketing: false }); applyConsent({ analytics: false, marketing: false }); hideBanner();
+      } else if (t.id === 'cookie-save') {
+        const consent = { analytics: ckAnalytics?.checked || false, marketing: ckMarketing?.checked || false };
+        setConsent(consent); applyConsent(consent); closeModal(); hideBanner();
+      } else if (t.id === 'cookie-cancel' || t.id === 'cookie-close-x') {
+        closeModal();
+      }
+    }, true);
   }
-
 })();
 </script>
+
 

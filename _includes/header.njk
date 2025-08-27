@@ -167,6 +167,18 @@
 </header>
 
 <script>
+  // ===== Limpiador de ?_nolang=1 al cargar en tu dominio =====
+  (function () {
+    if (/\.translate\.goog$/.test(location.hostname)) return; // solo en tu dominio canónico
+    const sp = new URLSearchParams(location.search);
+    if (sp.has('_nolang')) {
+      try { document.cookie = 'langpref=es; Path=/; Max-Age=2592000; SameSite=Lax'; } catch {}
+      sp.delete('_nolang');
+      const clean = location.pathname + (sp.toString() ? '?' + sp.toString() : '') + location.hash;
+      history.replaceState({}, '', clean);
+    }
+  })();
+
   // ===== Guardia global anti anchors vacíos ('#') =====
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a');
@@ -242,54 +254,67 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
   })();
 
-  // ===== Auto-traducción: construir URLs seguras (sin navegación fantasma) =====
+  // ===== Auto-traducción: construir URLs seguras (con _cc en u=) =====
   (function () {
+    const IS_TRANSLATE = /\.translate\.goog$/.test(location.hostname);
+
+    function stripParams(u, keys = ['_cc','_nolang']) {
+      try {
+        const url = new URL(u, location.origin);
+        keys.forEach(k => url.searchParams.delete(k));
+        return url.origin + url.pathname + (url.search ? url.search : '') + url.hash;
+      } catch { return u; }
+    }
+
     function getCanonical() {
       const link = document.querySelector('link[rel="canonical"]');
       return link && link.href ? link.href : null;
     }
+
     function getOriginalUrl() {
       const loc = window.location;
       const hrefNoHash = loc.href.split('#')[0];
+
       const can = getCanonical();
-      if (can) return can;
+      if (can) return stripParams(can);
+
       try {
         const u = new URL(hrefNoHash).searchParams.get('u');
-        if (u) return u;
-      } catch (_) {}
+        if (u) return stripParams(u);
+      } catch {}
+
       if ((loc.hostname || '').endsWith('.translate.goog')) {
-        const rawHost = loc.hostname.replace('.translate.goog', '');
-        return 'https://' + rawHost + loc.pathname + loc.search;
-        }
-      return hrefNoHash;
+        const raw = loc.hostname.replace('.translate.goog','');
+        return stripParams('https://' + raw + loc.pathname + loc.search);
+      }
+
+      return stripParams(hrefNoHash);
     }
+
     const original = getOriginalUrl();
 
-    // Consentimiento compactado a _cc
-    let cc = '';
+    // Inyecta _cc DENTRO de u=
+    let uWithCc = original;
     try {
       const ls = localStorage.getItem('cookie-consent');
-      if (ls) cc = '&_cc=' + encodeURIComponent(btoa(ls));
-    } catch (e) {}
+      if (ls) {
+        const u = new URL(original);
+        u.searchParams.set('_cc', btoa(ls));
+        uWithCc = u.toString();
+      }
+    } catch {}
 
-    function withNoLang(url) {
-      const sep = url.indexOf('?') > -1 ? '&' : '?';
-      return url + sep + '_nolang=1' + cc; // quedarse en ES, arrastrando consentimiento
-    }
-
-    const base = 'https://translate.google.com/translate?sl=es&u=' + encodeURIComponent(original);
+    const base = 'https://translate.google.com/translate?sl=es&u=' + encodeURIComponent(uWithCc);
     const urls = {
-      es: withNoLang(original),
-      en: base + '&tl=en&hl=en' + cc,
-      fr: base + '&tl=fr&hl=fr' + cc,
-      eu: base + '&tl=eu&hl=eu' + cc
+      es: IS_TRANSLATE
+          ? (original + (original.includes('?') ? '&' : '?') + '_nolang=1') // solo si estás en translate.goog
+          : original,                                                       // en tu dominio, ES limpio
+      en: base + '&tl=en&hl=en',
+      fr: base + '&tl=fr&hl=fr',
+      eu: base + '&tl=eu&hl=eu'
     };
 
-    function setPrefCookieES() {
-      try { document.cookie = 'langpref=es; Path=/; Max-Age=2592000; SameSite=Lax'; } catch (e) {}
-    }
-
-    // Handlers (desktop + móvil)
+    // Click handlers (desktop + móvil)
     [
       ['lang-es','es'],['lang-en','en'],['lang-fr','fr'],['lang-eu','eu'],
       ['mlang-es','es'],['mlang-en','en'],['mlang-fr','fr'],['mlang-eu','eu']
@@ -298,7 +323,6 @@
       if (!el) return;
       el.addEventListener('click', (ev) => {
         ev.preventDefault();
-        if (code === 'es') setPrefCookieES();
         window.location.assign(urls[code]);
       }, { passive:false });
     });
