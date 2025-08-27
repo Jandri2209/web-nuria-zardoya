@@ -38,6 +38,127 @@ permalink: "/"
   </div>
 </section>
 
+<!-- =========== Bloque Sí / No (flip solo en ordenador) =========== -->
+<style>
+  /* Estilos encapsulados para el flip */
+  #sn .flip { perspective: 1200px; }
+  #sn .flip__inner {
+    position: relative; width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform .65s cubic-bezier(.2,.7,.1,1);
+  }
+  #sn .flip__face {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    backface-visibility: hidden;
+  }
+  #sn .flip__face--back { transform: rotateY(180deg); }
+  /* Activa el volteo solo en dispositivos con hover y puntero fino (ordenador) */
+  @media (hover:hover) and (pointer:fine) {
+    #sn .flip:hover .flip__inner,
+    #sn .flip:focus-within .flip__inner { transform: rotateY(180deg); }
+  }
+</style>
+
+<section id="sn" class="py-8" aria-labelledby="sn-title">
+  <h2 id="sn-title" class="sr-only">Información inicial Sí/No</h2>
+  <div class="container mx-auto px-6 max-w-5xl grid gap-6 md:grid-cols-2">
+
+    <!-- Tarjeta 1: ¿Esto es para mí? -->
+    <!-- Desktop: flip -->
+    <article class="hidden md:block relative">
+      <div class="flip h-full">
+        <div class="flip__inner h-full">
+          <!-- Cara frontal -->
+          <div class="flip__face bg-white border border-gray-200 rounded-2xl shadow p-7 text-center">
+            <span class="absolute top-3 left-3 text-xs font-semibold px-2 py-1 rounded-full border border-gray-200 bg-white text-gray-600">Pregunta</span>
+            <div>
+              <h3 class="text-2xl font-semibold mb-2 text-gray-900">¿Esto es para mí?</h3>
+              <p class="text-gray-600">Pasa el ratón o enfoca con teclado para ver más.</p>
+            </div>
+          </div>
+          <!-- Cara trasera -->
+          <div class="flip__face flip__face--back bg-white border border-gray-200 rounded-2xl shadow p-7">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="rounded-xl border border-green-200 bg-green-50 p-5">
+                <h4 class="text-green-700 font-semibold mb-1">Sí</h4>
+                <p class="text-sm text-green-800">
+                  Si buscas mejorar hábitos con acompañamiento profesional y realista.
+                </p>
+              </div>
+              <div class="rounded-xl border border-red-200 bg-red-50 p-5">
+                <h4 class="text-red-700 font-semibold mb-1">No</h4>
+                <p class="text-sm text-red-800">
+                  Si esperas “dietas milagro” o resultados instantáneos sin cambios sostenibles.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+    <!-- Móvil: versión plana -->
+    <article class="md:hidden bg-white border border-gray-200 rounded-2xl shadow p-6">
+      <h3 class="text-xl font-semibold mb-3 text-gray-900">¿Esto es para mí?</h3>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="rounded-xl border border-green-200 bg-green-50 p-4">
+          <h4 class="text-green-700 font-semibold mb-1">Sí</h4>
+          <p class="text-sm text-green-800">Si buscas mejorar hábitos con acompañamiento profesional y realista.</p>
+        </div>
+        <div class="rounded-xl border border-red-200 bg-red-50 p-4">
+          <h4 class="text-red-700 font-semibold mb-1">No</h4>
+          <p class="text-sm text-red-800">Si esperas “dietas milagro” o resultados instantáneos.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- Tarjeta 2: ¿Puedo empezar ya? -->
+    <!-- Desktop: flip con enlaces -->
+    <article class="hidden md:block relative">
+      <div class="flip h-full">
+        <div class="flip__inner h-full">
+          <!-- Cara frontal -->
+          <div class="flip__face bg-white border border-gray-200 rounded-2xl shadow p-7 text-center">
+            <span class="absolute top-3 left-3 text-xs font-semibold px-2 py-1 rounded-full border border-gray-200 bg-white text-gray-600">Reserva</span>
+            <div>
+              <h3 class="text-2xl font-semibold mb-2 text-gray-900">¿Puedo empezar ya?</h3>
+              <p class="text-gray-600">Pasa el ratón o enfoca con teclado para ver opciones.</p>
+            </div>
+          </div>
+          <!-- Cara trasera -->
+          <div class="flip__face flip__face--back bg-white border border-gray-200 rounded-2xl shadow p-7">
+            <div class="grid grid-cols-2 gap-4">
+              <a href="/pide_tu_cita/" class="block rounded-xl border border-green-200 bg-green-50 p-5 focus:outline-none focus:ring-2 focus:ring-green-500">
+                <h4 class="text-green-700 font-semibold mb-1">Sí</h4>
+                <p class="text-sm text-green-800">Pide tu cita ahora y empezamos.</p>
+              </a>
+              <a href="/contacto/" class="block rounded-xl border border-red-200 bg-red-50 p-5 focus:outline-none focus:ring-2 focus:ring-red-500">
+                <h4 class="text-red-700 font-semibold mb-1">No</h4>
+                <p class="text-sm text-red-800">¿Dudas? Escríbeme primero.</p>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+    <!-- Móvil: versión plana -->
+    <article class="md:hidden bg-white border border-gray-200 rounded-2xl shadow p-6">
+      <h3 class="text-xl font-semibold mb-3 text-gray-900">¿Puedo empezar ya?</h3>
+      <div class="grid grid-cols-2 gap-4">
+        <a href="/pide_tu_cita/" class="block rounded-xl border border-green-200 bg-green-50 p-4">
+          <h4 class="text-green-700 font-semibold mb-1">Sí</h4>
+          <p class="text-sm text-green-800">Pide tu cita ahora.</p>
+        </a>
+        <a href="/contacto/" class="block rounded-xl border border-red-200 bg-red-50 p-4">
+          <h4 class="text-red-700 font-semibold mb-1">No</h4>
+          <p class="text-sm text-red-800">Consúltame tus dudas.</p>
+        </a>
+      </div>
+    </article>
+
+  </div>
+</section>
+
 <!-- =========== Teaser Sobre Mí (link a /quien_soy/) =========== -->
 <section id="sobre-mi" class="py-16 bg-gray-50" aria-labelledby="sobre-mi-title">
   <div class="container mx-auto px-6 max-w-5xl">
@@ -101,4 +222,3 @@ permalink: "/"
     </div>
   </div>
 </section>
-

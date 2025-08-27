@@ -108,52 +108,69 @@
     window.cookiePrefs = { necessary: true, analytics: !!consent.analytics, marketing: !!consent.marketing };
   }
 
-  // --- NUEVO: lee _cc del referrer (u=...) si no viene en location.search (caso Translate)
-  function getConsentFromReferrer() {
+  /* === NUEVO: helpers para leer/eliminar parámetros también del HASH === */
+  function getParamFromHash(name) {
     try {
-      if (!IS_TRANSLATE || !document.referrer) return null;
-      const ref = new URL(document.referrer);
-      if (!/translate\.google\./.test(ref.hostname)) return null;
-      const u = ref.searchParams.get('u');
-      if (!u) return null;
-      const orig = new URL(u);
-      const cc = orig.searchParams.get('_cc');
-      if (!cc) return null;
-      return JSON.parse(atob(cc));
+      const h = (location.hash || "").replace(/^#/, "");
+      if (!h) return null;
+      const usp = new URLSearchParams(h);
+      return usp.get(name);
     } catch { return null; }
   }
-
-  function getConsent() {
+  function deleteParamFromHash(name) {
+    try {
+      const h = (location.hash || "").replace(/^#/, "");
+      if (!h) return;
+      const usp = new URLSearchParams(h);
+      if (!usp.has(name)) return;
+      usp.delete(name);
+      const newHash = usp.toString();
+      history.replaceState({}, "", location.pathname + location.search + (newHash ? "#" + newHash : ""));
+    } catch {}
+  }
+  function cleanupParams() {
+    // Borra _cc y _nolang tanto de ? como de #
     const sp = new URLSearchParams(location.search);
+    let touched = false;
+    ["_cc","_nolang"].forEach(k => { if (sp.has(k)) { sp.delete(k); touched = true; } });
+    if (touched) {
+      const clean = location.pathname + (sp.toString() ? "?" + sp.toString() : "") + location.hash;
+      try { history.replaceState({}, "", clean); } catch {}
+    }
+    deleteParamFromHash("_cc");
+    deleteParamFromHash("_nolang");
+  }
 
-    // 1) Si viene por ?_cc=... úsalo y limpia la URL
+  /* === NUEVO: ya no dependemos del referrer (que a veces viene recortado) === */
+  function getConsent() {
+    // 1) ¿Viene en la query?
+    const sp = new URLSearchParams(location.search);
     if (sp.has("_cc")) {
       try {
         const obj = JSON.parse(atob(sp.get("_cc")));
         setConsent(obj);
-        sp.delete("_cc");
-        const clean = location.pathname + (sp.toString() ? "?" + sp.toString() : "") + location.hash;
-        history.replaceState({}, "", clean);
         return obj;
       } catch {}
     }
-
-    // 1.b) Plan B: en traducido, intenta referrer->u->_cc
-    const fromRef = getConsentFromReferrer();
-    if (fromRef) { setConsent(fromRef); return fromRef; }
-
-    // 2) localStorage
+    // 2) ¿Viene en el hash? (fallback robusto en Translate)
+    const ccHash = getParamFromHash("_cc");
+    if (ccHash) {
+      try {
+        const obj = JSON.parse(atob(ccHash));
+        setConsent(obj);
+        return obj;
+      } catch {}
+    }
+    // 3) localStorage
     try {
       const raw = localStorage.getItem(LS_KEY);
       if (raw) return JSON.parse(raw);
     } catch {}
-
-    // 3) cookie http
+    // 4) cookie http
     try {
       const c = readCookie(LS_KEY);
       if (c) return JSON.parse(c);
     } catch {}
-
     return null;
   }
 
@@ -168,14 +185,21 @@
     try { return btoa(JSON.stringify(v)); } catch { return ""; }
   }
   function addCcToUrl(u, cc) {
-    try { const url = new URL(u, location.origin); url.searchParams.set("_cc", cc); return url.pathname + url.search + url.hash; }
-    catch { return u; }
+    try {
+      const url = new URL(u, location.origin);
+      url.searchParams.set("_cc", cc);
+      return url.pathname + url.search + url.hash;
+    } catch { return u; }
   }
   function propagateCc(consent) {
     if (!IS_TRANSLATE || !consent) return;
     const cc = ccEncode(consent);
-    document.querySelectorAll('a[href^="/"]').forEach(a => a.href = addCcToUrl(a.getAttribute("href"), cc));
-    document.querySelectorAll('form[action^="/"]').forEach(f => f.action = addCcToUrl(f.getAttribute("action"), cc));
+    document.querySelectorAll('a[href^="/"]').forEach(a => {
+      a.href = addCcToUrl(a.getAttribute("href"), cc);
+    });
+    document.querySelectorAll('form[action^="/"]').forEach(f => {
+      f.action = addCcToUrl(f.getAttribute("action"), cc);
+    });
   }
 
   // API pública
@@ -193,12 +217,14 @@
     setConsent({ analytics: true, marketing: true });
     applyConsent({ analytics: true, marketing: true });
     hideBanner();
+    cleanupParams();
   });
   btnRejectAll?.addEventListener("click", (e) => {
     e.preventDefault();
     setConsent({ analytics: false, marketing: false });
     applyConsent({ analytics: false, marketing: false });
     hideBanner();
+    cleanupParams();
   });
   btnOpenPrefs?.addEventListener("click", (e) => { e.preventDefault(); window.openCookiePreferences(); });
 
@@ -209,13 +235,14 @@
     setConsent(consent);
     applyConsent(consent);
     closeModal(); hideBanner();
+    cleanupParams();
   });
   btnCancel?.addEventListener("click", (e) => { e.preventDefault(); closeModal(); });
   btnCloseX?.addEventListener("click", (e) => { e.preventDefault(); closeModal(); });
 
   // Init
   document.addEventListener("DOMContentLoaded", () => {
-    // Salvavidas: banner/modal fuera de <form>
+    // Asegura banner/modal fuera de <form>
     (function __ensureOutsideForms() {
       const b = document.getElementById("cookie-banner");
       const m = document.getElementById("cookie-modal");
@@ -226,6 +253,7 @@
     const consent = getConsent();
     if (!consent) showBanner(); else applyConsent(consent);
     propagateCc(consent);
+    cleanupParams(); // limpia ?_cc / ?_nolang y #_cc / #_nolang
   });
 
   // Accesibilidad
@@ -242,9 +270,9 @@
     if (typeof window.openCookiePreferences === "function") window.openCookiePreferences();
   });
 
-  // ===== Solo en Google Translate: blindaje anti pop-up =====
+  // ===== Solo en Google Translate: blindaje anti pop-up reforzado =====
   if (IS_TRANSLATE) {
-    // (a) Bloquea submits del banner/modal (no de formularios reales)
+    // Bloquea submits del banner/modal
     document.addEventListener("submit", (e) => {
       const f = e.target;
       if (f && f.closest('#cookie-banner, #cookie-modal')) {
@@ -252,35 +280,34 @@
       }
     }, true);
 
-    // (b) Intercepta pointerdown + click en CAPTURA (incluye el botón del footer)
+    // Interceptores en captura para todos los gestos de click
     const SEL = '#open-cookie-preferences, [data-open-cookie-preferences], #cookie-accept-all, #cookie-reject-all, #cookie-open-prefs, #cookie-save, #cookie-cancel, #cookie-close-x';
-
-    document.addEventListener('pointerdown', (e) => {
+    const intercept = (type) => document.addEventListener(type, (e) => {
       const t = e.target && e.target.closest(SEL);
       if (!t) return;
       e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
-    }, true);
-
-    document.addEventListener('click', (e) => {
-      const t = e.target && e.target.closest(SEL);
-      if (!t) return;
-      e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
-
-      if (t.id === 'open-cookie-preferences' || t.id === 'cookie-open-prefs') {
-        window.openCookiePreferences && window.openCookiePreferences();
-      } else if (t.id === 'cookie-accept-all') {
-        setConsent({ analytics: true, marketing: true }); applyConsent({ analytics: true, marketing: true }); hideBanner();
-      } else if (t.id === 'cookie-reject-all') {
-        setConsent({ analytics: false, marketing: false }); applyConsent({ analytics: false, marketing: false }); hideBanner();
-      } else if (t.id === 'cookie-save') {
-        const consent = { analytics: ckAnalytics?.checked || false, marketing: ckMarketing?.checked || false };
-        setConsent(consent); applyConsent(consent); closeModal(); hideBanner();
-      } else if (t.id === 'cookie-cancel' || t.id === 'cookie-close-x') {
-        closeModal();
+      // Acciones manuales
+      if (type === 'click' || type === 'pointerdown' || type === 'touchend' || type === 'mouseup' || type === 'auxclick') {
+        const id = t.id;
+        if (id === 'open-cookie-preferences' || id === 'cookie-open-prefs') {
+          window.openCookiePreferences && window.openCookiePreferences();
+        } else if (id === 'cookie-accept-all') {
+          setConsent({ analytics: true, marketing: true }); applyConsent({ analytics: true, marketing: true }); hideBanner(); cleanupParams();
+        } else if (id === 'cookie-reject-all') {
+          setConsent({ analytics: false, marketing: false }); applyConsent({ analytics: false, marketing: false }); hideBanner(); cleanupParams();
+        } else if (id === 'cookie-save') {
+          const consent = { analytics: ckAnalytics?.checked || false, marketing: ckMarketing?.checked || false };
+          setConsent(consent); applyConsent(consent); closeModal(); hideBanner(); cleanupParams();
+        } else if (id === 'cookie-cancel' || id === 'cookie-close-x') {
+          closeModal();
+        }
       }
     }, true);
+
+    ['pointerdown','click','touchstart','touchend','mousedown','mouseup','auxclick'].forEach(intercept);
   }
 })();
 </script>
+
 
 
