@@ -66,9 +66,10 @@
     // Si quieres usarlo en otra página (p.ej. #servicios), añade ese contenedor al selector de abajo
     // y extiende también los selectores del CSS en style/input.css.
     (function () {
-
-      const desktop = window.matchMedia('(hover:hover) and (pointer:fine)');
-      if (!desktop.matches) return; // móvil: sin click-to-flip
+      // Activa click en: (a) equipos con hover y puntero fino, O (b) pantallas ≥ 1024px (md)
+      const hasHoverFine = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+      const isWide = window.matchMedia('(min-width: 1024px)').matches;
+      if (!(hasHoverFine || isWide)) return; // móvil/tablet estrecho: sin click-to-flip
 
       const scopeSelector = '#nosiyes .flip, #cta-final .flip';
       document.querySelectorAll(scopeSelector).forEach((el) => {
@@ -81,8 +82,7 @@
         const toggle = () => {
           const on = el.classList.toggle('is-flipped');
           el.setAttribute('aria-pressed', on ? 'true' : 'false');
-
-          // Si se cierra con click, bloquea hover hasta salir y quita el foco
+          // Al cerrar con click: no reabrir por hover hasta salir + quitar foco visual
           if (!on) { el.classList.add('nohover'); el.blur(); }
           else     { el.classList.remove('nohover'); }
         };
