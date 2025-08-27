@@ -38,127 +38,6 @@ permalink: "/"
   </div>
 </section>
 
-<!-- =========== Bloque Sí / No (flip solo en ordenador) =========== -->
-<style>
-  /* Estilos encapsulados para el flip */
-  #sn .flip { perspective: 1200px; }
-  #sn .flip__inner {
-    position: relative; width: 100%; height: 100%;
-    transform-style: preserve-3d;
-    transition: transform .65s cubic-bezier(.2,.7,.1,1);
-  }
-  #sn .flip__face {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    backface-visibility: hidden;
-  }
-  #sn .flip__face--back { transform: rotateY(180deg); }
-  /* Activa el volteo solo en dispositivos con hover y puntero fino (ordenador) */
-  @media (hover:hover) and (pointer:fine) {
-    #sn .flip:hover .flip__inner,
-    #sn .flip:focus-within .flip__inner { transform: rotateY(180deg); }
-  }
-</style>
-
-<section id="sn" class="py-8" aria-labelledby="sn-title">
-  <h2 id="sn-title" class="sr-only">Información inicial Sí/No</h2>
-  <div class="container mx-auto px-6 max-w-5xl grid gap-6 md:grid-cols-2">
-
-    <!-- Tarjeta 1: ¿Esto es para mí? -->
-    <!-- Desktop: flip -->
-    <article class="hidden md:block relative">
-      <div class="flip h-full">
-        <div class="flip__inner h-full">
-          <!-- Cara frontal -->
-          <div class="flip__face bg-white border border-gray-200 rounded-2xl shadow p-7 text-center">
-            <span class="absolute top-3 left-3 text-xs font-semibold px-2 py-1 rounded-full border border-gray-200 bg-white text-gray-600">Pregunta</span>
-            <div>
-              <h3 class="text-2xl font-semibold mb-2 text-gray-900">¿Esto es para mí?</h3>
-              <p class="text-gray-600">Pasa el ratón o enfoca con teclado para ver más.</p>
-            </div>
-          </div>
-          <!-- Cara trasera -->
-          <div class="flip__face flip__face--back bg-white border border-gray-200 rounded-2xl shadow p-7">
-            <div class="grid grid-cols-2 gap-4">
-              <div class="rounded-xl border border-green-200 bg-green-50 p-5">
-                <h4 class="text-green-700 font-semibold mb-1">Sí</h4>
-                <p class="text-sm text-green-800">
-                  Si buscas mejorar hábitos con acompañamiento profesional y realista.
-                </p>
-              </div>
-              <div class="rounded-xl border border-red-200 bg-red-50 p-5">
-                <h4 class="text-red-700 font-semibold mb-1">No</h4>
-                <p class="text-sm text-red-800">
-                  Si esperas “dietas milagro” o resultados instantáneos sin cambios sostenibles.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </article>
-    <!-- Móvil: versión plana -->
-    <article class="md:hidden bg-white border border-gray-200 rounded-2xl shadow p-6">
-      <h3 class="text-xl font-semibold mb-3 text-gray-900">¿Esto es para mí?</h3>
-      <div class="grid grid-cols-2 gap-4">
-        <div class="rounded-xl border border-green-200 bg-green-50 p-4">
-          <h4 class="text-green-700 font-semibold mb-1">Sí</h4>
-          <p class="text-sm text-green-800">Si buscas mejorar hábitos con acompañamiento profesional y realista.</p>
-        </div>
-        <div class="rounded-xl border border-red-200 bg-red-50 p-4">
-          <h4 class="text-red-700 font-semibold mb-1">No</h4>
-          <p class="text-sm text-red-800">Si esperas “dietas milagro” o resultados instantáneos.</p>
-        </div>
-      </div>
-    </article>
-
-    <!-- Tarjeta 2: ¿Puedo empezar ya? -->
-    <!-- Desktop: flip con enlaces -->
-    <article class="hidden md:block relative">
-      <div class="flip h-full">
-        <div class="flip__inner h-full">
-          <!-- Cara frontal -->
-          <div class="flip__face bg-white border border-gray-200 rounded-2xl shadow p-7 text-center">
-            <span class="absolute top-3 left-3 text-xs font-semibold px-2 py-1 rounded-full border border-gray-200 bg-white text-gray-600">Reserva</span>
-            <div>
-              <h3 class="text-2xl font-semibold mb-2 text-gray-900">¿Puedo empezar ya?</h3>
-              <p class="text-gray-600">Pasa el ratón o enfoca con teclado para ver opciones.</p>
-            </div>
-          </div>
-          <!-- Cara trasera -->
-          <div class="flip__face flip__face--back bg-white border border-gray-200 rounded-2xl shadow p-7">
-            <div class="grid grid-cols-2 gap-4">
-              <a href="/pide_tu_cita/" class="block rounded-xl border border-green-200 bg-green-50 p-5 focus:outline-none focus:ring-2 focus:ring-green-500">
-                <h4 class="text-green-700 font-semibold mb-1">Sí</h4>
-                <p class="text-sm text-green-800">Pide tu cita ahora y empezamos.</p>
-              </a>
-              <a href="/contacto/" class="block rounded-xl border border-red-200 bg-red-50 p-5 focus:outline-none focus:ring-2 focus:ring-red-500">
-                <h4 class="text-red-700 font-semibold mb-1">No</h4>
-                <p class="text-sm text-red-800">¿Dudas? Escríbeme primero.</p>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </article>
-    <!-- Móvil: versión plana -->
-    <article class="md:hidden bg-white border border-gray-200 rounded-2xl shadow p-6">
-      <h3 class="text-xl font-semibold mb-3 text-gray-900">¿Puedo empezar ya?</h3>
-      <div class="grid grid-cols-2 gap-4">
-        <a href="/pide_tu_cita/" class="block rounded-xl border border-green-200 bg-green-50 p-4">
-          <h4 class="text-green-700 font-semibold mb-1">Sí</h4>
-          <p class="text-sm text-green-800">Pide tu cita ahora.</p>
-        </a>
-        <a href="/contacto/" class="block rounded-xl border border-red-200 bg-red-50 p-4">
-          <h4 class="text-red-700 font-semibold mb-1">No</h4>
-          <p class="text-sm text-red-800">Consúltame tus dudas.</p>
-        </a>
-      </div>
-    </article>
-
-  </div>
-</section>
-
 <!-- =========== Teaser Sobre Mí (link a /quien_soy/) =========== -->
 <section id="sobre-mi" class="py-16 bg-gray-50" aria-labelledby="sobre-mi-title">
   <div class="container mx-auto px-6 max-w-5xl">
@@ -186,39 +65,201 @@ permalink: "/"
   </div>
 </section>
 
-<!-- =========== Lo que NO vas a encontrar =========== -->
-<section class="py-12" aria-labelledby="no-encontraras-title">
-  <div class="container mx-auto px-6 max-w-5xl">
-    <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow">
-      <h3 id="no-encontraras-title" class="text-xl font-bold mb-6 text-gray-900">Lo que <span class="text-red-600">NO</span> vas a encontrar</h3>
-      <ul class="grid md:grid-cols-3 gap-4 text-gray-700">
-        <li class="flex items-center gap-2"><span class="text-red-500 text-lg" aria-hidden="true">✖</span> Dietas milagro</li>
-        <li class="flex items-center gap-2"><span class="text-red-500 text-lg" aria-hidden="true">✖</span> Planes genéricos</li>
-        <li class="flex items-center gap-2"><span class="text-red-500 text-lg" aria-hidden="true">✖</span> Culpa por comer</li>
-      </ul>
-    </div>
-  </div>
-</section>
+<!-- ===== Flip cards: estilos limitados a los bloques NO/SÍ ===== -->
+<style>
+  /* Contenedor acotado para no afectar a otras secciones */
+  #no-si .flip {
+    perspective: 1200px;
+  }
+  #no-si .flip__inner{
+    position: relative; width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform .6s cubic-bezier(.2,.7,.1,1);
+  }
+  #no-si .flip__face{
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.25rem; text-align: center;
+    border-radius: 0.75rem; /* ~rounded-xl */
+    backface-visibility: hidden;
+  }
+  #no-si .flip__face--back{ transform: rotateY(180deg); }
 
-<!-- =========== Lo que SÍ vas a encontrar =========== -->
-<section class="py-12" aria-labelledby="si-encontraras-title">
-  <div class="container mx-auto px-6 max-w-5xl">
-    <div class="bg-green-50 border border-green-200 rounded-2xl p-8 shadow">
-      <h3 id="si-encontraras-title" class="text-xl font-bold mb-6 text-gray-800">Lo que <span class="text-green-700">SÍ</span> vas a encontrar</h3>
-      <div class="grid md:grid-cols-3 gap-6 text-gray-700">
-        <div class="bg-white rounded-xl shadow p-6 text-center">
-          <h4 class="font-semibold text-green-700 mb-2">Acompañamiento cercano</h4>
-          <p>Escucha activa, comprensión y apoyo constante en cada paso de tu proceso.</p>
+  /* Activa el volteo solo en dispositivos con hover y puntero fino (ordenador) */
+  @media (hover:hover) and (pointer:fine) {
+    #no-si .flip:hover .flip__inner,
+    #no-si .flip:focus-within .flip__inner { transform: rotateY(180deg); }
+  }
+</style>
+
+<div id="no-si">
+  <!-- =========== Lo que NO vas a encontrar (con flip) =========== -->
+  <section class="py-12" aria-labelledby="no-encontraras-title">
+    <div class="container mx-auto px-6 max-w-5xl">
+      <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow">
+        <h3 id="no-encontraras-title" class="text-xl font-bold mb-6 text-gray-900">
+          Lo que <span class="text-red-600">NO</span> vas a encontrar
+        </h3>
+
+        <!-- Desktop: tarjetas con flip -->
+        <div class="hidden md:grid md:grid-cols-3 gap-4 text-gray-700">
+          <!-- Dietas milagro -->
+          <article class="flip h-28">
+            <div class="flip__inner h-full">
+              <div class="flip__face border border-gray-200 bg-white shadow">
+                <div class="flex items-center gap-2">
+                  <span class="text-red-500 text-lg" aria-hidden="true">✖</span>
+                  <span class="font-medium">Dietas milagro</span>
+                </div>
+              </div>
+              <div class="flip__face flip__face--back border border-red-200 bg-red-50 shadow">
+                <p class="text-sm text-red-900">
+                  Nada de detox ni planes extremos. Trabajamos cambios sostenibles y saludables.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Planes genéricos -->
+          <article class="flip h-28">
+            <div class="flip__inner h-full">
+              <div class="flip__face border border-gray-200 bg-white shadow">
+                <div class="flex items-center gap-2">
+                  <span class="text-red-500 text-lg" aria-hidden="true">✖</span>
+                  <span class="font-medium">Planes genéricos</span>
+                </div>
+              </div>
+              <div class="flip__face flip__face--back border border-red-200 bg-red-50 shadow">
+                <p class="text-sm text-red-900">
+                  Nada “copiar/pegar”. Todo se adapta a tus gustos, horarios y contexto real.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Culpa por comer -->
+          <article class="flip h-28">
+            <div class="flip__inner h-full">
+              <div class="flip__face border border-gray-200 bg-white shadow">
+                <div class="flex items-center gap-2">
+                  <span class="text-red-500 text-lg" aria-hidden="true">✖</span>
+                  <span class="font-medium">Culpa por comer</span>
+                </div>
+              </div>
+              <div class="flip__face flip__face--back border border-red-200 bg-red-50 shadow">
+                <p class="text-sm text-red-900">
+                  Enfoque respetuoso y sin juicios. Comer también es disfrute y cultura.
+                </p>
+              </div>
+            </div>
+          </article>
         </div>
-        <div class="bg-white rounded-xl shadow p-6 text-center">
-          <h4 class="font-semibold text-green-700 mb-2">Planes realistas</h4>
-          <p>Recomendaciones adaptadas a tu estilo de vida, sin prohibiciones absurdas ni “dietas milagro”.</p>
+
+        <!-- Móvil: lista plana como tenías -->
+        <ul class="md:hidden grid grid-cols-1 gap-4 text-gray-700 mt-2">
+          <li class="flex items-center gap-2"><span class="text-red-500 text-lg" aria-hidden="true">✖</span> Dietas milagro</li>
+          <li class="flex items-center gap-2"><span class="text-red-500 text-lg" aria-hidden="true">✖</span> Planes genéricos</li>
+          <li class="flex items-center gap-2"><span class="text-red-500 text-lg" aria-hidden="true">✖</span> Culpa por comer</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========== Lo que SÍ vas a encontrar (con flip) =========== -->
+  <section class="py-12" aria-labelledby="si-encontraras-title">
+    <div class="container mx-auto px-6 max-w-5xl">
+      <div class="bg-green-50 border border-green-200 rounded-2xl p-8 shadow">
+        <h3 id="si-encontraras-title" class="text-xl font-bold mb-6 text-gray-800">
+          Lo que <span class="text-green-700">SÍ</span> vas a encontrar
+        </h3>
+
+        <!-- Desktop: tarjetas con flip -->
+        <div class="hidden md:grid md:grid-cols-3 gap-6 text-gray-700">
+          <!-- Acompañamiento cercano -->
+          <article class="flip h-40">
+            <div class="flip__inner h-full">
+              <div class="flip__face bg-white rounded-xl shadow p-6 border border-green-200">
+                <h4 class="font-semibold text-green-700 mb-2">Acompañamiento cercano</h4>
+                <p class="text-sm text-gray-600">Cercanía y seguimiento real.</p>
+              </div>
+              <div class="flip__face flip__face--back rounded-xl shadow p-6 border border-green-200 bg-green-50">
+                <p class="text-sm text-green-800">
+                  Sesiones pautadas y comunicación clara para ayudarte a sostener el cambio.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Planes realistas -->
+          <article class="flip h-40">
+            <div class="flip__inner h-full">
+              <div class="flip__face bg-white rounded-xl shadow p-6 border border-green-200">
+                <h4 class="font-semibold text-green-700 mb-2">Planes realistas</h4>
+                <p class="text-sm text-gray-600">Enfoque práctico y flexible.</p>
+              </div>
+              <div class="flip__face flip__face--back rounded-xl shadow p-6 border border-green-200 bg-green-50">
+                <p class="text-sm text-green-800">
+                  Ajustados a tus gustos, presupuestos y tiempos. Sin prohibiciones absurdas.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Evidencia científica -->
+          <article class="flip h-40">
+            <div class="flip__inner h-full">
+              <div class="flip__face bg-white rounded-xl shadow p-6 border border-green-200">
+                <h4 class="font-semibold text-green-700 mb-2">Evidencia científica</h4>
+                <p class="text-sm text-gray-600">Rigor y actualización.</p>
+              </div>
+              <div class="flip__face flip__face--back rounded-xl shadow p-6 border border-green-200 bg-green-50">
+                <p class="text-sm text-green-800">
+                  Basado en guías y literatura actual; no en modas pasajeras ni pseudociencia.
+                </p>
+              </div>
+            </div>
+          </article>
         </div>
-        <div class="bg-white rounded-xl shadow p-6 text-center">
-          <h4 class="font-semibold text-green-700 mb-2">Evidencia científica</h4>
-          <p>Todo mi trabajo está basado en ciencia actual y en la práctica clínica, no en modas pasajeras.</p>
+
+        <!-- Móvil: tarjetas planas como tenías -->
+        <div class="md:hidden grid grid-cols-1 gap-6 text-gray-700">
+          <div class="bg-white rounded-xl shadow p-6 text-center">
+            <h4 class="font-semibold text-green-700 mb-2">Acompañamiento cercano</h4>
+            <p>Escucha activa, comprensión y apoyo constante en cada paso de tu proceso.</p>
+          </div>
+          <div class="bg-white rounded-xl shadow p-6 text-center">
+            <h4 class="font-semibold text-green-700 mb-2">Planes realistas</h4>
+            <p>Recomendaciones adaptadas a tu estilo de vida, sin prohibiciones absurdas ni “dietas milagro”.</p>
+          </div>
+          <div class="bg-white rounded-xl shadow p-6 text-center">
+            <h4 class="font-semibold text-green-700 mb-2">Evidencia científica</h4>
+            <p>Todo mi trabajo está basado en ciencia actual y en la práctica clínica, no en modas pasajeras.</p>
+          </div>
         </div>
       </div>
+    </div>
+  </section>
+</div>
+
+<!-- =========== CTA final: ¿Puedo empezar ya? (sin flip) =========== -->
+<section class="py-12" aria-labelledby="cta-final-title">
+  <div class="container mx-auto px-6 max-w-5xl">
+    <h2 id="cta-final-title" class="text-2xl font-bold text-center text-gray-900 mb-6">¿Puedo empezar ya?</h2>
+    <div class="grid gap-4 md:grid-cols-2">
+      <a href="/pide_tu_cita/" class="flex items-center justify-between gap-3 bg-white border border-green-200 rounded-xl shadow p-5 hover:border-green-300 hover:shadow-lg transition">
+        <div>
+          <strong class="text-gray-900">Sí</strong><br>
+          <span class="text-sm text-gray-600">Pide tu cita ahora y empezamos</span>
+        </div>
+        <span class="text-2xl text-green-500">›</span>
+      </a>
+      <a href="/contacto/" class="flex items-center justify-between gap-3 bg-white border border-gray-200 rounded-xl shadow p-5 hover:border-gray-300 hover:shadow-lg transition">
+        <div>
+          <strong class="text-gray-900">Tengo dudas</strong><br>
+          <span class="text-sm text-gray-600">Prefiero escribir antes</span>
+        </div>
+        <span class="text-2xl text-gray-400">›</span>
+      </a>
     </div>
   </div>
 </section>
