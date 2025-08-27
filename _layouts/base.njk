@@ -66,8 +66,6 @@
     // Si quieres usarlo en otra página (p.ej. #servicios), añade ese contenedor al selector de abajo
     // y extiende también los selectores del CSS en style/input.css.
     (function () {
-      // Si quieres poder desactivarlo sin borrar código: <body data-flip-click="0">
-      // if (document.body.dataset.flipClick === '0') return;
 
       const desktop = window.matchMedia('(hover:hover) and (pointer:fine)');
       if (!desktop.matches) return; // móvil: sin click-to-flip
