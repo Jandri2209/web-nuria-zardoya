@@ -97,4 +97,9 @@ body { font-family: 'Poppins', sans-serif; }
   }
 }
 
+/* Alturas mínimas robustas para las flip-cards (evita depender de min-h-* de Tailwind) */
+#nosiyes .minh-112 { min-height: 112px; } /* ~7rem */
+#nosiyes .minh-160 { min-height: 160px; } /* ~10rem */
+#cta-final .minh-176 { min-height: 176px; } /* ~11rem */
+
 
