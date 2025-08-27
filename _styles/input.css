@@ -102,4 +102,19 @@ body { font-family: 'Poppins', sans-serif; }
 #nosiyes .minh-160 { min-height: 160px; } /* ~10rem */
 #cta-final .minh-176 { min-height: 176px; } /* ~11rem */
 
+/* Estado persistente al hacer click/teclado */
+#nosiyes .is-flipped .flip__inner,
+#cta-final .is-flipped .flip__inner {
+  transform: rotateY(180deg);
+}
+
+/* Accesibilidad: foco visible */
+#nosiyes .flip:focus-visible,
+#cta-final .flip:focus-visible {
+  outline: 2px solid rgba(16,185,129,.6);
+  outline-offset: 3px;
+  border-radius: .75rem;
+}
+
+
 

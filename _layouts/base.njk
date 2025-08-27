@@ -17,17 +17,14 @@
 
   <!-- ✅ tipografía del sistema: cero bloqueo de render -->
   <style>
-
     /* Banderas emoji (mantener) */
     .emoji-flag {
       font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif !important;
       font-variant-emoji: emoji;
       line-height: 1;
     }
-
     /* (Opcional) si en el futuro autohospedas Poppins, aplícala solo a titulares:
-    h1, h2, h3 { font-family: "Poppins", ui-sans-serif, system-ui, sans-serif; }
-    */
+       h1, h2, h3 { font-family: "Poppins", ui-sans-serif, system-ui, sans-serif; } */
   </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -63,6 +60,34 @@
       const yearSpan = document.getElementById('year');
       if (yearSpan) yearSpan.textContent = new Date().getFullYear();
     })();
+
+    // ========== Flip global: click/teclado persistente SOLO en desktop ==========
+    // Nota: el CSS del flip está scopeado a #nosiyes y #cta-final.
+    // Si quieres usarlo en otra página (p.ej. #servicios), añade ese contenedor al selector de abajo
+    // y extiende también los selectores del CSS en style/input.css.
+    (function () {
+      const desktop = window.matchMedia('(hover:hover) and (pointer:fine)');
+      if (!desktop.matches) return; // móvil: sin click-to-flip
+
+      const scopeSelector = '#nosiyes .flip, #cta-final .flip';
+      document.querySelectorAll(scopeSelector).forEach((el) => {
+        if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+        el.setAttribute('role','button');
+        el.setAttribute('aria-pressed','false');
+
+        const toggle = () => {
+          const on = el.classList.toggle('is-flipped');
+          el.setAttribute('aria-pressed', on ? 'true' : 'false');
+        };
+
+        el.addEventListener('click', (e) => { e.stopPropagation(); toggle(); });
+        el.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+        });
+      });
+    })();
+    // ==========================================================================
+
   </script>
 
   {# Datos estructurados del negocio (globales) #}
