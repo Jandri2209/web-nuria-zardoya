@@ -58,7 +58,7 @@ collections:
       - label: "Pide tu cita"
         name: "cita"
         file: "pide_tu_cita.html"
-        preview_path: "pide-tu-cita/"
+        preview_path: "pide_tu_cita/"
         fields:
           - { label: "Título", name: "title", widget: "string" }
           - { label: "Descripción", name: "description", widget: "text", required: false }

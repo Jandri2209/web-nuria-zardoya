@@ -88,7 +88,7 @@ exports.handler = async (event) => {
     <p>Si quieres <strong>pedir cita directamente</strong> o simplemente ver mi calendario puedes hacerlo desde aquí:</p>
 
     <div style="text-align:center;margin:20px 0">
-      <a href="https://nuriazardoyalasheras.netlify.app/pide-tu-cita/"
+      <a href="https://nuriazardoyalasheras.netlify.app/pide_tu_cita/"
          style="display:inline-block;background:#22c55e;color:#fff;padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:600">
         Pide tu cita
       </a>
@@ -114,7 +114,7 @@ exports.handler = async (event) => {
       message ? `Mensaje: ${message}` : "",
       "",
       "Si quieres acelerar el proceso, puedes pedir cita aquí:",
-      "https://nuriazardoyalasheras.netlify.app/pide-tu-cita/",
+      "https://nuriazardoyalasheras.netlify.app/pide_tu_cita/",
       "",
       `— Nuria (${replyTo})`
     ].filter(Boolean).join("\n");
@@ -156,7 +156,7 @@ exports.handler = async (event) => {
 
     <div style="margin:16px 0 6px 0; display:flex;gap:10px;flex-wrap:wrap">
       <a href="${mailtoReply}" style="display:inline-block;background:#22c55e;color:#fff;padding:10px 16px;border-radius:999px;text-decoration:none;font-weight:600">Responder ahora</a>
-      <a href="https://nuriazardoyalasheras.netlify.app/pide-tu-cita/" style="display:inline-block;border:1px solid #22c55e;color:#15803d;padding:10px 16px;border-radius:999px;text-decoration:none;font-weight:600">Enviar enlace de cita</a>
+      <a href="https://nuriazardoyalasheras.netlify.app/pide_tu_cita/" style="display:inline-block;border:1px solid #22c55e;color:#15803d;padding:10px 16px;border-radius:999px;text-decoration:none;font-weight:600">Enviar enlace de cita</a>
     </div>
 
     <p style="margin:12px 0 0 0;color:#6b7280;font-size:12px">Adjunto: TXT y JSON con la consulta (útiles para archivar o imprimir a PDF).</p>
