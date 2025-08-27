@@ -44,3 +44,57 @@ body { font-family: 'Poppins', sans-serif; }
   }
 }
 
+/* ==== Flip cards Nuria ==== */
+
+/* Scopeado a secciones #nosiyes (NO/SÍ) y #cta-final */
+#nosiyes .flip,
+#cta-final .flip {
+  perspective: 1200px;
+}
+
+#nosiyes .flip__inner,
+#cta-final .flip__inner {
+  position: relative;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform .6s cubic-bezier(.2, .7, .1, 1);
+}
+
+#nosiyes .flip__face,
+#cta-final .flip__face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  border-radius: 0.75rem; /* ~rounded-xl */
+}
+
+#nosiyes .flip__back,
+#cta-final .flip__back {
+  transform: rotateY(180deg);
+}
+
+/* Solo en dispositivos con hover/puntero fino (ordenador) */
+@media (hover:hover) and (pointer:fine) {
+  #nosiyes .flip:hover .flip__inner,
+  #nosiyes .flip:focus-within .flip__inner {
+    transform: rotateY(180deg);
+  }
+
+  #cta-final .flip:hover .flip__inner,
+  #cta-final .flip:focus-within .flip__inner {
+    transform: rotateY(180deg);
+  }
+}
+
+/* Accesibilidad: usuarios con reducción de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  #nosiyes .flip__inner,
+  #cta-final .flip__inner {
+    transition: none;
+  }
+}
+
+
