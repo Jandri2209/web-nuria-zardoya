@@ -53,3 +53,8 @@
 [[edge_functions]]
 function = "lang-redirect"
 path = "/*"
+
+[[edge_functions]]
+function = "consent"
+path = "/api/consent"
+

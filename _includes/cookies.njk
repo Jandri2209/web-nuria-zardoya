@@ -84,9 +84,29 @@
   const btnCancel    = $("#cookie-cancel");
   const btnCloseX    = $("#cookie-close-x");
 
-  /* === Helpers cookies/localStorage === */
+  /* ===== Helpers de dominio/origen ===== */
+  function getOriginBase() {
+    // 1) canonical
+    try {
+      const can = document.querySelector('link[rel="canonical"]')?.href;
+      if (can) return new URL(can).origin;
+    } catch {}
+    // 2) si estamos en translate, reconstruye dominio original
+    if (IS_TRANSLATE) {
+      const raw = location.hostname.replace('.translate.goog', '');
+      return 'https://' + raw;
+    }
+    // 3) dominio actual
+    return location.origin;
+  }
+  const ORIGIN_BASE = getOriginBase();
+
+  /* ===== Helpers cookies/localStorage ===== */
   function writeCookie(name, value, maxAgeSecs = 31536000) {
-    try { document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAgeSecs}; SameSite=Lax`; } catch {}
+    // IMPORTANTÍSIMO: SameSite=None; Secure para que viaje desde paginas traducidas
+    try {
+      document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAgeSecs}; SameSite=None; Secure`;
+    } catch {}
   }
   function readCookie(name) {
     try {
@@ -94,42 +114,60 @@
       return m ? decodeURIComponent(m[1]) : null;
     } catch { return null; }
   }
-
-  function setConsent(consent) {
+  function getLocalConsent() {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    try {
+      const c = readCookie(LS_KEY);
+      if (c) return JSON.parse(c);
+    } catch {}
+    return null;
+  }
+  function saveLocalConsent(consent) {
     const value = { necessary: true, analytics: !!consent.analytics, marketing: !!consent.marketing };
     try { localStorage.setItem(LS_KEY, JSON.stringify(value)); } catch {}
     writeCookie(LS_KEY, JSON.stringify(value));
-    window.cookiePrefs = value;
-    window.dispatchEvent(new CustomEvent("cookie-preferences:updated", { detail: value }));
-    propagateCc(value); // añade _cc a enlaces internos si estamos en translate
+    return value;
   }
 
-  function applyConsent(consent) {
-    window.cookiePrefs = { necessary: true, analytics: !!consent.analytics, marketing: !!consent.marketing };
-  }
-
-  /* === NUEVO: helpers para leer/eliminar parámetros también del HASH === */
-  function getParamFromHash(name) {
+  /* ===== Sincronía con tu dominio (API 1P) ===== */
+  async function pullConsentFromOrigin() {
     try {
-      const h = (location.hash || "").replace(/^#/, "");
-      if (!h) return null;
-      const usp = new URLSearchParams(h);
-      return usp.get(name);
+      const r = await fetch(ORIGIN_BASE + '/api/consent', {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!r.ok) return null;
+      const data = await r.json();
+      return data && data.consent ? data.consent : null;
     } catch { return null; }
   }
-  function deleteParamFromHash(name) {
+  async function pushConsentToOrigin(consent) {
     try {
-      const h = (location.hash || "").replace(/^#/, "");
-      if (!h) return;
-      const usp = new URLSearchParams(h);
-      if (!usp.has(name)) return;
-      usp.delete(name);
-      const newHash = usp.toString();
-      history.replaceState({}, "", location.pathname + location.search + (newHash ? "#" + newHash : ""));
+      await fetch(ORIGIN_BASE + '/api/consent', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ consent: { analytics: !!consent.analytics, marketing: !!consent.marketing } })
+      });
     } catch {}
   }
+
+  /* ===== Aplicación UI ===== */
+  function applyConsent(consent) {
+    window.cookiePrefs = { necessary: true, analytics: !!consent.analytics, marketing: !!consent.marketing };
+    window.dispatchEvent(new CustomEvent("cookie-preferences:updated", { detail: window.cookiePrefs }));
+  }
+  function showBanner() { banner?.classList.remove("hidden"); }
+  function hideBanner() { banner?.classList.add("hidden"); }
+  function openModal()  { modal?.classList.remove("hidden"); document.body.style.overflow = "hidden"; }
+  function closeModal() { modal?.classList.add("hidden");    document.body.style.overflow = ""; }
+
+  // Limpia parámetros estéticos si llegan (por si acaso)
   function cleanupParams() {
-    // Borra _cc y _nolang tanto de ? como de #
     const sp = new URLSearchParams(location.search);
     let touched = false;
     ["_cc","_nolang"].forEach(k => { if (sp.has(k)) { sp.delete(k); touched = true; } });
@@ -137,112 +175,46 @@
       const clean = location.pathname + (sp.toString() ? "?" + sp.toString() : "") + location.hash;
       try { history.replaceState({}, "", clean); } catch {}
     }
-    deleteParamFromHash("_cc");
-    deleteParamFromHash("_nolang");
   }
 
-  /* === NUEVO: ya no dependemos del referrer (que a veces viene recortado) === */
-  function getConsent() {
-    // 1) ¿Viene en la query?
-    const sp = new URLSearchParams(location.search);
-    if (sp.has("_cc")) {
-      try {
-        const obj = JSON.parse(atob(sp.get("_cc")));
-        setConsent(obj);
-        return obj;
-      } catch {}
-    }
-    // 2) ¿Viene en el hash? (fallback robusto en Translate)
-    const ccHash = getParamFromHash("_cc");
-    if (ccHash) {
-      try {
-        const obj = JSON.parse(atob(ccHash));
-        setConsent(obj);
-        return obj;
-      } catch {}
-    }
-    // 3) localStorage
-    try {
-      const raw = localStorage.getItem(LS_KEY);
-      if (raw) return JSON.parse(raw);
-    } catch {}
-    // 4) cookie http
-    try {
-      const c = readCookie(LS_KEY);
-      if (c) return JSON.parse(c);
-    } catch {}
-    return null;
-  }
-
-  function showBanner() { banner?.classList.remove("hidden"); }
-  function hideBanner() { banner?.classList.add("hidden"); }
-  function openModal()  { modal?.classList.remove("hidden"); document.body.style.overflow = "hidden"; }
-  function closeModal() { modal?.classList.add("hidden");    document.body.style.overflow = ""; }
-
-  // === Propagación _cc (solo en translate.goog) ===
-  function ccEncode(consent) {
-    const v = { necessary: true, analytics: !!consent.analytics, marketing: !!consent.marketing };
-    try { return btoa(JSON.stringify(v)); } catch { return ""; }
-  }
-  function addCcToUrl(u, cc) {
-    try {
-      const url = new URL(u, location.origin);
-      url.searchParams.set("_cc", cc);
-      return url.pathname + url.search + url.hash;
-    } catch { return u; }
-  }
-  function propagateCc(consent) {
-    if (!IS_TRANSLATE || !consent) return;
-    const cc = ccEncode(consent);
-    document.querySelectorAll('a[href^="/"]').forEach(a => {
-      a.href = addCcToUrl(a.getAttribute("href"), cc);
-    });
-    document.querySelectorAll('form[action^="/"]').forEach(f => {
-      f.action = addCcToUrl(f.getAttribute("action"), cc);
-    });
-  }
-
-  // API pública
+  // API pública para abrir preferencias
   window.openCookiePreferences = function () {
-    const current = getConsent() || { necessary: true, analytics: false, marketing: false };
+    const current = getLocalConsent() || { necessary: true, analytics: false, marketing: false };
     if (ckAnalytics) ckAnalytics.checked = !!current.analytics;
     if (ckMarketing) ckMarketing.checked = !!current.marketing;
     openModal();
     (ckAnalytics || ckMarketing || btnSave)?.focus();
   };
 
-  // Banner
-  btnAcceptAll?.addEventListener("click", (e) => {
+  // Botonera banner
+  btnAcceptAll?.addEventListener("click", async (e) => {
     e.preventDefault();
-    setConsent({ analytics: true, marketing: true });
-    applyConsent({ analytics: true, marketing: true });
-    hideBanner();
-    cleanupParams();
+    const c = saveLocalConsent({ analytics: true, marketing: true });
+    applyConsent(c); hideBanner(); cleanupParams();
+    await pushConsentToOrigin(c);
   });
-  btnRejectAll?.addEventListener("click", (e) => {
+  btnRejectAll?.addEventListener("click", async (e) => {
     e.preventDefault();
-    setConsent({ analytics: false, marketing: false });
-    applyConsent({ analytics: false, marketing: false });
-    hideBanner();
-    cleanupParams();
+    const c = saveLocalConsent({ analytics: false, marketing: false });
+    applyConsent(c); hideBanner(); cleanupParams();
+    await pushConsentToOrigin(c);
   });
   btnOpenPrefs?.addEventListener("click", (e) => { e.preventDefault(); window.openCookiePreferences(); });
 
-  // Modal
-  btnSave?.addEventListener("click", (e) => {
+  // Botonera modal
+  btnSave?.addEventListener("click", async (e) => {
     e.preventDefault();
-    const consent = { analytics: ckAnalytics?.checked || false, marketing: ckMarketing?.checked || false };
-    setConsent(consent);
-    applyConsent(consent);
-    closeModal(); hideBanner();
-    cleanupParams();
+    const c = { analytics: ckAnalytics?.checked || false, marketing: ckMarketing?.checked || false };
+    const saved = saveLocalConsent(c);
+    applyConsent(saved); closeModal(); hideBanner(); cleanupParams();
+    await pushConsentToOrigin(saved);
   });
   btnCancel?.addEventListener("click", (e) => { e.preventDefault(); closeModal(); });
   btnCloseX?.addEventListener("click", (e) => { e.preventDefault(); closeModal(); });
 
   // Init
-  document.addEventListener("DOMContentLoaded", () => {
-    // Asegura banner/modal fuera de <form>
+  document.addEventListener("DOMContentLoaded", async () => {
+    // Saca banner/modal de cualquier <form> (por si acaso)
     (function __ensureOutsideForms() {
       const b = document.getElementById("cookie-banner");
       const m = document.getElementById("cookie-modal");
@@ -250,13 +222,27 @@
       if (m && m.closest("form")) document.body.appendChild(m);
     })();
 
-    const consent = getConsent();
-    if (!consent) showBanner(); else applyConsent(consent);
-    propagateCc(consent);
-    cleanupParams(); // limpia ?_cc / ?_nolang y #_cc / #_nolang
+    let consent = getLocalConsent();
+
+    // Si estamos en traducido y no hay preferencia local, tira del origen
+    if (!consent && IS_TRANSLATE) {
+      const remote = await pullConsentFromOrigin();
+      if (remote) {
+        consent = saveLocalConsent(remote); // guarda local en translate.goog
+      }
+    }
+
+    if (consent) {
+      applyConsent(consent);
+      hideBanner();
+    } else {
+      showBanner(); // primera visita sin preferencia (o 3PC bloqueadas)
+    }
+
+    cleanupParams();
   });
 
-  // Accesibilidad
+  // Accesibilidad + evitar pop-up "salir del sitio" en Translate
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && !modal?.classList.contains("hidden")) closeModal();
   });
@@ -267,47 +253,41 @@
     const t = e.target?.closest?.('#open-cookie-preferences, [data-open-cookie-preferences]');
     if (!t) return;
     e.preventDefault();
-    if (typeof window.openCookiePreferences === "function") window.openCookiePreferences();
+    window.openCookiePreferences && window.openCookiePreferences();
   });
 
-  // ===== Solo en Google Translate: blindaje anti pop-up reforzado =====
+  // Blindaje extra en Translate para evitar el diálogo molesto
   if (IS_TRANSLATE) {
-    // Bloquea submits del banner/modal
-    document.addEventListener("submit", (e) => {
-      const f = e.target;
-      if (f && f.closest('#cookie-banner, #cookie-modal')) {
-        e.preventDefault(); e.stopPropagation();
-      }
-    }, true);
-
-    // Interceptores en captura para todos los gestos de click
     const SEL = '#open-cookie-preferences, [data-open-cookie-preferences], #cookie-accept-all, #cookie-reject-all, #cookie-open-prefs, #cookie-save, #cookie-cancel, #cookie-close-x';
     const intercept = (type) => document.addEventListener(type, (e) => {
       const t = e.target && e.target.closest(SEL);
       if (!t) return;
       e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
-      // Acciones manuales
+      // Re-dispatch manual en los casos necesarios
       if (type === 'click' || type === 'pointerdown' || type === 'touchend' || type === 'mouseup' || type === 'auxclick') {
         const id = t.id;
         if (id === 'open-cookie-preferences' || id === 'cookie-open-prefs') {
           window.openCookiePreferences && window.openCookiePreferences();
         } else if (id === 'cookie-accept-all') {
-          setConsent({ analytics: true, marketing: true }); applyConsent({ analytics: true, marketing: true }); hideBanner(); cleanupParams();
+          const c = saveLocalConsent({ analytics: true, marketing: true });
+          applyConsent(c); hideBanner(); cleanupParams(); pushConsentToOrigin(c);
         } else if (id === 'cookie-reject-all') {
-          setConsent({ analytics: false, marketing: false }); applyConsent({ analytics: false, marketing: false }); hideBanner(); cleanupParams();
+          const c = saveLocalConsent({ analytics: false, marketing: false });
+          applyConsent(c); hideBanner(); cleanupParams(); pushConsentToOrigin(c);
         } else if (id === 'cookie-save') {
-          const consent = { analytics: ckAnalytics?.checked || false, marketing: ckMarketing?.checked || false };
-          setConsent(consent); applyConsent(consent); closeModal(); hideBanner(); cleanupParams();
+          const c = { analytics: ckAnalytics?.checked || false, marketing: ckMarketing?.checked || false };
+          const saved = saveLocalConsent(c);
+          applyConsent(saved); closeModal(); hideBanner(); cleanupParams(); pushConsentToOrigin(saved);
         } else if (id === 'cookie-cancel' || id === 'cookie-close-x') {
           closeModal();
         }
       }
     }, true);
-
     ['pointerdown','click','touchstart','touchend','mousedown','mouseup','auxclick'].forEach(intercept);
   }
 })();
 </script>
+
 
 
 
