@@ -103,6 +103,7 @@
       });
     })();
     // ==========================================================================
+
   </script>
 
   {# Datos estructurados del negocio (globales) #}
@@ -110,76 +111,5 @@
 
   {# Banner/modal de cookies #}
   {% include "cookies.njk" %}
-
-  {# ==== Google Translate: auto-aplicación sin redirección + modal congelado ==== #}
-  <script>
-  (function(){
-    // Congela banner/modal de cookies para que GT no meta tooltips ni mueva el layout
-    function freezeCookiesUI(){
-      ["cookie-banner","cookie-modal"].forEach(id=>{
-        const el=document.getElementById(id);
-        if(!el) return;
-        el.setAttribute("translate","no");
-        el.classList.add("notranslate");
-      });
-      const style=document.createElement("style");
-      style.textContent=`
-        .goog-te-banner-frame{display:none!important;}
-        body{top:0!important;}
-        #cookie-modal .VIpgJd-yAWNEb-L7lbkb,
-        #cookie-modal .VIpgJd-yAWNEb-hvhgNd,
-        #cookie-modal .goog-tooltip{display:none!important;}
-      `;
-      document.head.appendChild(style);
-    }
-
-    // Helpers cookies
-    function setCookie(name,val,attrs){ document.cookie = name+"="+encodeURIComponent(val)+";"+(attrs||""); }
-    function delCookie(name){
-      setCookie(name,"","Max-Age=0; Path=/");
-      setCookie(name,"","Max-Age=0; Path=/; Domain="+location.hostname);
-    }
-
-    // Asegura googtrans desde la pista de Edge antes de cargar el widget (evita flicker)
-    (function ensurePairFromHint(){
-      const m=document.cookie.match(/(?:^|; )gt_lang=([^;]+)/);
-      const hinted=m?decodeURIComponent(m[1]):"";
-      const hasPair=/(?:^|; )googtrans=\/es\//.test(document.cookie);
-      if(hinted && hinted!=="es" && !hasPair){
-        const pair="/es/"+hinted;
-        setCookie("googtrans",pair,"Max-Age=31536000; Path=/");
-        setCookie("googtrans",pair,"Max-Age=31536000; Path=/; Domain="+location.hostname);
-      }
-    })();
-
-    // Inicializa el widget
-    window.initGT=function(){
-      freezeCookiesUI();
-      new google.translate.TranslateElement({
-        pageLanguage:"es",
-        includedLanguages:"es,en,fr,eu",
-        autoDisplay:false
-      },"gt-el");
-    };
-
-    // API para tu menú de idioma
-    window.setLanguage=function(lang){
-      if(!lang || lang==="es"){
-        delCookie("gt_lang");
-        delCookie("googtrans");
-        location.reload();
-        return;
-      }
-      const pair="/es/"+lang;
-      setCookie("gt_lang",lang,"Max-Age=31536000; Path=/; SameSite=Lax");
-      setCookie("googtrans",pair,"Max-Age=31536000; Path=/");
-      setCookie("googtrans",pair,"Max-Age=31536000; Path=/; Domain="+location.hostname);
-      location.reload();
-    };
-  })();
-  </script>
-  <div id="gt-el" class="hidden"></div>
-  <script src="https://translate.google.com/translate_a/element.js?cb=initGT"></script>
-  {# ==== /Google Translate ==== #}
 </body>
 </html>
