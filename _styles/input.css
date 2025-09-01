@@ -6,34 +6,10 @@
 body { font-family: 'Poppins', sans-serif; }
 
 /* Poppins autoalojada */
-@font-face {
-  font-family: "Poppins";
-  src: url("/assets/fonts/poppins-400.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Poppins";
-  src: url("/assets/fonts/poppins-500.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Poppins";
-  src: url("/assets/fonts/poppins-600.woff2") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Poppins";
-  src: url("/assets/fonts/poppins-700.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
+@font-face { font-family: "Poppins"; src: url("/assets/fonts/poppins-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Poppins"; src: url("/assets/fonts/poppins-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Poppins"; src: url("/assets/fonts/poppins-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Poppins"; src: url("/assets/fonts/poppins-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
 
 /* Muy importante: gana a Preflight */
 @layer base {
@@ -45,67 +21,39 @@ body { font-family: 'Poppins', sans-serif; }
 }
 
 /* =================== Flip cards Nuria =================== */
-/* Scope a #nosiyes (NO/SÍ) y #cta-final */
-#nosiyes .flip,
-#cta-final .flip { perspective: 1200px; }
-
-#nosiyes .flip__inner,
-#cta-final .flip__inner {
-  position: relative;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform .6s cubic-bezier(.2,.7,.1,1);
-}
-
-#nosiyes .flip__face,
-#cta-final .flip__face {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backface-visibility: hidden;
-  border-radius: .75rem; /* ~rounded-xl */
-}
-
-#nosiyes .flip__back,
-#cta-final .flip__back { transform: rotateY(180deg); }
-
-/* Hover SOLO en desktop */
+#nosiyes .flip, #cta-final .flip { perspective: 1200px; }
+#nosiyes .flip__inner, #cta-final .flip__inner { position: relative; height: 100%; transform-style: preserve-3d; transition: transform .6s cubic-bezier(.2,.7,.1,1); }
+#nosiyes .flip__face, #cta-final .flip__face { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; backface-visibility: hidden; border-radius: .75rem; }
+#nosiyes .flip__back, #cta-final .flip__back { transform: rotateY(180deg); }
 @media (hover:hover) and (pointer:fine) {
   #nosiyes .flip:not(.nohover):hover .flip__inner { transform: rotateY(180deg); }
-  #cta-final .flip:not(.nohover):hover .flip__inner { transform: rotateY(180deg); }
+  #cta-final  .flip:not(.nohover):hover .flip__inner { transform: rotateY(180deg); }
 }
-
-/* Reduce motion */
-@media (prefers-reduced-motion: reduce) {
-  #nosiyes .flip__inner, #cta-final .flip__inner { transition: none; }
-}
-
-/* Alturas mínimas robustas (independientes de Tailwind) */
-#nosiyes .minh-112 { min-height: 112px; } /* ~7rem */
-#nosiyes .minh-160 { min-height: 160px; } /* ~10rem */
-#cta-final .minh-176 { min-height: 176px; } /* ~11rem */
-
-/* Estado persistente por click/teclado */
+@media (prefers-reduced-motion: reduce) { #nosiyes .flip__inner, #cta-final .flip__inner { transition: none; } }
+#nosiyes .minh-112 { min-height: 112px; }
+#nosiyes .minh-160 { min-height: 160px; }
+#cta-final .minh-176 { min-height: 176px; }
 #nosiyes .is-flipped .flip__inner, #cta-final .is-flipped .flip__inner { transform: rotateY(180deg); }
+#nosiyes .flip:focus-visible, #cta-final .flip:focus-visible { outline: 2px solid rgba(16,185,129,.6); outline-offset: 3px; border-radius: .75rem; }
 
-/* Accesibilidad: foco visible */
-#nosiyes .flip:focus-visible, #cta-final .flip:focus-visible {
-  outline: 2px solid rgba(16,185,129,.6);
-  outline-offset: 3px;
-  border-radius: .75rem;
-}
-
-/* ===== Google Translate (widget en tu dominio) — ocultar UI del widget ===== */
-.goog-te-banner-frame.skiptranslate { display: none !important; }
-iframe.goog-te-banner-frame         { display: none !important; } /* barra superior del widget */
-#goog-gt-tt,
-.goog-te-balloon-frame              { display: none !important; } /* tooltip/flotantes */
-.goog-text-highlight                { background: transparent !important; box-shadow: none !important; }
-
-/* A veces el widget mete top al <body> */
+/* =================== Google Translate =================== */
+/* No ocultamos la barra; solo evitamos tooltips/resaltados molestos */
+#goog-gt-tt, .goog-te-balloon-frame { display: none !important; }
+.goog-text-highlight, .VIpgJd-yAWNEb-VIpgJd-fmcmS-sn54Q { background: transparent !important; box-shadow: none !important; }
+/* A veces el widget mete top al <body>; lo anulamos */
 body { top: 0 !important; }
-
-/* Ocultar el gadget de Google (usamos nuestro menú propio) */
+/* Ocultamos el gadget visible: usamos menú propio */
 #gt-el, .goog-te-gadget { display: none !important; }
+
+/* ===== Offset para que la barra NUNCA tape nada ===== */
+:root               { --gtbar-h: 0px; }        /* altura por defecto */
+:root[data-gtbar=on]{ --gtbar-h: 42px; }       /* ajusta a 40–44 si ves 1–2px de más/menos */
+
+/* Mover el header fijo */
+#site-header { top: var(--gtbar-h) !important; }
+
+/* Compensar el padding-top del main (pt-24 / md:pt-32) con el mismo offset */
+body > main { padding-top: calc(6rem + var(--gtbar-h)) !important; }
+@media (min-width: 768px){
+  body > main { padding-top: calc(8rem + var(--gtbar-h)) !important; }
+}
