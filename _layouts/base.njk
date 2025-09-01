@@ -26,49 +26,6 @@
     /* (Opcional) si en el futuro autohospedas Poppins, aplícala solo a titulares:
        h1, h2, h3 { font-family: "Poppins", ui-sans-serif, system-ui, sans-serif; } */
   </style>
-
-  <!-- 🔇 Silenciador de UI de Google Translate (barra/tooltip/balloon) -->
-  <style id="gt-silencer">
-    /* Oculta la barra superior (iframe) y evita desplazamiento del body */
-    .goog-te-banner-frame { display: none !important; visibility: hidden !important; }
-    body { top: 0 !important; }
-
-    /* Tooltip y globo de ayuda de GT */
-    #goog-gt-tt, .goog-te-balloon-frame { display: none !important; visibility: hidden !important; }
-
-    /* Por si GT cuela overlays dentro del modal de cookies */
-    #cookie-modal .goog-tooltip,
-    #cookie-modal .VIpgJd-yAWNEb-L7lbkb,
-    #cookie-modal .VIpgJd-yAWNEb-hvhgNd {
-      display: none !important; visibility: hidden !important;
-    }
-  </style>
-  <script>
-    // Watcher: si GT reinyecta su UI, la ocultamos al vuelo (sin tocar tu lógica)
-    (function(){
-      const sel = [
-        '.goog-te-banner-frame',
-        '#goog-gt-tt',
-        '.goog-te-balloon-frame',
-        '.goog-tooltip',
-        '.VIpgJd-yAWNEb-L7lbkb',
-        '.VIpgJd-yAWNEb-hvhgNd'
-      ];
-      function hideGT(){
-        try{
-          document.body && document.body.style.setProperty('top','0','important');
-          sel.forEach(s => {
-            document.querySelectorAll(s).forEach(el => {
-              el.style.setProperty('display','none','important');
-              el.style.setProperty('visibility','hidden','important');
-            });
-          });
-        }catch(e){}
-      }
-      hideGT();
-      new MutationObserver(hideGT).observe(document.documentElement, { childList:true, subtree:true });
-    })();
-  </script>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
@@ -153,5 +110,98 @@
 
   {# Banner/modal de cookies #}
   {% include "cookies.njk" %}
+
+  <!-- ===== Plan B: Widget de Google Translate en tu dominio (auto + selector) ===== -->
+  <script>
+    (function(){
+      // ==== helpers cookie ====
+      function setCookie(n,v,a){ try{ document.cookie = n+"="+encodeURIComponent(v)+";"+(a||""); }catch(e){} }
+      function delCookie(n){
+        setCookie(n,"","Max-Age=0; Path=/");
+        setCookie(n,"","Max-Age=0; Path=/; Domain="+location.hostname);
+      }
+      function getGoogTrans(){
+        const m=document.cookie.match(/(?:^|;\s*)googtrans=([^;]+)/);
+        return m?decodeURIComponent(m[1]):"";
+      }
+      function currentLang(){
+        const pair=getGoogTrans();
+        if (pair && /\/es\/[a-z]{2}/i.test(pair)) return pair.split("/").pop().toLowerCase();
+        return "es";
+      }
+
+      // Si la Edge dejó gt_lang pero aún no hay googtrans, créalo para evitar flicker
+      (function ensurePairFromHint(){
+        const m=document.cookie.match(/(?:^|;\s*)gt_lang=([^;]+)/);
+        const hinted=m?decodeURIComponent(m[1]):"";
+        const hasPair=/(?:^|;\s*)googtrans=\/es\//.test(document.cookie);
+        if(hinted && hinted!=="es" && !hasPair){
+          const pair="/es/"+hinted;
+          setCookie("googtrans",pair,"Max-Age=31536000; Path=/");
+          setCookie("googtrans",pair,"Max-Age=31536000; Path=/; Domain="+location.hostname);
+        }
+      })();
+
+      // ==== inicializa TranslateElement (oculto) ====
+      window.initGT=function(){
+        try{
+          new google.translate.TranslateElement({
+            pageLanguage:"es",
+            includedLanguages:"es,en,fr,eu",
+            autoDisplay:false
+          },"gt-el");
+        }catch(e){}
+        syncLangUI(); // pinta el idioma activo en el menú
+      };
+
+      // ==== API pública para tu menú ====
+      window.setLanguage=function(lang){
+        if(!lang || lang==="es"){
+          delCookie("gt_lang"); delCookie("googtrans");
+          document.documentElement.setAttribute("lang","es-ES");
+          location.reload();
+          return;
+        }
+        const pair="/es/"+lang;
+        setCookie("gt_lang",lang,"Max-Age=31536000; Path=/; SameSite=Lax");
+        setCookie("googtrans",pair,"Max-Age=31536000; Path=/");
+        setCookie("googtrans",pair,"Max-Age=31536000; Path=/; Domain="+location.hostname);
+        document.documentElement.setAttribute("lang",lang);
+        location.reload();
+      };
+
+      // ==== Sincroniza el "activo" del menú Idioma ====
+      function syncLangUI(){
+        const lang=currentLang(); // 'es' | 'en' | 'fr' | 'eu'
+        // 1) Etiqueta visible del botón (si existe)
+        const label=document.getElementById("lang-current");
+        if(label){ label.textContent = ({es:"Español",en:"English",fr:"Français",eu:"Euskara"})[lang] || "Español"; }
+        // 2) Marca item activo
+        document.querySelectorAll('[data-lang]').forEach(el=>{
+          const on = el.getAttribute('data-lang') === lang;
+          el.setAttribute('aria-checked', on ? 'true' : 'false');
+          el.classList.toggle('font-semibold', on);
+        });
+        // 3) A11y: atributo lang en <html>
+        document.documentElement.setAttribute("lang", lang==="es" ? "es-ES" : lang);
+      }
+
+      // Hace que cualquier botón/enlace con data-set-language use la API
+      document.addEventListener("click",(e)=>{
+        const btn=e.target && e.target.closest('[data-set-language]');
+        if(!btn) return;
+        e.preventDefault();
+        const lang=btn.getAttribute('data-set-language');
+        window.setLanguage && window.setLanguage(lang);
+      });
+
+      // Sincroniza al cargar (por si hay navegación interna)
+      document.addEventListener("DOMContentLoaded", syncLangUI);
+    })();
+  </script>
+  <div id="gt-el" class="hidden"></div>
+  <script src="https://translate.google.com/translate_a/element.js?cb=initGT"></script>
+  <!-- ====================================================================== -->
+
 </body>
 </html>

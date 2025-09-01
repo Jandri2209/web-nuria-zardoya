@@ -1,7 +1,6 @@
 // netlify/edge-functions/lang-redirect.js
-// Redirección de primera visita según Accept-Language,
-// INYECTANDO _cc (consentimiento) DENTRO de `u`,
-// y excluyendo auditorías/bots.
+// Sugerencia de idioma en 1ª visita fijando cookies; **NO** redirige.
+// Respeta _nolang y la preferencia manual, y evita bots/auditorías.
 
 const SUPPORTED = new Set(["en", "fr", "eu"]);
 
@@ -22,53 +21,47 @@ const UA_SKIP = [
   "netlifybot", "rendertron", "prerender", "vercelbot",
 ];
 
-export default async (req) => {
-  if (req.method !== "GET") return;
+export default async (req, context) => {
+  if (req.method !== "GET") return context.next();
 
   const url = new URL(req.url);
 
-  // 1) No tocar estáticos ni panel
-  if (STATIC_RX.some((rx) => rx.test(url.pathname))) return;
+  // 1) No tocar estáticos ni /admin
+  if (STATIC_RX.some((rx) => rx.test(url.pathname))) return context.next();
 
-  // 2) No redirigir auditorías/bots
+  // 2) Saltar auditorías/bots
   const ua = (req.headers.get("user-agent") || "").toLowerCase();
-  if (UA_SKIP.some((token) => ua.includes(token))) return;
+  if (UA_SKIP.some((token) => ua.includes(token))) return context.next();
 
-  // 3) Respeta: ?_nolang=1 o preferencia manual (langpref)
-  if (url.searchParams.has("_nolang")) return;
+  // 3) Respeta opt-out y preferencia manual
+  if (url.searchParams.has("_nolang")) return context.next();
   const cookies = req.headers.get("cookie") || "";
-  if (/\blangpref=(es|stay)\b/.test(cookies)) return;
+  if (/\blangpref=(es|stay)\b/.test(cookies)) return context.next();          // el usuario dijo “no tocar”
+  if (/\bgoogtrans=\/es\/(en|fr|eu)\b/.test(cookies)) return context.next();   // ya sugerido antes
 
-  // 4) Si el navegador tiene español, no redirigir
+  // 4) Si el navegador tiene español, no sugerir
   const accept = (req.headers.get("accept-language") || "").toLowerCase();
-  if (/\bes(\b|-[a-z]{2}\b)/.test(accept)) return;
+  if (/\bes(\b|-[a-z]{2}\b)/.test(accept)) return context.next();
 
-  // 5) Primer idioma soportado (en, fr, eu)
+  // 5) Coge el primer idioma soportado
   const first = accept
     .split(",")
     .map((s) => s.split(";")[0].trim())
     .map((tag) => tag.split("-")[0])
     .find((code) => SUPPORTED.has(code));
-  if (!first) return;
+  if (!first) return context.next();
 
-  // 6) INYECTA _cc (base64 del JSON cookie-consent) dentro de la URL destino (u)
-  const dest = new URL(url.toString());
-  try {
-    const m = cookies.match(/(?:^|;\s*)cookie-consent=([^;]+)/);
-    if (m) {
-      const json = decodeURIComponent(m[1]); // la cookie ya es JSON
-      const base64 = btoa(json);
-      dest.searchParams.set("_cc", base64);  // <- clave del fix (va DENTRO de u)
-    }
-  } catch (_e) {}
+  // 6) Escribe cookies y continúa (sin redirigir)
+  const res = await context.next();
+  const host = new URL(req.url).hostname;
 
-  // 7) Redirige a Google Translate con u=... que YA lleva _cc
-  const target =
-    "https://translate.google.com/translate?sl=es&tl=" +
-    first +
-    "&u=" + encodeURIComponent(dest.toString());
+  res.headers.append("Set-Cookie", `gt_lang=${first}; Max-Age=31536000; Path=/; SameSite=Lax`);
+  // Cookie que el widget de Google Translate usa para auto-aplicar traducción
+  const pair = `/es/${first}`;
+  res.headers.append("Set-Cookie", `googtrans=${pair}; Max-Age=31536000; Path=/`);
+  res.headers.append("Set-Cookie", `googtrans=${pair}; Max-Age=31536000; Path=/; Domain=${host}`);
 
-  return Response.redirect(target, 302);
+  return res;
 };
 
 export const config = { path: "/*" };
