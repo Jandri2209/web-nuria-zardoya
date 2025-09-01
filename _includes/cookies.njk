@@ -2,11 +2,17 @@
 
 {# Silenciador visual de Google Translate (sin tocar base.njk) #}
 <style id="gt-silencer">
-  /* Oculta la barra superior de Google Translate y evita desplazamiento del body */
+  /* Oculta la barra superior (iframe) de Google Translate y evita desplazamiento del body */
   .goog-te-banner-frame { display: none !important; }
   body { top: 0 !important; }
 
-  /* Bloquea tooltips/overlays de GT dentro del modal de cookies */
+  /* Oculta el globo/tooltip global de GT (fuera o dentro del modal) */
+  #goog-gt-tt,
+  .goog-te-balloon-frame {
+    display: none !important;
+  }
+
+  /* Extra por si GT cuela tooltips internos en el modal */
   #cookie-modal .goog-tooltip,
   #cookie-modal .VIpgJd-yAWNEb-L7lbkb,
   #cookie-modal .VIpgJd-yAWNEb-hvhgNd {
@@ -224,6 +230,20 @@
     openModal();
     (ckAnalytics || ckMarketing || btnSave)?.focus();
   };
+
+  // --- LISTENERS explícitos (arregla apertura en ES) ---
+  // Botón del footer por id
+  document.getElementById('open-cookie-preferences')?.addEventListener('click', function(e){
+    e.preventDefault(); e.stopPropagation();
+    if (typeof window.openCookiePreferences === "function") window.openCookiePreferences();
+  }, true);
+  // Cualquier trigger con data-open-cookie-preferences
+  document.querySelectorAll('[data-open-cookie-preferences]').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      if (typeof window.openCookiePreferences === "function") window.openCookiePreferences();
+    }, true);
+  });
 
   // Banner
   btnAcceptAll?.addEventListener("click", (e) => {
