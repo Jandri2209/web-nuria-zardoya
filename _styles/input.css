@@ -45,7 +45,6 @@ body { font-family: 'Poppins', sans-serif; }
 }
 
 /* =================== Flip cards Nuria =================== */
-/* Scope a #nosiyes (NO/SÍ) y #cta-final */
 #nosiyes .flip,
 #cta-final .flip { perspective: 1200px; }
 
@@ -65,39 +64,34 @@ body { font-family: 'Poppins', sans-serif; }
   align-items: center;
   justify-content: center;
   backface-visibility: hidden;
-  border-radius: .75rem; /* ~rounded-xl */
+  border-radius: .75rem;
 }
 
 #nosiyes .flip__back,
 #cta-final .flip__back { transform: rotateY(180deg); }
 
-/* Hover SOLO en desktop */
 @media (hover:hover) and (pointer:fine) {
   #nosiyes .flip:not(.nohover):hover .flip__inner { transform: rotateY(180deg); }
   #cta-final .flip:not(.nohover):hover .flip__inner { transform: rotateY(180deg); }
 }
 
-/* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
   #nosiyes .flip__inner, #cta-final .flip__inner { transition: none; }
 }
 
-/* Alturas mínimas robustas (independientes de Tailwind) */
-#nosiyes .minh-112 { min-height: 112px; } /* ~7rem */
-#nosiyes .minh-160 { min-height: 160px; } /* ~10rem */
-#cta-final .minh-176 { min-height: 176px; } /* ~11rem */
+#nosiyes .minh-112 { min-height: 112px; }
+#nosiyes .minh-160 { min-height: 160px; }
+#cta-final .minh-176 { min-height: 176px; }
 
-/* Estado persistente por click/teclado */
 #nosiyes .is-flipped .flip__inner, #cta-final .is-flipped .flip__inner { transform: rotateY(180deg); }
 
-/* Accesibilidad: foco visible */
 #nosiyes .flip:focus-visible, #cta-final .flip:focus-visible {
   outline: 2px solid rgba(16,185,129,.6);
   outline-offset: 3px;
   border-radius: .75rem;
 }
 
-/* ===== Google Translate (widget en tu dominio) — ocultar UI del widget ===== */
+/* ===== Google Translate (widget) — ocultar UI y artefactos ===== */
 .goog-te-banner-frame.skiptranslate { display: none !important; }
 iframe.goog-te-banner-frame         { display: none !important; } /* barra superior del widget */
 #goog-gt-tt,

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  {# Bloquea la barra de traducción del NAVEGADOR (Chrome), no el widget #}
+  <!-- Bloquea la barra de traducción del NAVEGADOR (Chrome). No afecta al widget. -->
   <meta name="google" content="notranslate">
 
   {# SEO centralizado #}
@@ -12,22 +12,19 @@
 
   <link rel="icon" type="image/jpeg" href="/images/hero.jpeg">
 
-  {# Tailwind compilado (cambia el ?v= para bust de caché cuando toques input.css) #}
-  <link rel="stylesheet" href="/assets/styles.css?v=20250901">
+  {# IMPORTANT: bump de versión para bustear caché del CSS #}
+  <link rel="stylesheet" href="/assets/styles.css?v=20250902">
 
   {# Iconos #}
   <script src="https://unpkg.com/lucide@latest" defer></script>
 
-  <!-- ✅ tipografía del sistema: cero bloqueo de render -->
+  <!-- tipografía del sistema opcional -->
   <style>
-    /* Banderas emoji (mantener) */
     .emoji-flag {
       font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif !important;
       font-variant-emoji: emoji;
       line-height: 1;
     }
-    /* (Opcional) si en el futuro autohospedas Poppins, aplícala solo a titulares:
-       h1, h2, h3 { font-family: "Poppins", ui-sans-serif, system-ui, sans-serif; } */
   </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -41,7 +38,7 @@
   {% include "footer.njk" %}
 
   <script>
-    // Asegura iconos una vez que lucide y el DOM están listos
+    // Iconos
     (function () {
       function initIcons(){ try { window.lucide && window.lucide.createIcons(); } catch(e){} }
       if (document.readyState === "loading") {
@@ -64,11 +61,11 @@
       if (yearSpan) yearSpan.textContent = new Date().getFullYear();
     })();
 
-    // ========== Flip global: click/teclado persistente SOLO en desktop ==========
+    // Flip cards sólo desktop
     (function () {
       const hasHoverFine = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
       const isWide = window.matchMedia('(min-width: 1024px)').matches;
-      if (!(hasHoverFine || isWide)) return; // móvil/tablet estrecho: sin click-to-flip
+      if (!(hasHoverFine || isWide)) return;
 
       const scopeSelector = '#nosiyes .flip, #cta-final .flip';
       document.querySelectorAll(scopeSelector).forEach((el) => {
@@ -77,7 +74,6 @@
         el.setAttribute('aria-pressed','false');
 
         const isInteractive = (t) => !!t.closest('a,button,input,select,textarea,label,[role="button"]');
-
         const toggle = () => {
           const on = el.classList.toggle('is-flipped');
           el.setAttribute('aria-pressed', on ? 'true' : 'false');
@@ -99,17 +95,12 @@
         el.addEventListener('blur',       () => el.classList.remove('nohover'));
       });
     })();
-    // ==========================================================================
-
   </script>
 
-  {# Datos estructurados del negocio (globales) #}
   {% include "ld-localbusiness.njk" %}
-
-  {# Banner/modal de cookies #}
   {% include "cookies.njk" %}
 
-  <!-- ===== Plan B: Widget de Google Translate en tu dominio (auto + selector) ===== -->
+  <!-- ===== Widget Google Translate (en tu dominio) ===== -->
   <script>
     (function(){
       // ==== helpers cookie ====
@@ -128,7 +119,7 @@
         return "es";
       }
 
-      // Si la Edge dejó gt_lang pero aún no hay googtrans, créalo para evitar flicker
+      // Si la Edge dejó gt_lang pero aún no hay googtrans, créalo
       (function ensurePairFromHint(){
         const m=document.cookie.match(/(?:^|;\s*)gt_lang=([^;]+)/);
         const hinted=m?decodeURIComponent(m[1]):"";
@@ -140,7 +131,7 @@
         }
       })();
 
-      // ==== inicializa TranslateElement (oculto) ====
+      // Inicialización del gadget (oculto)
       window.initGT=function(){
         try{
           new google.translate.TranslateElement({
@@ -149,10 +140,10 @@
             autoDisplay:false
           },"gt-el");
         }catch(e){}
-        syncLangUI(); // pinta el idioma activo en el menú
+        syncLangUI();
       };
 
-      // ==== API pública para tu menú ====
+      // API pública de cambio de idioma (tu menú)
       window.setLanguage=function(lang){
         if(!lang || lang==="es"){
           delCookie("gt_lang"); delCookie("googtrans");
@@ -168,9 +159,8 @@
         location.reload();
       };
 
-      // ==== Sincroniza el "activo" del menú Idioma (no tocamos el texto del botón) ====
       function syncLangUI(){
-        const lang=currentLang(); // 'es' | 'en' | 'fr' | 'eu'
+        const lang=currentLang();
         document.querySelectorAll('[data-lang]').forEach(el=>{
           const on = el.getAttribute('data-lang') === lang;
           el.setAttribute('aria-checked', on ? 'true' : 'false');
@@ -179,7 +169,6 @@
         document.documentElement.setAttribute("lang", lang==="es" ? "es-ES" : lang);
       }
 
-      // Hace que cualquier botón/enlace con data-set-language use la API
       document.addEventListener("click",(e)=>{
         const btn=e.target && e.target.closest('[data-set-language]');
         if(!btn) return;
@@ -187,10 +176,9 @@
         const lang=btn.getAttribute('data-set-language');
         window.setLanguage && window.setLanguage(lang);
       });
-
       document.addEventListener("DOMContentLoaded", syncLangUI);
 
-      // ===== CARGA CONDICIONAL del script del widget (mejora Performance) =====
+      // ===== Carga condicional del script del widget (mejora performance) =====
       (function loadGTIfNeeded(){
         var pair = (document.cookie.match(/(?:^|;\s*)googtrans=([^;]+)/)||[])[1];
         var nonES = pair && /\/es\/(en|fr|eu)\b/i.test(decodeURIComponent(pair||''));
@@ -203,21 +191,31 @@
         document.head.appendChild(s);
       })();
 
-      // ===== Kill-switch: por si el widget reinyecta su barra, la ocultamos al vuelo =====
-      (function killGTBanner(){
+      // ===== “Nuke” de la barra del widget (eliminar del DOM + quitar top) =====
+      (function nukeGTUI(){
         try {
-          var b = document.querySelector('iframe.goog-te-banner-frame');
-          if (b) b.style.display = 'none';
-          if (getComputedStyle(document.body).top !== '0px') { document.body.style.top = '0px'; }
+          // Elimina la barra (iframe) si aparece
+          var ifr = document.querySelector('iframe.goog-te-banner-frame');
+          if (ifr && ifr.parentNode) ifr.parentNode.removeChild(ifr);
+
+          // Quita cualquier top que Google ponga en <body>
+          if (getComputedStyle(document.body).top !== '0px') {
+            document.body.style.top = '0px';
+          }
+
+          // Elimina tooltip antiguo, por si aparece
+          var tt = document.getElementById('goog-gt-tt');
+          if (tt && tt.parentNode) tt.parentNode.removeChild(tt);
+
         } catch(e){}
-        setTimeout(killGTBanner, 600);
+        setTimeout(nukeGTUI, 500); // vigila reinyectado
       })();
     })();
   </script>
 
   <!-- Contenedor oculto del gadget de Google -->
   <div id="gt-el" class="hidden"></div>
-  <!-- (No cargamos el script aquí; se inyecta de forma condicional arriba) -->
+  <!-- Nota: NO hay <script src="...translate_a/element.js"> directo; se inyecta arriba condicionalmente -->
 
 </body>
 </html>
