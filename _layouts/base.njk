@@ -192,7 +192,7 @@
       }
 
       // ==== Offset de la barra ====
-      const NUDGE = 5; // píxeles para evitar la línea verde
+      const NUDGE = 0; // píxeles para evitar la línea verde
       function measureBannerHeight(){
         const ifr = document.querySelector('iframe.goog-te-banner-frame') ||
                     document.querySelector('.skiptranslate iframe');
@@ -231,7 +231,7 @@
         host.innerHTML = `
           <div class="pointer-events-auto mx-auto max-w-fit bg-white/95 backdrop-blur border shadow-lg rounded-xl
                       px-3 py-2 text-sm flex items-center gap-2">
-            <span class="text-gray-800">Has dejado esta página en ${esName}. ¿Qué prefieres para el resto del sitio?</span>
+            <span class="text-gray-800">Has dejado esta página en ${prevName}. ¿Qué prefieres para el resto del sitio?</span>
             <button data-gt-exit="global" class="px-2 py-1 rounded-lg bg-green-600 text-white hover:bg-green-700">
               ${esName} en todo el sitio
             </button>
