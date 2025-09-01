@@ -175,7 +175,7 @@
         const lang=currentLang(); // 'es' | 'en' | 'fr' | 'eu'
         // 1) Etiqueta visible del botón (si existe)
         const label=document.getElementById("lang-current");
-        if(label){ label.textContent = ({es:"Español",en:"English",fr:"Français",eu:"Euskara"})[lang] || "Español"; }
+        if(label){ label.textContent = "Idioma"; }
         // 2) Marca item activo
         document.querySelectorAll('[data-lang]').forEach(el=>{
           const on = el.getAttribute('data-lang') === lang;

@@ -112,3 +112,16 @@ body { font-family: 'Poppins', sans-serif; }
   outline-offset: 3px;
   border-radius: .75rem;
 }
+
+/* ===== Google Translate (widget en TU dominio) — ocultar UI ===== */
+.goog-te-banner-frame.skiptranslate { display: none !important; }
+iframe.goog-te-banner-frame         { display: none !important; } /* iframe barra superior */
+#goog-gt-tt,
+.goog-te-balloon-frame              { display: none !important; } /* tooltip/flotantes */
+.goog-text-highlight                { background: transparent !important; box-shadow: none !important; }
+
+/* A veces Google mete top a <body> al mostrar su barra; lo anulamos */
+body { top: 0 !important; }
+
+/* Nuestro gadget está oculto, reforzamos por si acaso */
+#gt-el, .goog-te-gadget { display: none !important; }
