@@ -26,6 +26,49 @@
     /* (Opcional) si en el futuro autohospedas Poppins, aplícala solo a titulares:
        h1, h2, h3 { font-family: "Poppins", ui-sans-serif, system-ui, sans-serif; } */
   </style>
+
+  <!-- 🔇 Silenciador de UI de Google Translate (barra/tooltip/balloon) -->
+  <style id="gt-silencer">
+    /* Oculta la barra superior (iframe) y evita desplazamiento del body */
+    .goog-te-banner-frame { display: none !important; visibility: hidden !important; }
+    body { top: 0 !important; }
+
+    /* Tooltip y globo de ayuda de GT */
+    #goog-gt-tt, .goog-te-balloon-frame { display: none !important; visibility: hidden !important; }
+
+    /* Por si GT cuela overlays dentro del modal de cookies */
+    #cookie-modal .goog-tooltip,
+    #cookie-modal .VIpgJd-yAWNEb-L7lbkb,
+    #cookie-modal .VIpgJd-yAWNEb-hvhgNd {
+      display: none !important; visibility: hidden !important;
+    }
+  </style>
+  <script>
+    // Watcher: si GT reinyecta su UI, la ocultamos al vuelo (sin tocar tu lógica)
+    (function(){
+      const sel = [
+        '.goog-te-banner-frame',
+        '#goog-gt-tt',
+        '.goog-te-balloon-frame',
+        '.goog-tooltip',
+        '.VIpgJd-yAWNEb-L7lbkb',
+        '.VIpgJd-yAWNEb-hvhgNd'
+      ];
+      function hideGT(){
+        try{
+          document.body && document.body.style.setProperty('top','0','important');
+          sel.forEach(s => {
+            document.querySelectorAll(s).forEach(el => {
+              el.style.setProperty('display','none','important');
+              el.style.setProperty('visibility','hidden','important');
+            });
+          });
+        }catch(e){}
+      }
+      hideGT();
+      new MutationObserver(hideGT).observe(document.documentElement, { childList:true, subtree:true });
+    })();
+  </script>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
@@ -103,7 +146,6 @@
       });
     })();
     // ==========================================================================
-
   </script>
 
   {# Datos estructurados del negocio (globales) #}

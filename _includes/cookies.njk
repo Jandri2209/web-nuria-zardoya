@@ -1,25 +1,5 @@
 {# Banner y modal de preferencias de cookies (AEPD-friendly) #}
 
-{# Silenciador visual de Google Translate (sin tocar base.njk) #}
-<style id="gt-silencer">
-  /* Oculta la barra superior (iframe) de Google Translate y evita desplazamiento del body */
-  .goog-te-banner-frame { display: none !important; }
-  body { top: 0 !important; }
-
-  /* Oculta el globo/tooltip global de GT (fuera o dentro del modal) */
-  #goog-gt-tt,
-  .goog-te-balloon-frame {
-    display: none !important;
-  }
-
-  /* Extra por si GT cuela tooltips internos en el modal */
-  #cookie-modal .goog-tooltip,
-  #cookie-modal .VIpgJd-yAWNEb-L7lbkb,
-  #cookie-modal .VIpgJd-yAWNEb-hvhgNd {
-    display: none !important;
-  }
-</style>
-
 <!-- Banner (primera capa) -->
 <div id="cookie-banner" class="fixed inset-x-0 bottom-0 z-50 hidden">
   <div class="mx-auto max-w-4xl m-4 rounded-2xl border bg-white shadow-xl p-4 md:p-5">
@@ -42,7 +22,7 @@
 </div>
 
 <!-- Modal de preferencias (segunda capa) -->
-<div id="cookie-modal" translate="no" class="notranslate fixed inset-0 z-[70] hidden">
+<div id="cookie-modal" class="fixed inset-0 z-50 hidden">
   <div class="absolute inset-0 bg-black/40" aria-hidden="true"></div>
   <div role="dialog" aria-modal="true" aria-labelledby="cookie-modal-title"
        class="mx-auto max-w-xl mt-24 rounded-2xl border bg-white shadow-2xl p-6 relative
@@ -128,7 +108,7 @@
     window.cookiePrefs = { necessary: true, analytics: !!consent.analytics, marketing: !!consent.marketing };
   }
 
-  /* === Helpers para leer/eliminar parámetros también del HASH === */
+  /* === NUEVO: helpers para leer/eliminar parámetros también del HASH === */
   function getParamFromHash(name) {
     try {
       const h = (location.hash || "").replace(/^#/, "");
@@ -161,7 +141,7 @@
     deleteParamFromHash("_nolang");
   }
 
-  /* === Lectura de consentimiento (query/hash/localStorage/cookie) === */
+  /* === NUEVO: ya no dependemos del referrer (que a veces viene recortado) === */
   function getConsent() {
     // 1) ¿Viene en la query?
     const sp = new URLSearchParams(location.search);
@@ -231,20 +211,6 @@
     (ckAnalytics || ckMarketing || btnSave)?.focus();
   };
 
-  // --- LISTENERS explícitos (arregla apertura en ES) ---
-  // Botón del footer por id
-  document.getElementById('open-cookie-preferences')?.addEventListener('click', function(e){
-    e.preventDefault(); e.stopPropagation();
-    if (typeof window.openCookiePreferences === "function") window.openCookiePreferences();
-  }, true);
-  // Cualquier trigger con data-open-cookie-preferences
-  document.querySelectorAll('[data-open-cookie-preferences]').forEach(function(el){
-    el.addEventListener('click', function(e){
-      e.preventDefault(); e.stopPropagation();
-      if (typeof window.openCookiePreferences === "function") window.openCookiePreferences();
-    }, true);
-  });
-
   // Banner
   btnAcceptAll?.addEventListener("click", (e) => {
     e.preventDefault();
@@ -296,18 +262,52 @@
   });
   modal?.querySelector('[aria-hidden="true"]')?.addEventListener("click", closeModal);
 
-  // ===== Lifeguard-lite: forzar apertura del modal en translate.goog =====
+  // Delegado global: footer/header abren preferencias
+  document.addEventListener("click", (e) => {
+    const t = e.target?.closest?.('#open-cookie-preferences, [data-open-cookie-preferences]');
+    if (!t) return;
+    e.preventDefault();
+    if (typeof window.openCookiePreferences === "function") window.openCookiePreferences();
+  });
+
+  // ===== Solo en Google Translate: blindaje anti pop-up reforzado =====
   if (IS_TRANSLATE) {
-    const SEL = '#open-cookie-preferences, [data-open-cookie-preferences], #cookie-open-prefs';
-    const forceOpen = (e) => {
+    // Bloquea submits del banner/modal
+    document.addEventListener("submit", (e) => {
+      const f = e.target;
+      if (f && f.closest('#cookie-banner, #cookie-modal')) {
+        e.preventDefault(); e.stopPropagation();
+      }
+    }, true);
+
+    // Interceptores en captura para todos los gestos de click
+    const SEL = '#open-cookie-preferences, [data-open-cookie-preferences], #cookie-accept-all, #cookie-reject-all, #cookie-open-prefs, #cookie-save, #cookie-cancel, #cookie-close-x';
+    const intercept = (type) => document.addEventListener(type, (e) => {
       const t = e.target && e.target.closest(SEL);
       if (!t) return;
       e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
-      if (typeof window.openCookiePreferences === "function") window.openCookiePreferences();
-    };
-    ['pointerdown','click','touchend','mouseup','auxclick'].forEach(type => {
-      document.addEventListener(type, forceOpen, true); // captura
-    });
+      // Acciones manuales
+      if (type === 'click' || type === 'pointerdown' || type === 'touchend' || type === 'mouseup' || type === 'auxclick') {
+        const id = t.id;
+        if (id === 'open-cookie-preferences' || id === 'cookie-open-prefs') {
+          window.openCookiePreferences && window.openCookiePreferences();
+        } else if (id === 'cookie-accept-all') {
+          setConsent({ analytics: true, marketing: true }); applyConsent({ analytics: true, marketing: true }); hideBanner(); cleanupParams();
+        } else if (id === 'cookie-reject-all') {
+          setConsent({ analytics: false, marketing: false }); applyConsent({ analytics: false, marketing: false }); hideBanner(); cleanupParams();
+        } else if (id === 'cookie-save') {
+          const consent = { analytics: ckAnalytics?.checked || false, marketing: ckMarketing?.checked || false };
+          setConsent(consent); applyConsent(consent); closeModal(); hideBanner(); cleanupParams();
+        } else if (id === 'cookie-cancel' || id === 'cookie-close-x') {
+          closeModal();
+        }
+      }
+    }, true);
+
+    ['pointerdown','click','touchstart','touchend','mousedown','mouseup','auxclick'].forEach(intercept);
   }
 })();
 </script>
+
+
+
