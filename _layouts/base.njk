@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  {# Bloquea la barra de traducción del NAVEGADOR (Chrome), no el widget #}
+  <meta name="google" content="notranslate">
+
   {# SEO centralizado #}
   {% include "seo.njk" %}
 
   <link rel="icon" type="image/jpeg" href="/images/hero.jpeg">
 
-  {# Tailwind compilado (generado a /assets/styles.css en el build) #}
-  <link rel="stylesheet" href="/assets/styles.css?v=20250826">
+  {# Tailwind compilado (cambia el ?v= para bust de caché cuando toques input.css) #}
+  <link rel="stylesheet" href="/assets/styles.css?v=20250901">
 
   {# Iconos #}
   <script src="https://unpkg.com/lucide@latest" defer></script>
@@ -62,11 +65,7 @@
     })();
 
     // ========== Flip global: click/teclado persistente SOLO en desktop ==========
-    // Nota: el CSS del flip está scopeado a #nosiyes y #cta-final.
-    // Si quieres usarlo en otra página (p.ej. #servicios), añade ese contenedor al selector de abajo
-    // y extiende también los selectores del CSS en style/input.css.
     (function () {
-      // Activa click en: (a) equipos con hover y puntero fino, O (b) pantallas ≥ 1024px (md)
       const hasHoverFine = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
       const isWide = window.matchMedia('(min-width: 1024px)').matches;
       if (!(hasHoverFine || isWide)) return; // móvil/tablet estrecho: sin click-to-flip
@@ -82,13 +81,12 @@
         const toggle = () => {
           const on = el.classList.toggle('is-flipped');
           el.setAttribute('aria-pressed', on ? 'true' : 'false');
-          // Al cerrar con click: no reabrir por hover hasta salir + quitar foco visual
           if (!on) { el.classList.add('nohover'); el.blur(); }
           else     { el.classList.remove('nohover'); }
         };
 
         el.addEventListener('click', (e) => {
-          if (isInteractive(e.target)) return; // no interferir con enlaces/botones internos
+          if (isInteractive(e.target)) return;
           e.stopPropagation();
           toggle();
         });
@@ -97,12 +95,12 @@
           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
         });
 
-        // Al salir del área o perder foco, reactivar el hover normal
         el.addEventListener('mouseleave', () => el.classList.remove('nohover'));
         el.addEventListener('blur',       () => el.classList.remove('nohover'));
       });
     })();
     // ==========================================================================
+
   </script>
 
   {# Datos estructurados del negocio (globales) #}
@@ -170,19 +168,14 @@
         location.reload();
       };
 
-      // ==== Sincroniza el "activo" del menú Idioma ====
+      // ==== Sincroniza el "activo" del menú Idioma (no tocamos el texto del botón) ====
       function syncLangUI(){
         const lang=currentLang(); // 'es' | 'en' | 'fr' | 'eu'
-        // 1) Etiqueta visible del botón (si existe)
-        const label=document.getElementById("lang-current");
-        if(label){ label.textContent = "Idioma"; }
-        // 2) Marca item activo
         document.querySelectorAll('[data-lang]').forEach(el=>{
           const on = el.getAttribute('data-lang') === lang;
           el.setAttribute('aria-checked', on ? 'true' : 'false');
           el.classList.toggle('font-semibold', on);
         });
-        // 3) A11y: atributo lang en <html>
         document.documentElement.setAttribute("lang", lang==="es" ? "es-ES" : lang);
       }
 
@@ -195,13 +188,36 @@
         window.setLanguage && window.setLanguage(lang);
       });
 
-      // Sincroniza al cargar (por si hay navegación interna)
       document.addEventListener("DOMContentLoaded", syncLangUI);
+
+      // ===== CARGA CONDICIONAL del script del widget (mejora Performance) =====
+      (function loadGTIfNeeded(){
+        var pair = (document.cookie.match(/(?:^|;\s*)googtrans=([^;]+)/)||[])[1];
+        var nonES = pair && /\/es\/(en|fr|eu)\b/i.test(decodeURIComponent(pair||''));
+        if (!nonES) return; // en ES no cargamos nada
+        if (window.__gt_loaded) return;
+        window.__gt_loaded = true;
+        var s = document.createElement('script');
+        s.src = 'https://translate.google.com/translate_a/element.js?cb=initGT';
+        s.defer = true;
+        document.head.appendChild(s);
+      })();
+
+      // ===== Kill-switch: por si el widget reinyecta su barra, la ocultamos al vuelo =====
+      (function killGTBanner(){
+        try {
+          var b = document.querySelector('iframe.goog-te-banner-frame');
+          if (b) b.style.display = 'none';
+          if (getComputedStyle(document.body).top !== '0px') { document.body.style.top = '0px'; }
+        } catch(e){}
+        setTimeout(killGTBanner, 600);
+      })();
     })();
   </script>
+
+  <!-- Contenedor oculto del gadget de Google -->
   <div id="gt-el" class="hidden"></div>
-  <script src="https://translate.google.com/translate_a/element.js?cb=initGT"></script>
-  <!-- ====================================================================== -->
+  <!-- (No cargamos el script aquí; se inyecta de forma condicional arriba) -->
 
 </body>
 </html>
