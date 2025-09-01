@@ -1,5 +1,19 @@
 {# Banner y modal de preferencias de cookies (AEPD-friendly) #}
 
+{# Silenciador visual de Google Translate (sin tocar base.njk) #}
+<style id="gt-silencer">
+  /* Oculta la barra superior de Google Translate y evita desplazamiento del body */
+  .goog-te-banner-frame { display: none !important; }
+  body { top: 0 !important; }
+
+  /* Bloquea tooltips/overlays de GT dentro del modal de cookies */
+  #cookie-modal .goog-tooltip,
+  #cookie-modal .VIpgJd-yAWNEb-L7lbkb,
+  #cookie-modal .VIpgJd-yAWNEb-hvhgNd {
+    display: none !important;
+  }
+</style>
+
 <!-- Banner (primera capa) -->
 <div id="cookie-banner" class="fixed inset-x-0 bottom-0 z-50 hidden">
   <div class="mx-auto max-w-4xl m-4 rounded-2xl border bg-white shadow-xl p-4 md:p-5">
@@ -22,7 +36,7 @@
 </div>
 
 <!-- Modal de preferencias (segunda capa) -->
-<div id="cookie-modal" translate="no" class="notranslate fixed inset-0 z-50 hidden">
+<div id="cookie-modal" translate="no" class="notranslate fixed inset-0 z-[70] hidden">
   <div class="absolute inset-0 bg-black/40" aria-hidden="true"></div>
   <div role="dialog" aria-modal="true" aria-labelledby="cookie-modal-title"
        class="mx-auto max-w-xl mt-24 rounded-2xl border bg-white shadow-2xl p-6 relative
@@ -108,7 +122,7 @@
     window.cookiePrefs = { necessary: true, analytics: !!consent.analytics, marketing: !!consent.marketing };
   }
 
-  /* === NUEVO: helpers para leer/eliminar parámetros también del HASH === */
+  /* === Helpers para leer/eliminar parámetros también del HASH === */
   function getParamFromHash(name) {
     try {
       const h = (location.hash || "").replace(/^#/, "");
@@ -141,7 +155,7 @@
     deleteParamFromHash("_nolang");
   }
 
-  /* === NUEVO: ya no dependemos del referrer (que a veces viene recortado) === */
+  /* === Lectura de consentimiento (query/hash/localStorage/cookie) === */
   function getConsent() {
     // 1) ¿Viene en la query?
     const sp = new URLSearchParams(location.search);
@@ -262,6 +276,18 @@
   });
   modal?.querySelector('[aria-hidden="true"]')?.addEventListener("click", closeModal);
 
-  // (lifeguard eliminado)
+  // ===== Lifeguard-lite: forzar apertura del modal en translate.goog =====
+  if (IS_TRANSLATE) {
+    const SEL = '#open-cookie-preferences, [data-open-cookie-preferences], #cookie-open-prefs';
+    const forceOpen = (e) => {
+      const t = e.target && e.target.closest(SEL);
+      if (!t) return;
+      e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+      if (typeof window.openCookiePreferences === "function") window.openCookiePreferences();
+    };
+    ['pointerdown','click','touchend','mouseup','auxclick'].forEach(type => {
+      document.addEventListener(type, forceOpen, true); // captura
+    });
+  }
 })();
 </script>
