@@ -33,6 +33,7 @@
   {% include "footer.njk" %}
 
   <script>
+    // Iconos cuando el DOM está listo
     (function () {
       function initIcons(){ try { window.lucide && window.lucide.createIcons(); } catch(e){} }
       if (document.readyState === "loading") {
@@ -40,6 +41,7 @@
       } else { initIcons(); }
     })();
 
+    // Menú móvil (fallback global)
     (function () {
       const menuBtn = document.getElementById('menu-btn');
       const mobileMenu = document.getElementById('mobile-menu');
@@ -48,11 +50,13 @@
       document.addEventListener('keydown', (e) => { if (e.key === 'Escape') mobileMenu.classList.add('hidden'); });
     })();
 
+    // Año en footer
     (function () {
       const yearSpan = document.getElementById('year');
       if (yearSpan) yearSpan.textContent = new Date().getFullYear();
     })();
 
+    // Flip cards solo desktop
     (function () {
       const hasHoverFine = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
       const isWide = window.matchMedia('(min-width: 1024px)').matches;
@@ -82,7 +86,7 @@
   {% include "ld-localbusiness.njk" %}
   {% include "cookies.njk" %}
 
-  <!-- ===== Plan B: Widget de Google Translate en tu dominio (auto + selector) ===== -->
+  <!-- ===== Plan B: Widget de Google Translate (auto + selector + prompt al cerrar) ===== -->
   <script>
     (function(){
       // ==== helpers cookie ====
@@ -95,9 +99,10 @@
         const m=document.cookie.match(/(?:^|;\s*)googtrans=([^;]+)/);
         return m?decodeURIComponent(m[1]):"";
       }
-      function pairLang(){
-        const p=getGoogTrans(); if (!p) return "";
-        const parts=p.split("/"); return parts[parts.length-1].toLowerCase();
+      function currentLang(){
+        const p=getGoogTrans();
+        if (p && /\/es\/[a-z]{2}/i.test(p)) return p.split('/').pop().toLowerCase();
+        return 'es';
       }
 
       // ¿Está realmente traducida ahora?
@@ -139,6 +144,7 @@
       window.setLanguage=function(lang){
         if(!lang || lang==="es"){
           delCookie("gt_lang"); delCookie("googtrans");
+          setCookie("langpref","es","Max-Age=2592000; Path=/; SameSite=Lax");
           document.documentElement.setAttribute("lang","es-ES");
           location.reload();
           return;
@@ -151,8 +157,7 @@
         location.reload();
       };
 
-      // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-      // Delegado: clicks del menú Idioma (header/footer) -> setLanguage
+      // Delegado: clicks del menú Idioma (header/footer)
       document.addEventListener('click', function(e){
         const btn = e.target && e.target.closest('[data-set-language]');
         if (!btn) return;
@@ -160,12 +165,11 @@
         const lang = btn.getAttribute('data-set-language');
         if (window.setLanguage) window.setLanguage(lang);
       });
-      // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-      // ==== Marca el activo según la VISTA real ====
+      // Marca el activo según la VISTA real
       function syncLangUI(){
         const translated = isTranslatedNow();
-        const lang = translated ? (pairLang() || "es") : "es";
+        const lang = translated ? (currentLang() || "es") : "es";
         document.querySelectorAll('[data-lang]').forEach(el=>{
           const on = el.getAttribute('data-lang') === lang;
           el.setAttribute('aria-checked', on ? 'true' : 'false');
@@ -174,9 +178,8 @@
         document.documentElement.setAttribute("lang", lang==="es" ? "es-ES" : lang);
       }
 
-      // ==== Cálculo del offset de la barra ====
-      const NUDGE = 2; // quita 2px para que no asome el borde verde
-
+      // ==== Offset de la barra ====
+      const NUDGE = 3; // píxeles para evitar la línea verde
       function measureBannerHeight(){
         const ifr = document.querySelector('iframe.goog-te-banner-frame') ||
                     document.querySelector('.skiptranslate iframe');
@@ -187,11 +190,10 @@
         const top = parseFloat(getComputedStyle(document.body).top) || 0;
         return top > 0 ? Math.round(top) : 0;
       }
-
       function setBarOffset(on, h){
         const root = document.documentElement;
         if (on) {
-          const val = Math.max(0, (h|0) - NUDGE);
+          const val = Math.max(0, (h|0) + NUDGE);
           root.style.setProperty('--gtbar-h', val + 'px');
           root.setAttribute('data-gtbar','on');
           try { document.body.style.top = '0px'; } catch(e){}
@@ -202,12 +204,66 @@
         }
       }
 
+      // === >>> MODO DE SALIDA AL CERRAR LA ❌ (A/B/C) <<<
+      // 'page'  -> solo esta página (nativo)
+      // 'global'-> todo el sitio vuelve a ES automáticamente
+      // 'prompt'-> preguntar con un aviso (recomendado por ti)
+      const EXIT_MODE = 'prompt';
+
+      function showLangExitPrompt(){
+        const id = 'gt-exit-prompt';
+        if (document.getElementById(id)) return;
+        const host = document.createElement('div');
+        host.id = id;
+        host.className = 'fixed inset-x-0 top-[var(--gtbar-h)] z-[70] flex justify-center pointer-events-none';
+        host.innerHTML = `
+          <div class="pointer-events-auto mx-auto max-w-fit bg-white/95 backdrop-blur border shadow-lg rounded-xl
+                      px-3 py-2 text-sm flex items-center gap-2">
+            <span class="text-gray-800">¿Seguir traduciendo el resto del sitio?</span>
+            <button data-gt-exit="page" class="px-2 py-1 rounded-lg border hover:bg-gray-50">Solo esta página</button>
+            <button data-gt-exit="global" class="px-2 py-1 rounded-lg bg-green-600 text-white hover:bg-green-700">Todo el sitio</button>
+            <button aria-label="Cerrar" data-gt-exit="close" class="ml-1 px-2 py-1 rounded-lg hover:bg-gray-50">✕</button>
+          </div>`;
+        document.body.appendChild(host);
+
+        host.addEventListener('click', (e)=>{
+          const b = e.target && e.target.closest('[data-gt-exit]');
+          if (!b) return;
+          const v = b.getAttribute('data-gt-exit');
+          host.remove();
+          if (v === 'global') {
+            delCookie('gt_lang'); delCookie('googtrans');
+            setCookie('langpref','es','Max-Age=2592000; Path=/; SameSite=Lax');
+            document.documentElement.setAttribute('lang','es-ES');
+            syncLangUI();
+          } else if (v === 'page') {
+            // Nada: mantenemos las cookies, solo fue esta página
+          }
+          // 'close' simplemente cierra el aviso
+        });
+      }
+
       function updateGTLayout(){
         const translated = isTranslatedNow();
         const h = measureBannerHeight();
         const barVisible = translated && h > 0;
         setBarOffset(barVisible, h);
-        syncLangUI(); // si cierran con "X", volvemos a ES en el menú
+        syncLangUI();
+
+        // Si la barra pasó de visible -> oculta mientras no estamos en ES,
+        // ejecuta según EXIT_MODE
+        const was = updateGTLayout.__lastH || 0;
+        if (was > 0 && h === 0 && currentLang() !== 'es') {
+          if (EXIT_MODE === 'global') {
+            delCookie('gt_lang'); delCookie('googtrans');
+            setCookie('langpref','es','Max-Age=2592000; Path=/; SameSite=Lax');
+            document.documentElement.setAttribute('lang','es-ES');
+            syncLangUI();
+          } else if (EXIT_MODE === 'prompt') {
+            showLangExitPrompt();
+          } // 'page' no hace nada
+        }
+        updateGTLayout.__lastH = h;
       }
 
       function rafUpdate(){
