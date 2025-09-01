@@ -1,7 +1,7 @@
 {# Banner y modal de preferencias de cookies (AEPD-friendly) #}
 
 <!-- Banner (primera capa) -->
-<div id="cookie-banner" class="fixed inset-x-0 bottom-0 z-50 hidden">
+<div id="cookie-banner" translate="no" class="notranslate fixed inset-x-0 bottom-0 z-50 hidden">
   <div class="mx-auto max-w-4xl m-4 rounded-2xl border bg-white shadow-xl p-4 md:p-5">
     <div class="md:flex md:items-start md:gap-4">
       <div class="flex-1">
@@ -22,7 +22,7 @@
 </div>
 
 <!-- Modal de preferencias (segunda capa) -->
-<div id="cookie-modal" class="fixed inset-0 z-50 hidden">
+<div id="cookie-modal" translate="no" class="notranslate fixed inset-0 z-[60] hidden">
   <div class="absolute inset-0 bg-black/40" aria-hidden="true"></div>
   <div role="dialog" aria-modal="true" aria-labelledby="cookie-modal-title"
        class="mx-auto max-w-xl mt-24 rounded-2xl border bg-white shadow-2xl p-6 relative
@@ -108,7 +108,7 @@
     window.cookiePrefs = { necessary: true, analytics: !!consent.analytics, marketing: !!consent.marketing };
   }
 
-  /* === NUEVO: helpers para leer/eliminar parámetros también del HASH === */
+  /* === Helpers para leer/eliminar parámetros también del HASH === */
   function getParamFromHash(name) {
     try {
       const h = (location.hash || "").replace(/^#/, "");
@@ -141,7 +141,7 @@
     deleteParamFromHash("_nolang");
   }
 
-  /* === NUEVO: ya no dependemos del referrer (que a veces viene recortado) === */
+  /* === Lectura de consentimiento (query/hash/localStorage/cookie) === */
   function getConsent() {
     // 1) ¿Viene en la query?
     const sp = new URLSearchParams(location.search);
@@ -308,6 +308,3 @@
   }
 })();
 </script>
-
-
-
