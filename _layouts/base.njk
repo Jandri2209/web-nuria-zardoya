@@ -7,18 +7,13 @@
   <!-- Bloquea la barra de traducción del NAVEGADOR (Chrome), no el widget -->
   <meta name="google" content="notranslate">
 
-  {# SEO centralizado #}
   {% include "seo.njk" %}
 
   <link rel="icon" type="image/jpeg" href="/images/hero.jpeg">
-
-  {# Tailwind compilado (bust de caché si cambias input.css) #}
   <link rel="stylesheet" href="/assets/styles.css?v=20250901">
 
-  {# Iconos #}
   <script src="https://unpkg.com/lucide@latest" defer></script>
 
-  <!-- Tipografía/emoji -->
   <style>
     .emoji-flag{
       font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif!important;
@@ -38,7 +33,6 @@
   {% include "footer.njk" %}
 
   <script>
-    // Iconos cuando el DOM está listo
     (function () {
       function initIcons(){ try { window.lucide && window.lucide.createIcons(); } catch(e){} }
       if (document.readyState === "loading") {
@@ -46,7 +40,6 @@
       } else { initIcons(); }
     })();
 
-    // Menú móvil (fallback global)
     (function () {
       const menuBtn = document.getElementById('menu-btn');
       const mobileMenu = document.getElementById('mobile-menu');
@@ -55,13 +48,11 @@
       document.addEventListener('keydown', (e) => { if (e.key === 'Escape') mobileMenu.classList.add('hidden'); });
     })();
 
-    // Año en footer
     (function () {
       const yearSpan = document.getElementById('year');
       if (yearSpan) yearSpan.textContent = new Date().getFullYear();
     })();
 
-    // Flip cards solo desktop
     (function () {
       const hasHoverFine = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
       const isWide = window.matchMedia('(min-width: 1024px)').matches;
@@ -88,10 +79,7 @@
     })();
   </script>
 
-  {# Datos estructurados #}
   {% include "ld-localbusiness.njk" %}
-
-  {# Banner/modal de cookies #}
   {% include "cookies.njk" %}
 
   <!-- ===== Plan B: Widget de Google Translate en tu dominio (auto + selector) ===== -->
@@ -163,6 +151,17 @@
         location.reload();
       };
 
+      // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      // Delegado: clicks del menú Idioma (header/footer) -> setLanguage
+      document.addEventListener('click', function(e){
+        const btn = e.target && e.target.closest('[data-set-language]');
+        if (!btn) return;
+        e.preventDefault();
+        const lang = btn.getAttribute('data-set-language');
+        if (window.setLanguage) window.setLanguage(lang);
+      });
+      // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
       // ==== Marca el activo según la VISTA real ====
       function syncLangUI(){
         const translated = isTranslatedNow();
@@ -211,7 +210,6 @@
         syncLangUI(); // si cierran con "X", volvemos a ES en el menú
       }
 
-      // Throttle por rAF
       function rafUpdate(){
         if (window.__gt_raf) return;
         window.__gt_raf = requestAnimationFrame(function(){
@@ -233,7 +231,6 @@
         document.head.appendChild(s);
       })();
 
-      // Observadores para reaccionar a cambios del widget
       const moClass  = new MutationObserver(rafUpdate);
       moClass.observe(document.documentElement, { attributes:true, attributeFilter:['class'] });
       moClass.observe(document.body,            { attributes:true, attributeFilter:['class','style'] });
