@@ -10,15 +10,16 @@
   {% include "seo.njk" %}
 
   <link rel="icon" type="image/jpeg" href="/images/hero.jpeg">
+  <!-- Actualiza el ?v= cuando recompiles CSS -->
   <link rel="stylesheet" href="/assets/styles.css?v=20250901">
 
   <script src="https://unpkg.com/lucide@latest" defer></script>
 
   <style>
+    /* Banderas emoji (mantener) */
     .emoji-flag{
       font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif!important;
-      font-variant-emoji: emoji;
-      line-height:1;
+      font-variant-emoji:emoji; line-height:1;
     }
   </style>
 </head>
@@ -41,7 +42,7 @@
       } else { initIcons(); }
     })();
 
-    // Menú móvil (fallback global)
+    // Menú móvil (fallback global por si el header no está cargado aún)
     (function () {
       const menuBtn = document.getElementById('menu-btn');
       const mobileMenu = document.getElementById('mobile-menu');
@@ -104,11 +105,8 @@
         if (p && /\/es\/[a-z]{2}/i.test(p)) return p.split('/').pop().toLowerCase();
         return 'es';
       }
-
-      // ¿Está realmente traducida ahora?
       function isTranslatedNow() {
-        const el = document.documentElement;
-        const b  = document.body;
+        const el = document.documentElement, b = document.body;
         return el.classList.contains('translated-ltr') ||
                el.classList.contains('translated-rtl') ||
                b.classList.contains('translated-ltr')  ||
@@ -166,20 +164,35 @@
         if (window.setLanguage) window.setLanguage(lang);
       });
 
-      // Marca el activo según la VISTA real
+      // Endónimos bonitos para el menú/prompt
+      function labelFor(lang){
+        switch((lang||'es').toLowerCase()){
+          case 'en': return 'English';
+          case 'fr': return 'Français';
+          case 'eu': return 'Euskara';
+          default:   return 'Castellano';
+        }
+      }
+
+      // Marca el activo según la VISTA real + actualiza texto del botón
       function syncLangUI(){
         const translated = isTranslatedNow();
         const lang = translated ? (currentLang() || "es") : "es";
+
         document.querySelectorAll('[data-lang]').forEach(el=>{
           const on = el.getAttribute('data-lang') === lang;
           el.setAttribute('aria-checked', on ? 'true' : 'false');
           el.classList.toggle('font-semibold', on);
         });
+
+        const cur = document.getElementById('lang-current');
+        if (cur) cur.textContent = labelFor(lang);
+
         document.documentElement.setAttribute("lang", lang==="es" ? "es-ES" : lang);
       }
 
       // ==== Offset de la barra ====
-      const NUDGE = 3; // píxeles para evitar la línea verde
+      const NUDGE = 5; // píxeles para evitar la línea verde
       function measureBannerHeight(){
         const ifr = document.querySelector('iframe.goog-te-banner-frame') ||
                     document.querySelector('.skiptranslate iframe');
@@ -204,26 +217,30 @@
         }
       }
 
-      // === >>> MODO DE SALIDA AL CERRAR LA ❌ (A/B/C) <<<
-      // 'page'  -> solo esta página (nativo)
-      // 'global'-> todo el sitio vuelve a ES automáticamente
-      // 'prompt'-> preguntar con un aviso (recomendado por ti)
-      const EXIT_MODE = 'prompt';
-
-      function showLangExitPrompt(){
+      // Prompt cuando el usuario cierra la barra (❌)
+      function showLangExitPrompt(prevLang){
         const id = 'gt-exit-prompt';
         if (document.getElementById(id)) return;
+
+        const prevName = labelFor(prevLang);
+        const esName   = labelFor('es');
+
         const host = document.createElement('div');
         host.id = id;
         host.className = 'fixed inset-x-0 top-[var(--gtbar-h)] z-[70] flex justify-center pointer-events-none';
         host.innerHTML = `
           <div class="pointer-events-auto mx-auto max-w-fit bg-white/95 backdrop-blur border shadow-lg rounded-xl
                       px-3 py-2 text-sm flex items-center gap-2">
-            <span class="text-gray-800">¿Seguir traduciendo el resto del sitio?</span>
-            <button data-gt-exit="page" class="px-2 py-1 rounded-lg border hover:bg-gray-50">Solo esta página</button>
-            <button data-gt-exit="global" class="px-2 py-1 rounded-lg bg-green-600 text-white hover:bg-green-700">Todo el sitio</button>
+            <span class="text-gray-800">Has dejado esta página en ${esName}. ¿Qué prefieres para el resto del sitio?</span>
+            <button data-gt-exit="global" class="px-2 py-1 rounded-lg bg-green-600 text-white hover:bg-green-700">
+              ${esName} en todo el sitio
+            </button>
+            <button data-gt-exit="keep" class="px-2 py-1 rounded-lg border hover:bg-gray-50">
+              Seguir en ${prevName}
+            </button>
             <button aria-label="Cerrar" data-gt-exit="close" class="ml-1 px-2 py-1 rounded-lg hover:bg-gray-50">✕</button>
           </div>`;
+
         document.body.appendChild(host);
 
         host.addEventListener('click', (e)=>{
@@ -231,15 +248,26 @@
           if (!b) return;
           const v = b.getAttribute('data-gt-exit');
           host.remove();
+
           if (v === 'global') {
+            // 👉 Todo el sitio en ES (limpia cookies de traducción)
             delCookie('gt_lang'); delCookie('googtrans');
-            setCookie('langpref','es','Max-Age=2592000; Path=/; SameSite=Lax');
+            try { document.cookie = 'langpref=es; Max-Age=2592000; Path=/; SameSite=Lax'; } catch(e){}
             document.documentElement.setAttribute('lang','es-ES');
             syncLangUI();
-          } else if (v === 'page') {
-            // Nada: mantenemos las cookies, solo fue esta página
+          } else if (v === 'keep') {
+            // 👉 Volver a traducir en el idioma anterior y mantenerlo globalmente
+            const lang = (prevLang||'').toLowerCase();
+            if (lang && lang !== 'es') {
+              const pair = '/es/' + lang;
+              setCookie('gt_lang', lang, 'Max-Age=31536000; Path=/; SameSite=Lax');
+              setCookie('googtrans', pair, 'Max-Age=31536000; Path=/');
+              setCookie('googtrans', pair, 'Max-Age=31536000; Path=/; Domain=' + location.hostname);
+              document.documentElement.setAttribute('lang', lang);
+              location.reload(); // necesitamos que el widget reaplique
+            }
           }
-          // 'close' simplemente cierra el aviso
+          // 'close' => no hacemos nada (solo esta página en ES; al navegar volverá el idioma previo)
         });
       }
 
@@ -247,21 +275,17 @@
         const translated = isTranslatedNow();
         const h = measureBannerHeight();
         const barVisible = translated && h > 0;
+
         setBarOffset(barVisible, h);
         syncLangUI();
 
-        // Si la barra pasó de visible -> oculta mientras no estamos en ES,
-        // ejecuta según EXIT_MODE
+        // Detecta transición de visible -> oculta
         const was = updateGTLayout.__lastH || 0;
-        if (was > 0 && h === 0 && currentLang() !== 'es') {
-          if (EXIT_MODE === 'global') {
-            delCookie('gt_lang'); delCookie('googtrans');
-            setCookie('langpref','es','Max-Age=2592000; Path=/; SameSite=Lax');
-            document.documentElement.setAttribute('lang','es-ES');
-            syncLangUI();
-          } else if (EXIT_MODE === 'prompt') {
-            showLangExitPrompt();
-          } // 'page' no hace nada
+        if (was > 0 && h === 0) {
+          const prev = currentLang(); // idioma que había antes de cerrar
+          if (prev !== 'es') {
+            showLangExitPrompt(prev); // opción C: preguntamos
+          }
         }
         updateGTLayout.__lastH = h;
       }
