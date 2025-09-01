@@ -61,7 +61,7 @@
                 class="cursor-pointer flex items-center gap-2 text-gray-600 hover:text-green-600"
                 aria-haspopup="true" aria-expanded="false" aria-controls="lang-menu">
           <i data-lucide="globe" class="w-5 h-5"></i>
-          <span class="hidden lg:inline">Idioma</span>
+          <span class="hidden lg:inline" id="lang-current">Idioma</span>
         </button>
 
         <!-- MENÚ -->
@@ -71,28 +71,32 @@
                    invisible opacity-0 translate-y-1
                    group-hover:visible group-hover:opacity-100 group-hover:translate-y-0">
           <li>
-            <button id="lang-es" type="button" hreflang="es" data-lang="es"
+            <button id="lang-es" type="button" hreflang="es" data-lang="es" data-set-language="es"
+                    role="menuitemradio" aria-checked="false"
                     class="w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50">
               <img src="/images/flag-es.png" alt="Bandera de España" class="w-5 h-5 rounded-sm">
               <span>Castellano (ES)</span>
             </button>
           </li>
           <li>
-            <button id="lang-en" type="button" hreflang="en" data-lang="en"
+            <button id="lang-en" type="button" hreflang="en" data-lang="en" data-set-language="en"
+                    role="menuitemradio" aria-checked="false"
                     class="w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50">
               <img src="/images/flag-gb.png" alt="Bandera del Reino Unido" class="w-5 h-5 rounded-sm">
               <span>English (EN)</span>
             </button>
           </li>
           <li>
-            <button id="lang-fr" type="button" hreflang="fr" data-lang="fr"
+            <button id="lang-fr" type="button" hreflang="fr" data-lang="fr" data-set-language="fr"
+                    role="menuitemradio" aria-checked="false"
                     class="w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50">
               <img src="/images/flag-fr.png" alt="Bandera de Francia" class="w-5 h-5 rounded-sm">
               <span>Français (FR)</span>
             </button>
           </li>
           <li>
-            <button id="lang-eu" type="button" hreflang="eu" data-lang="eu"
+            <button id="lang-eu" type="button" hreflang="eu" data-lang="eu" data-set-language="eu"
+                    role="menuitemradio" aria-checked="false"
                     class="w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-50">
               <img src="/images/ikurrina.png" alt="Ikurriña (País Vasco)" class="w-5 h-5 rounded-sm">
               <span>Euskara (EU)</span>
@@ -144,19 +148,23 @@
       <div class="mt-1 pt-2 border-t border-gray-100">
         <p class="px-1 pb-1 text-xs uppercase tracking-wide text-gray-500">Idioma</p>
         <div class="grid grid-cols-2 gap-2">
-          <button id="mlang-es" type="button" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
+          <button id="mlang-es" type="button" data-set-language="es"
+                  class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
             <img src="/images/flag-es.png" alt="" class="w-5 h-5 rounded-sm" loading="lazy" decoding="async">
             <span>Castellano</span>
           </button>
-          <button id="mlang-en" type="button" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
+          <button id="mlang-en" type="button" data-set-language="en"
+                  class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
             <img src="/images/flag-gb.png" alt="" class="w-5 h-5 rounded-sm" loading="lazy" decoding="async">
             <span>English</span>
           </button>
-          <button id="mlang-fr" type="button" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
+          <button id="mlang-fr" type="button" data-set-language="fr"
+                  class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
             <img src="/images/flag-fr.png" alt="" class="w-5 h-5 rounded-sm" loading="lazy" decoding="async">
             <span>Français</span>
           </button>
-          <button id="mlang-eu" type="button" class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
+          <button id="mlang-eu" type="button" data-set-language="eu"
+                  class="flex items-center justify-center gap-2 py-2 text-sm text-center rounded-lg border hover:bg-green-50">
             <img src="/images/ikurrina.png" alt="" class="w-5 h-5 rounded-sm" loading="lazy" decoding="async">
             <span>Euskara</span>
           </button>
@@ -167,9 +175,9 @@
 </header>
 
 <script>
-  // ===== Limpiador de ?_nolang=1 al cargar en tu dominio =====
+  // ===== Limpiador de ?_nolang=1 al cargar en tu dominio (harmless) =====
   (function () {
-    if (/\.translate\.goog$/.test(location.hostname)) return; // solo en tu dominio canónico
+    if (/\.translate\.goog$/.test(location.hostname)) return;
     const sp = new URLSearchParams(location.search);
     if (sp.has('_nolang')) {
       try { document.cookie = 'langpref=es; Path=/; Max-Age=2592000; SameSite=Lax'; } catch {}
@@ -252,80 +260,6 @@
 
     btn.addEventListener('click', (e) => { e.preventDefault(); const ex = btn.getAttribute('aria-expanded') === 'true'; ex ? close() : open(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-  })();
-
-  // ===== Auto-traducción: construir URLs seguras (con _cc en u=) =====
-  (function () {
-    const IS_TRANSLATE = /\.translate\.goog$/.test(location.hostname);
-
-    function stripParams(u, keys = ['_cc','_nolang']) {
-      try {
-        const url = new URL(u, location.origin);
-        keys.forEach(k => url.searchParams.delete(k));
-        return url.origin + url.pathname + (url.search ? url.search : '') + url.hash;
-      } catch { return u; }
-    }
-
-    function getCanonical() {
-      const link = document.querySelector('link[rel="canonical"]');
-      return link && link.href ? link.href : null;
-    }
-
-    function getOriginalUrl() {
-      const loc = window.location;
-      const hrefNoHash = loc.href.split('#')[0];
-
-      const can = getCanonical();
-      if (can) return stripParams(can);
-
-      try {
-        const u = new URL(hrefNoHash).searchParams.get('u');
-        if (u) return stripParams(u);
-      } catch {}
-
-      if ((loc.hostname || '').endsWith('.translate.goog')) {
-        const raw = loc.hostname.replace('.translate.goog','');
-        return stripParams('https://' + raw + loc.pathname + loc.search);
-      }
-
-      return stripParams(hrefNoHash);
-    }
-
-    const original = getOriginalUrl();
-
-    // Inyecta _cc DENTRO de u=
-    let uWithCc = original;
-    try {
-      const ls = localStorage.getItem('cookie-consent');
-      if (ls) {
-        const u = new URL(original);
-        u.searchParams.set('_cc', btoa(ls));
-        uWithCc = u.toString();
-      }
-    } catch {}
-
-    const base = 'https://translate.google.com/translate?sl=es&u=' + encodeURIComponent(uWithCc);
-    const urls = {
-      es: IS_TRANSLATE
-          ? (original + (original.includes('?') ? '&' : '?') + '_nolang=1') // solo si estás en translate.goog
-          : original,                                                       // en tu dominio, ES limpio
-      en: base + '&tl=en&hl=en',
-      fr: base + '&tl=fr&hl=fr',
-      eu: base + '&tl=eu&hl=eu'
-    };
-
-    // Click handlers (desktop + móvil)
-    [
-      ['lang-es','es'],['lang-en','en'],['lang-fr','fr'],['lang-eu','eu'],
-      ['mlang-es','es'],['mlang-en','en'],['mlang-fr','fr'],['mlang-eu','eu']
-    ].forEach(([id, code]) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.addEventListener('click', (ev) => {
-        ev.preventDefault();
-        window.location.assign(urls[code]);
-      }, { passive:false });
-    });
   })();
 
   // ===== Idioma desktop: hover por CSS, click para fijar abierto =====
