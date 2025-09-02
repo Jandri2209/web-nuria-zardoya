@@ -68,8 +68,7 @@ exports.handler = async (event) => {
     const sigImgURL = process.env.SIGNATURE_IMG_URL || ""; // opcional
 
     // ========= AUTO-REPLY AL USUARIO =========
-    const logoUrl = "https://nuriazardoyalasheras.netlify.app/images/hero.jpeg"; // súbelo a /images si aún no está
-
+    const logoUrl = "https://nuriazardoyalasheras.netlify.app/images/hero.jpeg";
     const replyHtml = `
 <div style="font-family:system-ui,Segoe UI,Roboto,Arial;max-width:640px;margin:auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #eef1f3">
   <div style="background:#22c55e;color:#fff;padding:16px 24px">
