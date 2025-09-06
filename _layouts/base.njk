@@ -9,6 +9,27 @@
 
   {% include "seo.njk" %}
 
+  {# -- Verificación Search Console (opcional, si configuraste site.meta.googleSiteVerification) -- #}
+  {% if site.meta.googleSiteVerification %}
+  <meta name="google-site-verification" content="{{ site.meta.googleSiteVerification }}">
+  {% endif %}
+
+  <!-- JSON-LD: WebSite + SearchAction (sitelinks search box) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": "{{ site.url }}/#website",
+    "url": "{{ site.url }}",
+    "name": "{{ site.name }}",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "{{ site.url }}/buscador/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
   <link rel="icon" type="image/jpeg" href="/images/hero.jpeg">
   <!-- Actualiza el ?v= cuando recompiles CSS -->
   <link rel="stylesheet" href="/assets/styles.css?v=20250901">
@@ -324,6 +345,5 @@
   </script>
   <div id="gt-el" class="hidden"></div>
   <!-- ====================================================================== -->
-
 </body>
 </html>

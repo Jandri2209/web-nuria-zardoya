@@ -1,10 +1,44 @@
 {
-  "url": "https://nuriazardoyalasheras.netlify.app",
+  "url": "https://nuriazardoya.es",
   "name": "Nuria Zardoya - Dietista-Nutricionista",
+  "legalName": "Nuria Zardoya Lasheras",
   "defaultTitle": "Dietista-Nutricionista en Navarra | Nuria Zardoya",
   "defaultDescription": "Consulta presencial en Ribaforada y online. Alimentación consciente basada en evidencia.",
-  "socialImage": "/images/pixar.jpeg",
   "lang": "es-ES",
-  "businessId": "https://nuriazardoyalasheras.netlify.app",
-  "email": "nuriariba03@gmail.com"
+
+  "email": "nuriazardoyalasheras@gmail.com",
+  "telephone": "+34 601 401 677",
+
+  "businessId": "https://nuriazardoya.es/#org",
+  "logo": "/images/logo.png",
+  "socialImage": "/images/pixar.jpeg",
+
+  "sameAs": [
+    "https://www.instagram.com/nuriazardoyaa",
+    "https://www.linkedin.com/in/nuria-zardoya-lasheras-3579262b8"
+  ],
+
+  "address": {
+    "streetAddress": "Calle Antonio Machado, 33",
+    "addressLocality": "Ribaforada",
+    "addressRegion": "Navarra",
+    "postalCode": "31550",
+    "addressCountry": "ES"
+  },
+
+  "areaServed": "Navarra, España",
+
+  "calendlyUrl": "https://calendly.com/alejandrolostadosalvatierra/30min?locale=es",
+  "instagram": "nuriazardoyaa",
+  "linkedin": "nuria-zardoya-lasheras-3579262b8",
+
+  "meta": {
+    "themeColor": "#166534",
+    "googleSiteVerification": "jxM8bUERWBNQGE9mnKQF9Qg15BCSraGxXIaBH3LwhOw"
+  },
+
+  "i18n": {
+    "default": "es",
+    "supported": ["es", "en", "fr", "eu"]
+  }
 }

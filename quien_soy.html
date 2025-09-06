@@ -123,31 +123,33 @@ permalink: "/quien_soy/"
       </ul>
     </div>
 
-    <!-- CTA -->
-    <div class="flex flex-wrap gap-3">
-      <a href="/pide_tu_cita/" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full shadow">Pide tu cita</a>
-      <a href="/contacto/" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-6 rounded-full">Escríbeme</a>
+    <!-- Doble CTA -->
+    <div class="text-center mt-16 flex flex-col md:flex-row items-center justify-center gap-4">
+      <a href="/pide_tu_cita/"
+        class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-green-600 text-white font-semibold shadow hover:bg-green-700 transition">
+        <i data-lucide="calendar" class="w-5 h-5"></i> Pide tu cita
+      </a>
+      <a href="/contacto/"
+        class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gray-100 text-gray-800 font-semibold shadow hover:bg-gray-200 transition">
+        <i data-lucide="mail" class="w-5 h-5"></i> Escríbeme tus dudas
+      </a>
     </div>
-  </div>
 </section>
 
-<!-- Datos estructurados Person -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Nuria Zardoya",
   "jobTitle": "Dietista-Nutricionista",
-  "memberOf": { "@type": "Organization", "name": "CODINNA" },
-  "medicalSpecialty": "Nutrition",
-  "areaServed": "Navarra, España",
   "image": "{{ site.socialImage }}",
   "url": "{{ site.url }}/quien_soy/",
   "worksFor": { "@id": "{{ site.businessId }}" },
-  "sameAs": [
-    "https://www.instagram.com/nuriazardoyaa?igsh=MWp0bmIyMGI3eHBpMg==",
-    "https://www.linkedin.com/in/nuria-zardoya-lasheras-3579262b8"
-  ],
+  "knowsAbout": ["Nutrición", "FODMAP", "Nutrición deportiva", "Nutrición Clínica", "Perdida de Peso", "Mejora de la composición Corporal", "Nutrición Deportiva", "Educación Nutricional", "Alimentación Antiflamatoria", "Patologías Digestivas"],
+  "memberOf": { "@type": "Organization", "name": "CODINNA" },
+  "areaServed": "Navarra, España",
+  "sameAs": ["{{ site.sameAs[0] }}","{{ site.sameAs[1] }}"],
   "description": "Dietista-Nutricionista colegiada en Navarra. Enfoque cercano, realista y basado en evidencia."
 }
 </script>
+

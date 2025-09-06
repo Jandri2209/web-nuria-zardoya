@@ -1,19 +1,21 @@
 <script type="application/ld+json" id="ld-localbusiness">
 {
   "@context":"https://schema.org",
-  "@type":"LocalBusiness",
+  "@type": ["Organization","LocalBusiness"],
   "@id":"{{ site.businessId }}",
-  "name":"Nuria Zardoya - Dietista-Nutricionista",
+  "name": "{{ site.legalName }}",
   "url":"{{ site.url }}/",
-  "image":"{{ site.url }}{{ site.socialImage }}",
-  "telephone":"+34 601 401 677",
-  "address":{
-    "@type":"PostalAddress",
-    "streetAddress":"C. Antonio Machado, 33",
-    "addressLocality":"Ribaforada",
-    "addressRegion":"Navarra",
-    "postalCode":"31550",
-    "addressCountry":"ES"
+  "logo": "{{ site.logo }}",
+  "image": "{{ site.socialImage }}",
+  "email": "{{ site.email }}",
+  "telephone": "{{ site.telephone }}",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "{{ site.address.streetAddress }}",
+    "addressLocality": "{{ site.address.addressLocality }}",
+    "addressRegion": "{{ site.address.addressRegion }}",
+    "postalCode": "{{ site.address.postalCode }}",
+    "addressCountry": "{{ site.address.addressCountry }}"
   },
   "openingHoursSpecification": [
     {
