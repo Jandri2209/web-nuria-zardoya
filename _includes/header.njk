@@ -29,8 +29,8 @@
          class="{% if isInicio %}{{ active }}{% else %}{{ idle }}{% endif %}"
          {% if isInicio %}aria-current="page"{% endif %}>Inicio</a>
 
-      {% set isQuienSoy = page.url == '/quien_soy/' %}
-      <a href="/quien_soy/"
+      {% set isQuienSoy = page.url == '/quien-soy/' %}
+      <a href="/quien-soy/"
          class="{% if isQuienSoy %}{{ active }}{% else %}{{ idle }}{% endif %}"
          {% if isQuienSoy %}aria-current="page"{% endif %}>Quién soy</a>
 
@@ -49,8 +49,8 @@
          class="{% if isContacto %}{{ active }}{% else %}{{ idle }}{% endif %}"
          {% if isContacto %}aria-current="page"{% endif %}>Contacto</a>
 
-      {% set isCita = page.url == '/pide_tu_cita/' %}
-      <a href="/pide_tu_cita/"
+      {% set isCita = page.url == '/pide-tu-cita/' %}
+      <a href="/pide-tu-cita/"
          class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-lg {% if isCita %}ring-2 ring-green-300{% endif %}">
         Pide tu cita
       </a>
@@ -138,11 +138,11 @@
   <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-sm">
     <nav class="container mx-auto px-6 py-2 space-y-1" role="menu" aria-label="Menú móvil">
       <a href="/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Inicio</a>
-      <a href="/quien_soy/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Quién soy</a>
+      <a href="/quien-soy/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Quién soy</a>
       <a href="/servicios/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Servicios</a>
       <a href="/recetas/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Recetas</a>
       <a href="/contacto/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Contacto</a>
-      <a href="/pide_tu_cita/" class="block py-2 text-sm font-semibold text-green-700 hover:bg-green-50" role="menuitem">Pide tu cita</a>
+      <a href="/pide-tu-cita/" class="block py-2 text-sm font-semibold text-green-700 hover:bg-green-50" role="menuitem">Pide tu cita</a>
 
       <!-- Idioma (móvil) con banderas -->
       <div class="mt-1 pt-2 border-t border-gray-100">

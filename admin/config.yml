@@ -29,9 +29,9 @@ collections:
           - { label: "Contenido", name: "body", widget: "markdown", required: false }
 
       - label: "Quién soy"
-        name: "quien_soy"
-        file: "quien_soy.html"
-        preview_path: "quien_soy/"
+        name: "quien-soy"
+        file: "quien-soy.html"
+        preview_path: "quien-soy/"
         fields:
           - { label: "Título", name: "title", widget: "string" }
           - { label: "Descripción", name: "description", widget: "text", required: false }
@@ -57,8 +57,8 @@ collections:
 
       - label: "Pide tu cita"
         name: "cita"
-        file: "pide_tu_cita.html"
-        preview_path: "pide_tu_cita/"
+        file: "pide-tu-cita.html"
+        preview_path: "pide-tu-cita/"
         fields:
           - { label: "Título", name: "title", widget: "string" }
           - { label: "Descripción", name: "description", widget: "text", required: false }

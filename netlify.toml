@@ -15,7 +15,9 @@
 [functions."submission-created"]
   external_node_modules = ["nodemailer"]
 
-# Pretty URLs para legales
+# ---------------------------
+# Pretty URLs (.html → /)
+# ---------------------------
 [[redirects]]
   from = "/privacidad.html"
   to = "/privacidad/"
@@ -31,11 +33,109 @@
   to = "/cookies/"
   status = 301
 
-# Si antes usabas /quien-soy/, redirige a la nueva ruta
 [[redirects]]
-  from = "/quien-soy/"
-  to = "/quien_soy/"
+  from = "/servicios.html"
+  to = "/servicios/"
   status = 301
+
+[[redirects]]
+  from = "/contacto.html"
+  to = "/contacto/"
+  status = 301
+
+[[redirects]]
+  from = "/gracias.html"
+  to = "/gracias/"
+  status = 301
+
+[[redirects]]
+  from = "/recetas.html"
+  to = "/recetas/"
+  status = 301
+
+[[redirects]]
+  from = "/blog.html"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/buscador.html"
+  to = "/buscador/"
+  status = 301
+
+[[redirects]]
+  from = "/quien-soy.html"
+  to = "/quien-soy/"
+  status = 301
+
+[[redirects]]
+  from = "/pide-tu-cita.html"
+  to = "/pide-tu-cita/"
+  status = 301
+
+# ------------------------------------
+# Legacy: guion_bajo → guiones (301)
+# ------------------------------------
+[[redirects]]
+  from = "/quien_soy/"
+  to = "/quien-soy/"
+  status = 301
+
+[[redirects]]
+  from = "/quien_soy.html"
+  to = "/quien-soy/"
+  status = 301
+
+[[redirects]]
+  from = "/pide_tu_cita/"
+  to = "/pide-tu-cita/"
+  status = 301
+
+[[redirects]]
+  from = "/pide_tu_cita.html"
+  to = "/pide-tu-cita/"
+  status = 301
+
+# ------------------------------------
+# Canonicalización de dominio (301)
+# Ajusta los dominios si son distintos
+# ------------------------------------
+[[redirects]]
+  from = "http://nuriazardoya.es/*"
+  to = "https://nuriazardoya.es/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.nuriazardoya.es/*"
+  to = "https://nuriazardoya.es/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.nuriazardoya.es/*"
+  to = "https://nuriazardoya.es/:splat"
+  status = 301
+  force = true
+
+# Redirige el subdominio de Netlify al dominio final
+[[redirects]]
+  from = "https://nuriazardoyalasheras.netlify.app/*"
+  to = "https://nuriazardoya.es/:splat"
+  status = 301
+  force = true
+
+# ---------------------------
+# Headers de seguridad
+# ---------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
 
 # Cache largo para assets estáticos
 [[headers]]
@@ -49,8 +149,9 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# Para redirigir la primera visita
+# ---------------------------
+# Edge Function (redir idioma)
+# ---------------------------
 [[edge_functions]]
-function = "lang-redirect"
-path = "/*"
-
+  function = "lang-redirect"
+  path = "/*"
