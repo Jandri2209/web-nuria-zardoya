@@ -98,7 +98,6 @@
 
 # ------------------------------------
 # Canonicalización de dominio (301)
-# Ajusta los dominios si son distintos
 # ------------------------------------
 [[redirects]]
   from = "http://nuriazardoya.es/*"
@@ -148,10 +147,3 @@
   for = "/images/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
-
-# ---------------------------
-# Edge Function (redir idioma)
-# ---------------------------
-[[edge_functions]]
-  function = "lang-redirect"
-  path = "/*"

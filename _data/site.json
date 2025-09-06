@@ -10,8 +10,10 @@
   "telephone": "+34 601 401 677",
 
   "businessId": "https://nuriazardoya.es/#org",
-  "logo": "https://nuriazardoya.es/images/hero.jpeg",
-  "socialImage": "https://nuriazardoya.es/images/hero.jpeg",
+
+  "logo": "https://nuriazardoya.es/apple-touch-icon.png",
+
+  "socialImage": "/images/social-1200x630.jpg",
 
   "sameAs": [
     "https://www.instagram.com/nuriazardoyaa",

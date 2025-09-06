@@ -8,12 +8,23 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("assets");
   eleventyConfig.addPassthroughCopy("images");
 
+  // Favicons + manifest en raíz
+  eleventyConfig.addPassthroughCopy({
+    "favicon.ico": "favicon.ico",
+    "favicon-16x16.png": "favicon-16x16.png",
+    "favicon-32x32.png": "favicon-32x32.png",
+    "apple-touch-icon.png": "apple-touch-icon.png",
+    "android-chrome-192x192.png": "android-chrome-192x192.png",
+    "android-chrome-512x512.png": "android-chrome-512x512.png",
+    "site.webmanifest": "site.webmanifest"
+  });
+
   // Sitemap
   eleventyConfig.addPlugin(pluginSitemap, {
     sitemap: { hostname: site.url }
   });
 
-  // ✅ Filtro 'date' para Nunjucks/Liquid: sin dependencias externas
+  // Filtro 'date'
   eleventyConfig.addFilter("date", (value, locale = "es-ES", options = {}) => {
     if (!value) return "";
     const d = value instanceof Date ? value : new Date(value);
