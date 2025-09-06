@@ -99,7 +99,7 @@ exports.handler = async (event) => {
       <p style="margin:0 0 6px"><strong>Nuria Zardoya Lasheras</strong> · Dietista–Nutricionista</p>
       <p style="margin:0">
         🌐 <a href="https://nuriazardoya.es" style="color:#15803d;text-decoration:none">Web</a>
-        &nbsp;·&nbsp; 📸 <a href="https://www.instagram.com/nuriazardoyaa" style="color:#15803d;text-decoration:none">Instagram</a>
+        &nbsp;·&nbsp; 📸 <a href="https://www.instagram.com/nutri.zar/" style="color:#15803d;text-decoration:none">Instagram</a>
         &nbsp;·&nbsp; ✉️ <a href="mailto:${replyTo}" style="color:#15803d;text-decoration:none">${replyTo}</a>
       </p>
     </div>

@@ -136,20 +136,27 @@ permalink: "/quien-soy/"
     </div>
 </section>
 
+{% set absImage = site.socialImage.startsWith('/') ? site.url + site.socialImage : site.socialImage %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Person",
+  "@id": "{{ site.url }}/#person",
   "name": "Nuria Zardoya",
   "jobTitle": "Dietista-Nutricionista",
-  "image": "{{ site.socialImage }}",
-  "url": "{{ site.url }}/quien-soy/",
+  "image": "{{ absImage }}",
+  "url": "{{ site.url }}{{ page.url }}",
   "worksFor": { "@id": "{{ site.businessId }}" },
-  "knowsAbout": ["Nutrición", "FODMAP", "Nutrición deportiva", "Nutrición Clínica", "Perdida de Peso", "Mejora de la composición Corporal", "Nutrición Deportiva", "Educación Nutricional", "Alimentación Antiflamatoria", "Patologías Digestivas"],
+  "knowsAbout": [
+    "Nutrición", "Dieta baja en FODMAP", "Nutrición deportiva",
+    "Nutrición clínica", "Pérdida de peso", "Composición corporal",
+    "Educación nutricional", "Alimentación antiinflamatoria", "Patologías digestivas"
+  ],
   "memberOf": { "@type": "Organization", "name": "CODINNA" },
-  "areaServed": "Navarra, España",
-  "sameAs": ["{{ site.sameAs[0] }}","{{ site.sameAs[1] }}"],
+  "areaServed": "{{ site.areaServed }}",
+  "sameAs": {{ site.sameAs | dump }},
   "description": "Dietista-Nutricionista colegiada en Navarra. Enfoque cercano, realista y basado en evidencia."
 }
 </script>
+
 
