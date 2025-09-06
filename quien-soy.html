@@ -136,7 +136,6 @@ permalink: "/quien-soy/"
     </div>
 </section>
 
-{% set absImage = site.socialImage.startsWith('/') ? site.url + site.socialImage : site.socialImage %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -144,7 +143,7 @@ permalink: "/quien-soy/"
   "@id": "{{ site.url }}/#person",
   "name": "Nuria Zardoya",
   "jobTitle": "Dietista-Nutricionista",
-  "image": "{{ absImage }}",
+  "image": "{{ site.url }}{{ site.socialImage }}",
   "url": "{{ site.url }}{{ page.url }}",
   "worksFor": { "@id": "{{ site.businessId }}" },
   "knowsAbout": [
@@ -158,5 +157,6 @@ permalink: "/quien-soy/"
   "description": "Dietista-Nutricionista colegiada en Navarra. Enfoque cercano, realista y basado en evidencia."
 }
 </script>
+
 
 
