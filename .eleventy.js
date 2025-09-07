@@ -9,10 +9,12 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("images");
 
   // .eleventy.js
+  // .eleventy.js (solo muestro el bloque del passthrough de raíz)
   eleventyConfig.addPassthroughCopy({
     "favicon.ico": "favicon.ico",
     "favicon-16x16.png": "favicon-16x16.png",
     "favicon-32x32.png": "favicon-32x32.png",
+    "favicon-48x48.png": "favicon-48x48.png",
     "apple-touch-icon.png": "apple-touch-icon.png",
     "android-chrome-192x192.png": "android-chrome-192x192.png",
     "android-chrome-512x512.png": "android-chrome-512x512.png",
