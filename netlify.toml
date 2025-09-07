@@ -153,3 +153,13 @@
   [headers.values]
     Content-Type = "application/xml; charset=utf-8"
 
+[[headers]]
+  for = "/site.webmanifest"
+  [headers.values]
+  Content-Type = "application/manifest+json; charset=utf-8"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+  Cache-Control = "no-cache"
+
