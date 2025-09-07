@@ -1,5 +1,6 @@
-// netlify/functions/submission-created.js
 const nodemailer = require("nodemailer");
+const path = require("path");
+const fs = require("fs");
 
 /* ==== Utils ==== */
 function escapeHtml(str = "") {
@@ -22,10 +23,7 @@ function nowStamp() {
   return `${parts.year}${parts.month}${parts.day}-${parts.hour}${parts.minute}`;
 }
 
-/* ==== Firma / estilos ==== */
-const path = require("path");
-
-// Usa la URL del sitio desde _data/site.json (con fallback seguro)
+/* ==== Datos del sitio (sin ENV) ==== */
 let SITE_URL = "https://nuriazardoya.es";
 for (const guess of ["../../_data/site.json", "../../src/_data/site.json"]) {
   try {
@@ -34,12 +32,29 @@ for (const guess of ["../../_data/site.json", "../../src/_data/site.json"]) {
     break;
   } catch (_) {}
 }
-const LOGO_URL = `${SITE_URL}/images/hero.jpeg`;
+
+/* ==== Logo inline (CID) ==== */
+const LOGO_CID = "logoNuria@inline";
+
+function getLogoAttachment() {
+  // Usa la imagen que ya existe en tu sitio
+  return {
+    filename: "logo-nuria.jpg",
+    path: `${SITE_URL}/images/hero.jpeg`, // <- tu imagen actual online
+    cid: LOGO_CID,
+    contentType: "image/jpeg",
+  };
+}
+
+
+/* ==== Firma / estilos (usa el logo inline) ==== */
 const FIRMA_HTML = `
-<table role="presentation" cellpadding="0" cellspacing="0" style="font:14px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif;color:#0f172a;margin-top:24px">
+<table role="presentation" cellpadding="0" cellspacing="0"
+       style="font:14px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif;color:#0f172a;margin-top:24px">
   <tr>
     <td style="padding-right:12px;vertical-align:top">
-      ${LOGO_URL ? `<img src="${LOGO_URL}" width="48" height="48" alt="Nuria Zardoya" style="border-radius:12px;display:block">` : ``}
+      <img src="cid:${LOGO_CID}" width="48" height="48" alt="Nuria Zardoya"
+           style="border-radius:12px;display:block">
     </td>
     <td style="vertical-align:top">
       <div style="font-weight:700;font-size:16px;color:#0b1220">Nuria Zardoya</div>
@@ -61,16 +76,15 @@ function makeTransporter() {
   const useSMTP = !!process.env.SMTP_HOST && !!process.env.SMTP_USER && !!process.env.SMTP_PASS;
   if (useSMTP) {
     return nodemailer.createTransport({
-      host: process.env.SMTP_HOST,               // ej: "smtp.servidor-correo.net"
+      host: process.env.SMTP_HOST,               // p.ej. "smtp.servidor-correo.net"
       port: Number(process.env.SMTP_PORT || 587),
-      secure: process.env.SMTP_SECURE === "true",// false con 587 (STARTTLS), true si usas 465
-      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+      secure: process.env.SMTP_SECURE === "true",// false con 587 (STARTTLS); true con 465
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
     });
   }
-  // Fallback a Gmail si no hay SMTP
   return nodemailer.createTransport({
     service: "gmail",
-    auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD }
+    auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD },
   });
 }
 
@@ -85,7 +99,6 @@ exports.handler = async (event) => {
     const reason  = (data.reason || data.motivo || "").trim();
     const message = (data.message || data.mensaje || "").trim();
     const bot     = (data["bot-field"] || data._gotcha || "").trim(); // honeypot
-
     if (!to || bot) return { statusCode: 200, body: "skip" };
 
     // Saneado
@@ -100,19 +113,39 @@ exports.handler = async (event) => {
     const REPLYTO = process.env.MAIL_REPLYTO || (process.env.SMTP_USER || process.env.GMAIL_USER);
     const NOTIFY  = process.env.NOTIFY_TO    || "nuriazardoyalasheras@gmail.com";
 
-    /* ========= AUTO-REPLY AL CLIENTE ========= */
+    /* ========= AUTO-REPLY (verde + logo inline) ========= */
     const replyHtml = `
-<div style="font:16px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif;color:#0f172a;max-width:640px;margin:auto">
-  <p style="margin:0 0 14px">Hola ${safeName},</p>
-  <p style="margin:0 0 14px">¡Gracias por escribirme! He recibido tu mensaje y te responderé a la mayor brevedad.</p>
-  ${(safeReason || safeMessage) ? `
-  <div style="margin:16px 0;padding:16px;background:#f9fafb;border-radius:10px">
-    <p style="margin:0 0 8px;font-weight:600;color:#334155">Resumen</p>
-    ${safeReason ? `<p style="margin:0 0 6px"><strong>Motivo:</strong> ${safeReason}</p>` : ``}
-    ${safeMessage ? `<p style="margin:0"><strong>Mensaje:</strong> “${safeMessage}”</p>` : ``}
-  </div>` : ``}
-  <p style="margin:0 0 14px">Si quieres, puedes <a href="${SITE_URL}/pide-tu-cita/" style="color:#2563eb;text-decoration:none">pedir tu cita online</a> directamente.</p>
-  ${FIRMA_HTML}
+<div style="font-family:system-ui,Segoe UI,Roboto,Arial;max-width:640px;margin:auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #eef1f3">
+  <div style="background:#22c55e;color:#fff;padding:16px 24px">
+    <h2 style="margin:0;font-size:20px;line-height:1.3">¡Gracias por tu mensaje, ${safeName}!</h2>
+  </div>
+  <div style="padding:24px;color:#111827">
+    <p>He recibido tu consulta y te responderé con la mayor brevedad.</p>
+    ${(safeReason || safeMessage) ? `
+    <div style="margin:16px 0;padding:16px;background:#f9fafb;border-radius:10px">
+      <p style="margin:0 0 8px;font-weight:600;color:#166534">Resumen</p>
+      ${safeReason ? `<p style="margin:0 0 6px"><strong>Motivo:</strong> ${safeReason}</p>` : ``}
+      ${safeMessage ? `<p style="margin:0"><strong>Mensaje:</strong> “${safeMessage}”</p>` : ``}
+    </div>` : ``}
+    <p>Si lo prefieres, puedes <a href="${SITE_URL}/pide-tu-cita/" style="color:#2563eb;text-decoration:none">pedir tu cita online</a> directamente.</p>
+    <div style="text-align:center;margin:20px 0">
+      <a href="${SITE_URL}/pide-tu-cita/"
+         style="display:inline-block;background:#22c55e;color:#fff;padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:600">
+        Pide tu cita
+      </a>
+    </div>
+  </div>
+  <div style="background:#f3f4f6;padding:14px 24px;color:#374151;font-size:13px;display:flex;align-items:center;gap:12px">
+    <img src="cid:${LOGO_CID}" width="40" height="40" alt="Logo Nuria" style="border-radius:12px;display:block">
+    <div style="padding-left:12px">
+      <p style="margin:0 0 6px"><strong>Nuria Zardoya</strong> · Dietista–Nutricionista</p>
+      <p style="margin:0">
+        🌐 <a href="${SITE_URL}" style="color:#15803d;text-decoration:none">Web</a>
+        &nbsp;·&nbsp; 📸 <a href="https://www.instagram.com/nutri.zar/" style="color:#15803d;text-decoration:none">Instagram</a>
+        &nbsp;·&nbsp; ✉️ <a href="mailto:${REPLYTO}" style="color:#15803d;text-decoration:none">${REPLYTO}</a>
+      </p>
+    </div>
+  </div>
 </div>`.trim();
 
     const replyText = [
@@ -120,17 +153,23 @@ exports.handler = async (event) => {
       `Gracias por tu mensaje. Te responderé en breve.`,
       reason ? `Motivo: ${reason}` : "",
       message ? `Mensaje: ${message}` : "",
-      `\nPide tu cita: ${SITE_URL}/pide-tu-cita/`,
-      `\n— Nuria (${REPLYTO})`
+      ``,
+      `Pide tu cita: ${SITE_URL}/pide-tu-cita/`,
+      ``,
+      `— Nuria (${REPLYTO})`
     ].filter(Boolean).join("\n");
+
+    // Adjunta el logo inline (un objeto por envío)
+    const logoForClient = getLogoAttachment();
 
     await transporter.sendMail({
       to, from: FROM, replyTo: REPLYTO,
       subject: "Hemos recibido tu mensaje",
-      html: replyHtml, text: replyText
+      html: replyHtml, text: replyText,
+      attachments: [logoForClient],
     });
 
-    /* ========= NOTIFICACIÓN INTERNA ========= */
+    /* ========= NOTIFICACIÓN INTERNA (verde + logo inline) ========= */
     const stamp = nowStamp();
     const flatText = [
       `Nueva consulta — ${stamp}`,
@@ -141,16 +180,23 @@ exports.handler = async (event) => {
     ].filter(Boolean).join("\n");
 
     const notifyHtml = `
-<div style="font:14px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif;color:#0f172a;max-width:700px;margin:auto">
-  <h2 style="margin:0 0 10px;font-size:18px">📩 Nueva consulta desde la web</h2>
-  <table role="presentation" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-radius:10px;border-collapse:collapse;width:100%;max-width:640px">
-    <tr><td style="padding:6px 8px;background:#f8fafc;color:#334155">Nombre</td><td style="padding:6px 8px;border-left:1px solid #e2e8f0;color:#0f172a">${safeName}</td></tr>
-    <tr><td style="padding:6px 8px;background:#f8fafc;color:#334155">Email</td><td style="padding:6px 8px;border-left:1px solid #e2e8f0"><a href="mailto:${to}" style="color:#2563eb;text-decoration:none">${to}</a></td></tr>
-    ${safeReason ? `<tr><td style="padding:6px 8px;background:#f8fafc;color:#334155">Motivo</td><td style="padding:6px 8px;border-left:1px solid #e2e8f0">${safeReason}</td></tr>` : ``}
-    ${safeMessage ? `<tr><td style="padding:6px 8px;background:#f8fafc;color:#334155">Mensaje</td><td style="padding:6px 8px;border-left:1px solid #e2e8f0"><pre style="white-space:pre-wrap;margin:0">${safeMessage}</pre></td></tr>` : ``}
-  </table>
-  ${FIRMA_HTML}
+<div style="font-family:system-ui,Segoe UI,Roboto,Arial;max-width:700px;margin:auto;background:#ffffff;border:1px solid #eef1f3;border-radius:12px;overflow:hidden">
+  <div style="background:#22c55e;color:#fff;padding:14px 20px">
+    <h2 style="margin:0;font-size:18px;line-height:1.3">📩 Nueva consulta desde la web</h2>
+  </div>
+  <div style="padding:20px;color:#111827">
+    <div style="display:grid;grid-template-columns:140px 1fr;gap:8px 16px">
+      <div style="color:#6b7280">Nombre</div><div><strong>${escapeHtml(name || "-")}</strong></div>
+      <div style="color:#6b7280">Email</div><div><a href="mailto:${to}" style="color:#15803d;text-decoration:none">${to}</a></div>
+      ${safeReason ? `<div style="color:#6b7280">Motivo</div><div>${safeReason}</div>` : ``}
+      ${safeMessage ? `<div style="grid-column:1/-1;color:#6b7280;margin-top:8px">Mensaje</div>` : ``}
+      ${safeMessage ? `<div style="grid-column:1/-1"><pre style="white-space:pre-wrap;background:#f9fafb;padding:12px;border-radius:8px;margin:0">${safeMessage}</pre></div>` : ``}
+    </div>
+    ${FIRMA_HTML}
+  </div>
 </div>`.trim();
+
+    const logoForNotify = getLogoAttachment();
 
     await transporter.sendMail({
       from: FROM,
@@ -159,6 +205,7 @@ exports.handler = async (event) => {
       html: notifyHtml,
       text: flatText,
       attachments: [
+        logoForNotify,
         { filename: `consulta-${stamp}.txt`,  content: flatText },
         { filename: `consulta.json`, content: JSON.stringify({ name, email: to, reason, message }, null, 2), contentType: "application/json" }
       ]
