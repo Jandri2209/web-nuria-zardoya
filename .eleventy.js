@@ -8,7 +8,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("assets");
   eleventyConfig.addPassthroughCopy("images");
 
-  // Favicons + manifest en raíz
+  // .eleventy.js
   eleventyConfig.addPassthroughCopy({
     "favicon.ico": "favicon.ico",
     "favicon-16x16.png": "favicon-16x16.png",
@@ -16,7 +16,8 @@ module.exports = function(eleventyConfig) {
     "apple-touch-icon.png": "apple-touch-icon.png",
     "android-chrome-192x192.png": "android-chrome-192x192.png",
     "android-chrome-512x512.png": "android-chrome-512x512.png",
-    "site.webmanifest": "site.webmanifest"
+    "site.webmanifest": "site.webmanifest",
+    "sw.js": "sw.js"
   });
 
   // Sitemap
