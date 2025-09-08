@@ -41,7 +41,7 @@
   <!-- Actualiza el ?v= cuando recompiles CSS -->
   <link rel="stylesheet" href="/assets/styles.css?v=20250901">
 
-  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script src="/assets/vendor/lucide.min.js" defer></script>
 
   <style>
     /* Banderas emoji (mantener) */
@@ -353,11 +353,11 @@
   <div id="gt-el" class="hidden"></div>
   <!-- ====================================================================== -->
   <script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(console.error);
-    });
-  }
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {});
+      });
+    }
   </script>
 </body>
 </html>
