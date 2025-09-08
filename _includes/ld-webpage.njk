@@ -1,0 +1,35 @@
+{# _includes/ld-webpage.njk #}
+
+{# Imagen principal de la página (fallback al social del sitio) #}
+{% set img = image or featuredImage or site.socialImage %}
+{% if img and (img | first) != "h" %}
+  {% set img = site.url + img %}
+{% endif %}
+
+{# Tipo específico de WebPage según la URL #}
+{% set pageType = "WebPage" %}
+{% if page.url == "/quien-soy/" %}
+  {% set pageType = "AboutPage" %}
+{% elif page.url == "/contacto/" %}
+  {% set pageType = "ContactPage" %}
+{% elif page.url == "/servicios/" or page.url == "/recetas/" %}
+  {% set pageType = "CollectionPage" %}
+{% elif page.url == "/buscador/" %}
+  {% set pageType = "SearchResultsPage" %}
+{% endif %}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "{{ pageType }}",
+  "@id": "{{ site.url }}{{ page.url }}#webpage",
+  "url": "{{ site.url }}{{ page.url }}",
+  "name": {{ (title or site.defaultTitle) | dump }},
+  "description": {{ (description or site.defaultDescription) | dump }},
+  "inLanguage": "{{ site.lang or 'es-ES' }}",
+  "isPartOf": { "@id": "{{ site.url }}/#website" }{% if img %},
+  "primaryImageOfPage": { "@type": "ImageObject", "url": {{ img | dump }} }{% endif %}{% if page.url != "/" %},
+  "breadcrumb": { "@id": "{{ site.url }}{{ page.url }}#breadcrumb" }{% endif %}{% if page.date %},
+  "datePublished": "{{ page.date | date('en-CA', { year:'numeric', month:'2-digit', day:'2-digit' }) }}"{% endif %}
+}
+</script>

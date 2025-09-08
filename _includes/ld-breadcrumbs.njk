@@ -1,33 +1,31 @@
 {# _includes/ld-breadcrumbs.njk #}
-{# Si no se definen migas manuales, usamos: Inicio → Página actual #}
-{% if page.url and page.url != "/" %}
-
-  {# Permite sobreescribir con front matter:
-     breadcrumbs: [{ name: "Inicio", url: "/" }, { name: "Servicios", url: "/servicios/" }, ...] #}
-  {% set crumbs = breadcrumbs or [
+{# Trail: usa front matter "breadcrumbs" si existe; si no, Inicio + página actual #}
+{% set trail = breadcrumbs
+  or [
     { "name": "Inicio", "url": "/" },
-    { "name": page.title or "Página", "url": page.url }
-  ] %}
+    { "name": (title or (page.fileSlug | replace('-', ' ') | title)), "url": page.url }
+  ]
+%}
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {% for c in crumbs %}
-        {% set itemUrl = c.url %}
-        {% if itemUrl and itemUrl[0] == '/' %}
-          {% set itemUrl = site.url + itemUrl %}
-        {% endif %}
-        {
-          "@type": "ListItem",
-          "position": {{ loop.index }},
-          "name": {{ c.name | dump }},
-          "item": {{ itemUrl | dump }}
-        }{{ not loop.last ? ',' : '' }}
-      {% endfor %}
-    ]
-  }
-  </script>
-
+{# Solo imprimimos si hay al menos 2 elementos (evita Home sola) #}
+{% if (trail | length) > 1 %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "@id": "{{ site.url }}{{ page.url }}#breadcrumb",
+  "itemListElement": [
+{% for item in trail %}
+{% set u = item.url %}
+{% if u and (u | first) != "h" %}{% set u = site.url + u %}{% endif %}
+    {
+      "@type": "ListItem",
+      "position": {{ loop.index }},
+      "name": {{ item.name | dump }},
+      "item": {{ u | dump }}
+    }{{ loop.last ? "" : "," }}
+{% endfor %}
+  ]
+}
+</script>
 {% endif %}
