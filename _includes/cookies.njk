@@ -7,8 +7,8 @@
       <div class="flex-1">
         <h2 class="text-lg font-semibold mb-1">Tu privacidad nos importa</h2>
         <p class="text-sm text-gray-600">
-          Usamos cookies necesarias para que el sitio funcione y, opcionalmente, cookies de analítica y marketing para mejorar la experiencia.
-          Puedes aceptar, rechazar o configurar tus preferencias. Consulta la
+          Usamos cookies necesarias para que el sitio funcione y, opcionalmente, cookies de analítica y marketing para mejorar la
+          experiencia. Puedes aceptar, rechazar o configurar tus preferencias. Consulta la
           <a href="/cookies/" class="underline text-green-700">Política de Cookies</a>.
         </p>
       </div>
@@ -50,7 +50,7 @@
       <div class="flex items-start justify-between gap-4 p-3 rounded-lg border">
         <div>
           <p class="font-medium">Marketing</p>
-          <p class="text-sm text-gray-600">Servicios de terceros como el calendario embebido de Calendly.</p>
+          <p class="text-sm text-gray-600">Servicios de terceros (por ejemplo, calendarios embebidos, Ads, etc.).</p>
         </div>
         <input id="ck-marketing" type="checkbox" aria-label="Cookies de marketing">
       </div>
@@ -103,12 +103,11 @@
     window.dispatchEvent(new CustomEvent("cookie-preferences:updated", { detail: value }));
     propagateCc(value); // añade _cc a enlaces internos si estamos en translate
   }
-
   function applyConsent(consent) {
     window.cookiePrefs = { necessary: true, analytics: !!consent.analytics, marketing: !!consent.marketing };
   }
 
-  /* === NUEVO: helpers para leer/eliminar parámetros también del HASH === */
+  /* === Param helpers también para HASH (para Google Translate) === */
   function getParamFromHash(name) {
     try {
       const h = (location.hash || "").replace(/^#/, "");
@@ -141,36 +140,21 @@
     deleteParamFromHash("_nolang");
   }
 
-  /* === NUEVO: ya no dependemos del referrer (que a veces viene recortado) === */
   function getConsent() {
-    // 1) ¿Viene en la query?
+    // 1) Query
     const sp = new URLSearchParams(location.search);
     if (sp.has("_cc")) {
-      try {
-        const obj = JSON.parse(atob(sp.get("_cc")));
-        setConsent(obj);
-        return obj;
-      } catch {}
+      try { const obj = JSON.parse(atob(sp.get("_cc"))); setConsent(obj); return obj; } catch {}
     }
-    // 2) ¿Viene en el hash? (fallback robusto en Translate)
+    // 2) Hash
     const ccHash = getParamFromHash("_cc");
     if (ccHash) {
-      try {
-        const obj = JSON.parse(atob(ccHash));
-        setConsent(obj);
-        return obj;
-      } catch {}
+      try { const obj = JSON.parse(atob(ccHash)); setConsent(obj); return obj; } catch {}
     }
     // 3) localStorage
-    try {
-      const raw = localStorage.getItem(LS_KEY);
-      if (raw) return JSON.parse(raw);
-    } catch {}
-    // 4) cookie http
-    try {
-      const c = readCookie(LS_KEY);
-      if (c) return JSON.parse(c);
-    } catch {}
+    try { const raw = localStorage.getItem(LS_KEY); if (raw) return JSON.parse(raw); } catch {}
+    // 4) cookie
+    try { const c = readCookie(LS_KEY); if (c) return JSON.parse(c); } catch {}
     return null;
   }
 
@@ -253,7 +237,7 @@
     const consent = getConsent();
     if (!consent) showBanner(); else applyConsent(consent);
     propagateCc(consent);
-    cleanupParams(); // limpia ?_cc / ?_nolang y #_cc / #_nolang
+    cleanupParams();
   });
 
   // Accesibilidad
@@ -272,7 +256,6 @@
 
   // ===== Solo en Google Translate: blindaje anti pop-up reforzado =====
   if (IS_TRANSLATE) {
-    // Bloquea submits del banner/modal
     document.addEventListener("submit", (e) => {
       const f = e.target;
       if (f && f.closest('#cookie-banner, #cookie-modal')) {
@@ -280,34 +263,60 @@
       }
     }, true);
 
-    // Interceptores en captura para todos los gestos de click
     const SEL = '#open-cookie-preferences, [data-open-cookie-preferences], #cookie-accept-all, #cookie-reject-all, #cookie-open-prefs, #cookie-save, #cookie-cancel, #cookie-close-x';
     const intercept = (type) => document.addEventListener(type, (e) => {
       const t = e.target && e.target.closest(SEL);
       if (!t) return;
       e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
-      // Acciones manuales
-      if (type === 'click' || type === 'pointerdown' || type === 'touchend' || type === 'mouseup' || type === 'auxclick') {
-        const id = t.id;
-        if (id === 'open-cookie-preferences' || id === 'cookie-open-prefs') {
-          window.openCookiePreferences && window.openCookiePreferences();
-        } else if (id === 'cookie-accept-all') {
-          setConsent({ analytics: true, marketing: true }); applyConsent({ analytics: true, marketing: true }); hideBanner(); cleanupParams();
-        } else if (id === 'cookie-reject-all') {
-          setConsent({ analytics: false, marketing: false }); applyConsent({ analytics: false, marketing: false }); hideBanner(); cleanupParams();
-        } else if (id === 'cookie-save') {
-          const consent = { analytics: ckAnalytics?.checked || false, marketing: ckMarketing?.checked || false };
-          setConsent(consent); applyConsent(consent); closeModal(); hideBanner(); cleanupParams();
-        } else if (id === 'cookie-cancel' || id === 'cookie-close-x') {
-          closeModal();
-        }
+      const id = t.id;
+      if (id === 'open-cookie-preferences' || id === 'cookie-open-prefs') {
+        window.openCookiePreferences && window.openCookiePreferences();
+      } else if (id === 'cookie-accept-all') {
+        setConsent({ analytics: true, marketing: true }); applyConsent({ analytics: true, marketing: true }); hideBanner(); cleanupParams();
+      } else if (id === 'cookie-reject-all') {
+        setConsent({ analytics: false, marketing: false }); applyConsent({ analytics: false, marketing: false }); hideBanner(); cleanupParams();
+      } else if (id === 'cookie-save') {
+        const consent = { analytics: ckAnalytics?.checked || false, marketing: ckMarketing?.checked || false };
+        setConsent(consent); applyConsent(consent); closeModal(); hideBanner(); cleanupParams();
+      } else if (id === 'cookie-cancel' || id === 'cookie-close-x') {
+        closeModal();
       }
     }, true);
 
     ['pointerdown','click','touchstart','touchend','mousedown','mouseup','auxclick'].forEach(intercept);
   }
+
+  /* === GA4: sincroniza Consent Mode con el banner === */
+  (function(){
+    function updateGA(consent){
+      if (!window.gtag) return;
+      try {
+        gtag('consent','update',{
+          analytics_storage: consent && consent.analytics ? 'granted' : 'denied',
+          ad_storage:       consent && consent.marketing ? 'granted' : 'denied',
+          functionality_storage:'granted',
+          security_storage:'granted'
+        });
+      } catch(_) {}
+    }
+
+    // Aplica el consentimiento guardado (si existe) al cargar
+    try {
+      let saved = null;
+      const rawLS = localStorage.getItem(LS_KEY);
+      if (rawLS) saved = JSON.parse(rawLS);
+      if (!saved) {
+        const m = document.cookie.match(/(?:^|;\s*)cookie-consent=([^;]+)/);
+        if (m) saved = JSON.parse(decodeURIComponent(m[1]));
+      }
+      if (saved) updateGA(saved);
+    } catch(_){}
+
+    // Y en cada cambio emitido por el banner
+    window.addEventListener('cookie-preferences:updated', function (ev) {
+      updateGA(ev.detail || {});
+    });
+  })();
+
 })();
 </script>
-
-
-

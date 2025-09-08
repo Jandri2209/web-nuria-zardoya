@@ -50,6 +50,26 @@
       font-variant-emoji:emoji; line-height:1;
     }
   </style>
+  <!-- GA4 + Consent Mode (por defecto sin analítica) -->
+  <script>
+    if (location.hostname.endsWith('nuriazardoya.es')) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      gtag('consent','default',{
+        ad_storage:'denied',
+        analytics_storage:'denied',
+        functionality_storage:'granted',
+        security_storage:'granted'
+      });
+      (function(){
+        var s=document.createElement('script');
+        s.async=1; s.src='https://www.googletagmanager.com/gtag/js?id=G-LC5PDXC6PE';
+        document.head.appendChild(s);
+      })();
+      gtag('js', new Date());
+      gtag('config','G-LC5PDXC6PE',{ transport_type:'beacon' });
+    }
+  </script>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
