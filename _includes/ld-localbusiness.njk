@@ -2,25 +2,25 @@
 {
   "@context": "https://schema.org",
   "@type": ["Organization","LocalBusiness"],
-  "@id": "{{ site.businessId }}",
-  "name": "{{ site.name }}",
-  "legalName": "{{ site.legalName }}",
-  "url": "{{ site.url }}/",
-  "logo": "{{ site.logo }}",
-  "image": "{{ site.url }}{{ site.socialImage }}",
-  "email": "{{ site.email }}",
-  "telephone": "{{ site.telephone }}",
+  "@id": {{ site.businessId | dump | safe }},
+  "name": {{ site.name | dump | safe }},
+  "legalName": {{ site.legalName | dump | safe }},
+  "url": {{ (site.url + "/") | dump | safe }},
+  "logo": {{ site.logo | dump | safe }},
+  "image": {{ (site.url + site.socialImage) | dump | safe }},
+  "email": {{ site.email | dump | safe }},
+  "telephone": {{ site.telephone | dump | safe }},
 
   "address": {
     "@type": "PostalAddress",
-    "addressLocality": "{{ site.address.addressLocality }}",
-    "addressRegion": "{{ site.address.addressRegion }}",
-    "postalCode": "{{ site.address.postalCode }}",
-    "addressCountry": "{{ site.address.addressCountry }}"
+    "addressLocality": {{ site.address.addressLocality | dump | safe }},
+    "addressRegion": {{ site.address.addressRegion | dump | safe }},
+    "postalCode": {{ site.address.postalCode | dump | safe }},
+    "addressCountry": {{ site.address.addressCountry | dump | safe }}
   },
 
-  "areaServed": "{{ site.areaServed }}",
-  "hasMap": "{{ site.googleBusiness }}",
+  "areaServed": {{ site.areaServed | dump | safe }},
+  "hasMap": {{ site.googleBusiness | dump | safe }},
 
   "openingHoursSpecification": [
     { "@type":"OpeningHoursSpecification", "dayOfWeek":[ "Monday","Tuesday","Wednesday","Thursday" ], "opens":"08:00", "closes":"14:00" },
@@ -30,30 +30,30 @@
 
   "sameAs": {{ site.sameAs | dump | safe }},
   "priceRange": "€€",
-  "founder": { "@type":"Person", "@id":"{{ site.url }}/#person" },
+  "founder": { "@type":"Person", "@id": {{ (site.url + "/#person") | dump | safe }} },
 
   "contactPoint": [
     {
       "@type": "ContactPoint",
       "contactType": "customer support",
-      "telephone": "{{ site.telephone }}",
+      "telephone": {{ site.telephone | dump | safe }},
       "areaServed": "ES",
       "availableLanguage": ["es","en","fr","eu"]
     },
     {
       "@type": "ContactPoint",
       "contactType": "appointments",
-      "telephone": "{{ site.telephone }}",
+      "telephone": {{ site.telephone | dump | safe }},
       "areaServed": "ES",
       "availableLanguage": ["es","en","fr","eu"],
-      "url": "{{ site.calendlyUrl }}"
+      "url": {{ site.calendlyUrl | dump | safe }}
     }
   ],
 
   "potentialAction": {
     "@type": "ScheduleAction",
     "name": "Pedir cita",
-    "target": "{{ site.calendlyUrl }}"
+    "target": {{ site.calendlyUrl | dump | safe }}
   }
 }
 </script>
