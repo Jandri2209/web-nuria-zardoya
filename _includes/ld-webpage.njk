@@ -2,11 +2,11 @@
 
 {# Imagen principal de la página (fallback al social del sitio) #}
 {% set img = image or featuredImage or site.socialImage %}
-{% if img and (img | first) != "h" %}
+{% if img and img[0:4] != "http" %}
   {% set img = site.url + img %}
 {% endif %}
 
-{# Tipo específico de WebPage según la URL #}
+{# Tipo específico según URL #}
 {% set pageType = "WebPage" %}
 {% if page.url == "/quien-soy/" %}
   {% set pageType = "AboutPage" %}

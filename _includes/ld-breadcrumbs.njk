@@ -3,11 +3,11 @@
 {% set trail = breadcrumbs
   or [
     { "name": "Inicio", "url": "/" },
-    { "name": (title or (page.fileSlug | replace('-', ' ') | title)), "url": page.url }
+    { "name": (title or (page.fileSlug | replace('-', ' '))), "url": page.url }
   ]
 %}
 
-{# Solo imprimimos si hay al menos 2 elementos (evita Home sola) #}
+{# Solo imprimimos si hay ≥2 elementos (evita Home sola) #}
 {% if (trail | length) > 1 %}
 <script type="application/ld+json">
 {
@@ -17,7 +17,9 @@
   "itemListElement": [
 {% for item in trail %}
 {% set u = item.url %}
-{% if u and (u | first) != "h" %}{% set u = site.url + u %}{% endif %}
+{% if u and u[0:4] != "http" %}
+  {% set u = site.url + u %}
+{% endif %}
     {
       "@type": "ListItem",
       "position": {{ loop.index }},
