@@ -2,7 +2,7 @@
 
 {# Imagen principal de la página (fallback al social del sitio) #}
 {% set img = image or featuredImage or site.socialImage %}
-{% if img and img[0:4] != "http" %}
+{% if img and (img.indexOf('http') != 0) %}
   {% set img = site.url + img %}
 {% endif %}
 

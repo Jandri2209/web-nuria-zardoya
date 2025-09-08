@@ -17,7 +17,7 @@
   "itemListElement": [
 {% for item in trail %}
 {% set u = item.url %}
-{% if u and u[0:4] != "http" %}
+{% if u and (u.indexOf('http') != 0) %}
   {% set u = site.url + u %}
 {% endif %}
     {
