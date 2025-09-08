@@ -40,7 +40,7 @@ function getLogoAttachment() {
   // Usa la imagen que ya existe en tu sitio
   return {
     filename: "logo-nuria.jpg",
-    path: `${SITE_URL}/images/hero.jpeg`, // <- tu imagen actual online
+    path: `${SITE_URL}/images/nuria-zardoya-hero-320.jpg`,
     cid: LOGO_CID,
     contentType: "image/jpeg",
   };

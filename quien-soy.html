@@ -12,8 +12,14 @@ permalink: "/quien-soy/"
 
     <!-- Hero compacto -->
     <div class="flex flex-col md:flex-row items-center gap-8 mb-12">
-      <img src="/images/hero.jpeg" alt="Foto de Nuria Zardoya"
-           class="rounded-full shadow-2xl w-40 h-40 object-cover" width="240" height="240" loading="lazy" decoding="async">
+      <img
+        src="/images/nuria-zardoya-hero-640.jpg"
+        srcset="/images/nuria-zardoya-hero-320.jpg 320w, /images/nuria-zardoya-hero-640.jpg 640w"
+        sizes="160px"
+        alt="Nuria Zardoya, dietista-nutricionista en Navarra"
+        width="640" height="640"
+        class="rounded-full shadow-2xl w-40 h-40 object-cover"
+        decoding="async" fetchpriority="high">
       <div>
         <h2 class="text-2xl font-semibold mb-2">Hola, soy Nuria Zardoya</h2>
         <p class="text-gray-700">
@@ -80,14 +86,15 @@ permalink: "/quien-soy/"
         </li>
       </ol>
     </div>
-    <!-- debajo del </ol> de "Cómo trabajo" -->
+
+    <!-- CTA a servicios -->
     <div class="mt-6 mb-12">
       <a href="/servicios/"
         class="inline-flex items-center gap-2 bg-green-700 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full shadow transition duration-300"
         aria-label="Ver mis servicios de nutrición">
         Ver mis servicios
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-            viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+             viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 5l7 7-7 7"/></svg>
       </a>
     </div>
 
@@ -114,7 +121,7 @@ permalink: "/quien-soy/"
 
         <!-- Img 3: Plato sencillo -->
         <figure class="overflow-hidden rounded-xl border border-gray-200">
-          <img src="/images/plato.jpeg"
+          <img src="/images/plato.jpg"
                alt="Plato saludable y sencillo"
                class="w-full h-48 object-cover"
                width="600" height="400" loading="lazy" decoding="async">
@@ -153,7 +160,7 @@ permalink: "/quien-soy/"
   "@id": "{{ site.url }}/#person",
   "name": "Nuria Zardoya",
   "jobTitle": "Dietista-Nutricionista",
-  "image": "{{ site.url }}{{ site.socialImage }}",
+  "image": "{{ site.url }}/images/nuria-zardoya-hero-640.jpg",
   "url": "{{ site.url }}{{ page.url }}",
   "worksFor": { "@id": "{{ site.businessId }}" },
   "knowsAbout": [
@@ -167,6 +174,3 @@ permalink: "/quien-soy/"
   "description": "Dietista-Nutricionista colegiada en Navarra. Enfoque cercano, realista y basado en evidencia."
 }
 </script>
-
-
-

@@ -20,7 +20,7 @@
   const RecipePreview = ({ entry, getAsset }) => {
     const T   = entry.getIn(["data","title"]) || entry.get("slug") || "Título";
     const D   = entry.getIn(["data","description"]) || "Receta saludable de Nuria Zardoya";
-    const Img = withAsset(entry, "image", getAsset) || "/images/hero.jpeg";
+    const Img = withAsset(entry, "image", getAsset) || "/images/nuria-zardoya-hero-640.jpg";
     const Cat = entry.getIn(["data","category"]) || "Receta";
 
     const date       = entry.getIn(["data","date"]);
