@@ -3,7 +3,7 @@
 {% set trail = breadcrumbs
   or [
     { "name": "Inicio", "url": "/" },
-    { "name": (title or (page.fileSlug | replace('-', ' '))), "url": page.url }
+    { "name": (title or (page.fileSlug | replace("-", " "))), "url": page.url }
   ]
 %}
 
@@ -25,7 +25,7 @@
       "position": {{ loop.index }},
       "name": {{ item.name | dump }},
       "item": {{ u | dump }}
-    }{{ loop.last ? "" : "," }}
+    }{% if not loop.last %},{% endif %}
 {% endfor %}
   ]
 }
