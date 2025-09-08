@@ -1,14 +1,35 @@
 ---
 layout: base.njk
 title: "Contacto | Nuria Zardoya"
-description: "Escríbeme tus dudas y te responderé lo antes posible. Consulta de nutrición en Navarra."
+description: "Escríbeme tus dudas y te responderé lo antes posible. Consulta online y a domicilio en Navarra."
 permalink: "/contacto/"
 ---
 <div class="container mx-auto px-6">
   <div class="bg-green-700 text-white rounded-xl shadow-2xl p-8 md:p-12 my-12">
     <h1 class="text-4xl font-bold text-center mb-4">Contacto</h1>
-    <p class="text-lg text-green-100 text-center max-w-3xl mx-auto mb-12">
-      Cuéntame tu caso y te responderé lo antes posible.
+    <p class="text-lg text-green-100 text-center max-w-3xl mx-auto">
+      Cuéntame tu caso y te responderé lo antes posible. Atiendo <strong>online</strong> y <strong>a domicilio en Navarra</strong>.
+    </p>
+
+    <!-- Botones de acción -->
+    <div class="mt-6 mb-10 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <a href="/pide-tu-cita/"
+         class="inline-flex items-center gap-2 bg-white text-green-700 hover:bg-green-50 font-semibold py-3 px-6 rounded-full shadow transition"
+         aria-label="Pedir cita online">
+        <span>🗓️</span> <span>Pedir cita online</span>
+      </a>
+
+      <a href="{{ site.googleBusiness }}"
+         class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white font-semibold py-3 px-6 rounded-full shadow transition"
+         target="_blank" rel="noopener"
+         aria-label="Ver mi ficha en Google">
+        <span>⭐</span> <span>Ver mi ficha en Google</span>
+      </a>
+    </div>
+
+    <!-- Enlace pequeño a Calendly directo (opcional) -->
+    <p class="text-center text-green-100 text-sm -mt-6 mb-8">
+      ¿Prefieres Calendly directo? <a href="{{ site.calendlyUrl }}" class="underline decoration-dotted text-white hover:text-green-200">Abrir calendario</a>
     </p>
 
     <div class="max-w-xl mx-auto">
@@ -63,7 +84,7 @@ permalink: "/contacto/"
 
         <div class="text-center">
           <button type="submit"
-                  class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 shadow-lg">
+                  class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 shadow-lg">
             Enviar Mensaje
           </button>
         </div>

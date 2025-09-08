@@ -3,32 +3,34 @@
   "name": "Nuria Zardoya - Dietista-Nutricionista",
   "legalName": "Nuria Zardoya Lasheras",
   "defaultTitle": "Dietista-Nutricionista en Navarra | Nuria Zardoya",
-  "defaultDescription": "Consulta presencial en Ribaforada y online. Alimentación consciente basada en evidencia.",
+  "defaultDescription": "Consulta presencial a domicilio en Navarra y online. Alimentación consciente basada en evidencia.",
   "lang": "es-ES",
 
   "email": "nuriazardoyalasheras@gmail.com",
   "telephone": "+34 601 401 677",
 
   "businessId": "https://nuriazardoya.es/#org",
-
   "logo": "https://nuriazardoya.es/apple-touch-icon.png",
+  "socialImage": "/images/nuria-zardoya-portrait-960.jpg",
 
-  "socialImage": "/images/social-1200x630.jpg",
-
+  "googleBusiness": "https://share.google/uKPL7AUTTINRULb7o",
   "sameAs": [
     "https://www.instagram.com/nutri.zar/",
-    "https://www.linkedin.com/in/nuria-zardoya-lasheras-3579262b8/"
+    "https://www.linkedin.com/in/nuria-zardoya-lasheras-3579262b8/",
+    "https://share.google/uKPL7AUTTINRULb7o"
   ],
 
   "address": {
-    "streetAddress": "Calle Antonio Machado, 33",
     "addressLocality": "Ribaforada",
     "addressRegion": "Navarra",
     "postalCode": "31550",
     "addressCountry": "ES"
   },
 
+  "serviceAreas": ["Ribaforada","Tudela","Fustiñana","Cascante","Murchante","Buñuel","Cortes","Cabanillas","Navarra"],
   "areaServed": "Navarra, España",
+
+  "appointmentUrl": "https://nuriazardoya.es/pide-tu-cita/?utm_source=google&utm_medium=gbp&utm_campaign=appointments",
 
   "calendlyUrl": "https://calendly.com/nuriazardoyalasheras/60min?locale=es",
   "instagram": "nutri.zar",

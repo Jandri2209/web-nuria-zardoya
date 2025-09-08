@@ -10,14 +10,15 @@
   "image": "{{ site.url }}{{ site.socialImage }}",
   "email": "{{ site.email }}",
   "telephone": "{{ site.telephone }}",
+
   "address": {
     "@type": "PostalAddress",
-    "streetAddress": "{{ site.address.streetAddress }}",
     "addressLocality": "{{ site.address.addressLocality }}",
     "addressRegion": "{{ site.address.addressRegion }}",
     "postalCode": "{{ site.address.postalCode }}",
     "addressCountry": "{{ site.address.addressCountry }}"
   },
+
   "openingHoursSpecification": [
     {
       "@type": "OpeningHoursSpecification",
@@ -38,9 +39,57 @@
       "closes": "15:00"
     }
   ],
-  "areaServed": "{{ site.areaServed }}",
+
+  "areaServed": {{ (site.serviceAreas or [site.areaServed]) | dump | safe }},
+  "serviceArea": [
+    {% for a in (site.serviceAreas or []) -%}
+    { "@type": "AdministrativeArea", "name": "{{ a }}" }{{ loop.last ? "" : "," }}
+    {%- endfor -%}
+  ],
+
   "sameAs": {{ site.sameAs | dump | safe }},
   "priceRange": "€€",
-  "founder": { "@type": "Person", "@id": "{{ site.url }}/#person" }
+  "founder": { "@type": "Person", "@id": "{{ site.url }}/#person" },
+
+  "contactPoint": [
+    {
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "telephone": "{{ site.telephone }}",
+      "areaServed": "ES",
+      "availableLanguage": ["es","en","fr","eu"],
+      "hoursAvailable": [
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday"], "opens": "08:00", "closes": "14:00" },
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday"], "opens": "16:30", "closes": "18:30" },
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": "Friday", "opens": "08:00", "closes": "15:00" }
+      ]
+    },
+    {
+      "@type": "ContactPoint",
+      "contactType": "appointments",
+      "telephone": "{{ site.telephone }}",
+      "areaServed": "ES",
+      "availableLanguage": ["es","en","fr","eu"],
+      "url": "{{ site.calendlyUrl }}",
+      "hoursAvailable": [
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday"], "opens": "08:00", "closes": "14:00" },
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday"], "opens": "16:30", "closes": "18:30" },
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": "Friday", "opens": "08:00", "closes": "15:00" }
+      ]
+    }
+  ],
+
+  "potentialAction": {
+    "@type": "ScheduleAction",
+    "name": "Pedir cita",
+    "target": "{{ site.calendlyUrl }}"
+  }{% if site.googleBusiness %},
+  "hasMap": "{{ site.googleBusiness }}"{% endif %}{% if site.branchCode %},
+  "identifier": {
+    "@type": "PropertyValue",
+    "propertyID": "google:cid",
+    "value": "{{ site.branchCode }}"
+  },
+  "branchCode": "{{ site.branchCode }}"{% endif %}
 }
 </script>
