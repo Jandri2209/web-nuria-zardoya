@@ -58,6 +58,7 @@
       <!-- Selector de idioma (desktop) -->
       <div class="relative group" id="lang-switch-desktop">
         <button id="lang-btn" type="button"
+                data-gtag="cta_idioma"
                 class="cursor-pointer flex items-center gap-2 text-gray-600 hover:text-green-600"
                 aria-haspopup="true" aria-expanded="false" aria-controls="lang-menu">
           <i data-lucide="globe" class="w-5 h-5"></i>
@@ -108,13 +109,13 @@
 
     <!-- Botones móviles -->
     <div class="md:hidden flex items-center gap-3">
-      <button id="search-btn-mobile" type="button" class="text-gray-600 focus:outline-none"
+      <button id="search-btn-mobile" type="button" data-gtag="cta_buscador" class="text-gray-600 focus:outline-none"
               aria-controls="mobile-search" aria-expanded="false">
         <span class="sr-only">Abrir búsqueda</span>
         <i data-lucide="search" class="w-6 h-6"></i>
       </button>
 
-      <button id="menu-btn" type="button" class="text-gray-600 focus:outline-none"
+      <button id="menu-btn" type="button" data-gtag="cta_menu_movil" class="text-gray-600 focus:outline-none"
               aria-controls="mobile-menu" aria-expanded="false">
         <span class="sr-only">Abrir menú</span>
         <i data-lucide="menu" class="w-6 h-6"></i>

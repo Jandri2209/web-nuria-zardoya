@@ -373,6 +373,71 @@
     })();
   </script>
   <div id="gt-el" class="hidden"></div>
+  <!-- GA4 – eventos útiles para CTA, teléfono/email y descargas -->
+  <script>
+  (function () {
+    const FILE_EXT = /\.(pdf|docx?|xlsx?|pptx?|zip|rar|7z|mp3|mp4|wav|mov|avi)$/i;
+
+    function canSend() {
+      return typeof window.gtag === "function" &&
+            window.cookiePrefs && window.cookiePrefs.analytics === true;
+    }
+    function send(eventName, params) {
+      if (!canSend()) return;
+      window.gtag("event", eventName, Object.assign({
+        page_location: location.href
+      }, params || {}));
+    }
+
+    // Marca cualquier CTA con data-gtag="id_que_quieras"
+    // ej. <a href="/pide-tu-cita/" data-gtag="cta_header">Pide tu cita</a>
+    document.addEventListener("click", (e) => {
+      const el = e.target.closest("a,button");
+      if (!el) return;
+
+      // 1) CTAs etiquetados
+      const tag = el.getAttribute("data-gtag");
+      if (tag) {
+        send("select_content", {
+          content_type: "cta",
+          item_id: tag,
+          link_text: (el.textContent || "").trim().slice(0, 80),
+          link_url: el.href || location.href
+        });
+        return;
+      }
+
+      // 2) Teléfono / Email / Descargas
+      if (el.tagName === "A" && el.hasAttribute("href")) {
+        const href = el.getAttribute("href").trim();
+
+        if (href.startsWith("tel:")) {
+          send("generate_lead", { method: "phone", value: 1, link_url: href });
+          return;
+        }
+        if (href.startsWith("mailto:")) {
+          send("generate_lead", { method: "email", value: 1, link_url: href });
+          return;
+        }
+        if (FILE_EXT.test(href)) {
+          const url = new URL(href, location.href);
+          send("file_download", {
+            link_url: url.href,
+            file_extension: (url.pathname.split(".").pop() || "").toLowerCase(),
+            file_name: url.pathname.split("/").pop()
+          });
+          return;
+        }
+      }
+    });
+
+    // Si algún día abres Calendly vía JS:
+    // window.dispatchEvent(new Event("calendly:open"));
+    window.addEventListener("calendly:open", () => {
+      send("begin_checkout", { item_list_name: "calendly" });
+    });
+  })();
+  </script>
   <!-- ====================================================================== -->
   <script>
     if ("serviceWorker" in navigator) {
