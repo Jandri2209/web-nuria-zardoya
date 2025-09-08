@@ -39,7 +39,7 @@
     }
   ],
   "areaServed": "{{ site.areaServed }}",
-  "sameAs": {{ site.sameAs | dump }},
+  "sameAs": {{ site.sameAs | dump | safe }},
   "priceRange": "€€",
   "founder": { "@type": "Person", "@id": "{{ site.url }}/#person" }
 }
