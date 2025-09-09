@@ -51,16 +51,13 @@
     }
   </style>
 
-  <!-- === GA4 + Consent Mode + DebugView (por ?ga_debug=1 o localhost) === -->
+  <!-- === GA4 + Consent Mode (por defecto DENIED y respetando tu banner) === -->
   <script>
-  (function(){
-    if (!(location.hostname.endsWith('nuriazardoya.es') || location.hostname === 'localhost')) return;
-
-    // dataLayer / gtag
+  if (location.hostname.endsWith('nuriazardoya.es')) {
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
 
-    // 1) Consentimiento por defecto (sin analítica hasta aceptar)
+    // 1) Estado por defecto: sin analítica ni ads
     gtag('consent','default',{
       ad_storage:'denied',
       analytics_storage:'denied',
@@ -84,40 +81,18 @@
           security_storage:'granted'
         });
       }
-    } catch(_){}
+    } catch(e){}
 
-    // 3) Cargar GA4
-    var s=document.createElement('script');
-    s.async=1;
-    s.src='https://www.googletagmanager.com/gtag/js?id=G-LC5PDXC6PE';
-    document.head.appendChild(s);
-
-    // 4) Flag de depuración: ?ga_debug=1 / ?ga_debug=0 o si es localhost
+    // 3) Cargar GA4 y configurar
     (function(){
-      var q = new URLSearchParams(location.search);
-      if (q.get('ga_debug') === '1') { try{ localStorage.setItem('ga_debug','1'); }catch{} }
-      if (q.get('ga_debug') === '0') { try{ localStorage.removeItem('ga_debug'); }catch{} }
-      window.__gaDebug = (location.hostname === 'localhost') || (localStorage.getItem('ga_debug') === '1');
+      var s=document.createElement('script');
+      s.async=1;
+      s.src='https://www.googletagmanager.com/gtag/js?id=G-LC5PDXC6PE';
+      document.head.appendChild(s);
     })();
-
-    // 5) Inicializar GA4
     gtag('js', new Date());
-    gtag('config','G-LC5PDXC6PE',{
-      transport_type:'beacon',
-      debug_mode: !!window.__gaDebug
-    });
-
-    // 6) Envolver gtag para que todos los eventos lleven debug_mode en debug
-    (function(){
-      var og = window.gtag;
-      window.gtag = function(cmd, name, params){
-        if (cmd === 'event' && window.__gaDebug) {
-          params = Object.assign({}, params || {}, { debug_mode:true });
-        }
-        return og(cmd, name, params);
-      };
-    })();
-  })();
+    gtag('config','G-LC5PDXC6PE',{ transport_type:'beacon' });
+  }
   </script>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -212,7 +187,7 @@
                b.classList.contains('translated-rtl');
       }
 
-      // Si Edge dejó gt_lang pero aún no hay googtrans, créalo
+      // Si la Edge dejó gt_lang pero aún no hay googtrans, créalo
       (function ensurePairFromHint(){
         const m=document.cookie.match(/(?:^|;\s*)gt_lang=([^;]+)/);
         const hinted=m?decodeURIComponent(m[1]):"";
@@ -291,7 +266,7 @@
       }
 
       // ==== Offset de la barra ====
-      const NUDGE = 0;
+      const NUDGE = 0; // píxeles para evitar la línea verde
       function measureBannerHeight(){
         const ifr = document.querySelector('iframe.goog-te-banner-frame') ||
                     document.querySelector('.skiptranslate iframe');
@@ -349,11 +324,13 @@
           host.remove();
 
           if (v === 'global') {
+            // 👉 Todo el sitio en ES (limpia cookies de traducción)
             delCookie('gt_lang'); delCookie('googtrans');
             try { document.cookie = 'langpref=es; Max-Age=2592000; Path=/; SameSite=Lax'; } catch(e){}
             document.documentElement.setAttribute('lang','es-ES');
             syncLangUI();
           } else if (v === 'keep') {
+            // 👉 Volver a traducir en el idioma anterior y mantenerlo globalmente
             const lang = (prevLang||'').toLowerCase();
             if (lang && lang !== 'es') {
               const pair = '/es/' + lang;
@@ -361,7 +338,7 @@
               setCookie('googtrans', pair, 'Max-Age=31536000; Path=/');
               setCookie('googtrans', pair, 'Max-Age=31536000; Path=/; Domain=' + location.hostname);
               document.documentElement.setAttribute('lang', lang);
-              location.reload();
+              location.reload(); // necesitamos que el widget reaplique
             }
           }
         });
@@ -375,11 +352,12 @@
         setBarOffset(barVisible, h);
         syncLangUI();
 
+        // Detecta transición de visible -> oculta
         const was = updateGTLayout.__lastH || 0;
         if (was > 0 && h === 0) {
-          const prev = currentLang();
+          const prev = currentLang(); // idioma que había antes de cerrar
           if (prev !== 'es') {
-            showLangExitPrompt(prev);
+            showLangExitPrompt(prev); // opción C: preguntamos
           }
         }
         updateGTLayout.__lastH = h;
@@ -419,70 +397,60 @@
   </script>
   <div id="gt-el" class="hidden"></div>
 
-  <!-- === GA4 – eventos útiles para CTA, teléfono/email y descargas === -->
+  <!-- GA4 – eventos CTA / Tel / Descargas (NO bloquea la navegación) -->
   <script>
   (function () {
     const FILE_EXT = /\.(pdf|docx?|xlsx?|pptx?|zip|rar|7z|mp3|mp4|wav|mov|avi)$/i;
-    const dbg = !!window.__gaDebug;
 
-    function canSend() {
-      return typeof window.gtag === "function" &&
-             window.cookiePrefs && window.cookiePrefs.analytics === true;
-    }
-    function send(eventName, params) {
-      if (!canSend()) return;
-      window.gtag("event", eventName, Object.assign(
-        { page_location: location.href },
-        params || {},
-        dbg ? { debug_mode:true } : {}
-      ));
+    function sendEvent(name, params){
+      if (typeof window.gtag !== 'function') return; // si GA aún no está listo, no estorbamos
+      window.gtag('event', name, Object.assign({
+        transport_type: 'beacon',
+        page_location: location.href
+      }, params || {}));
     }
 
-    // Cualquier CTA marcado con data-gtag="id_que_quieras"
-    document.addEventListener("click", (e) => {
-      const el = e.target.closest("a,button");
+    // 1) CTAs con data-gtag (no se hace preventDefault)
+    document.addEventListener('click', function(e){
+      const el = e.target && e.target.closest('a[data-gtag],button[data-gtag]');
       if (!el) return;
 
-      // 1) CTAs etiquetados
-      const tag = el.getAttribute("data-gtag");
-      if (tag) {
-        send("select_content", {
-          content_type: "cta",
-          item_id: tag,
-          link_text: (el.textContent || "").trim().slice(0, 80),
-          link_url: el.href || location.href
+      const tag = el.getAttribute('data-gtag') || '';
+      const linkText = (el.textContent || '').trim().slice(0,80);
+      const linkUrl  = el.tagName === 'A' ? el.href : location.href;
+
+      sendEvent('select_content', {
+        content_type: 'cta',
+        item_id: tag,
+        link_text: linkText,
+        link_url: linkUrl
+      });
+    }, true); // captura
+
+    // 2) Teléfono / Email / Descargas (tampoco se frena la navegación)
+    document.addEventListener('click', function(e){
+      const a = e.target && e.target.closest('a[href]');
+      if (!a) return;
+
+      const href = a.getAttribute('href').trim();
+      if (href.startsWith('tel:')) {
+        sendEvent('generate_lead', { method: 'phone', value: 1, link_url: href });
+      } else if (href.startsWith('mailto:')) {
+        sendEvent('generate_lead', { method: 'email', value: 1, link_url: href });
+      } else if (FILE_EXT.test(href)) {
+        const url = new URL(href, location.href);
+        sendEvent('file_download', {
+          link_url: url.href,
+          file_extension: (url.pathname.split('.').pop() || '').toLowerCase(),
+          file_name: url.pathname.split('/').pop()
         });
-        return;
       }
+    }, true);
 
-      // 2) Teléfono / Email / Descargas
-      if (el.tagName === "A" && el.hasAttribute("href")) {
-        const href = el.getAttribute("href").trim();
-
-        if (href.startsWith("tel:")) {
-          send("generate_lead", { method: "phone", value: 1, link_url: href });
-          return;
-        }
-        if (href.startsWith("mailto:")) {
-          send("generate_lead", { method: "email", value: 1, link_url: href });
-          return;
-        }
-        if (FILE_EXT.test(href)) {
-          const url = new URL(href, location.href);
-          send("file_download", {
-            link_url: url.href,
-            file_extension: (url.pathname.split(".").pop() || "").toLowerCase(),
-            file_name: url.pathname.split("/").pop()
-          });
-          return;
-        }
-      }
-    });
-
-    // Si algún día abres Calendly vía JS:
-    // window.dispatchEvent(new Event("calendly:open"));
-    window.addEventListener("calendly:open", () => {
-      send("begin_checkout", { item_list_name: "calendly" });
+    // 3) Si algún día abres Calendly vía JS:
+    // window.dispatchEvent(new Event('calendly:open'));
+    window.addEventListener('calendly:open', function () {
+      sendEvent('begin_checkout', { item_list_name: 'calendly' });
     });
   })();
   </script>
