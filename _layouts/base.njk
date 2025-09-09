@@ -9,7 +9,7 @@
 
   {% include "seo.njk" %}
 
-  {# -- Verificación Search Console (opcional, si configuraste site.meta.googleSiteVerification) -- #}
+  {# -- Verificación Search Console (opcional) -- #}
   {% if site.meta.googleSiteVerification %}
   <meta name="google-site-verification" content="{{ site.meta.googleSiteVerification }}">
   {% endif %}
@@ -31,12 +31,12 @@
   </script>
 
   <!-- Favicons -->
-<link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
 
   <!-- Actualiza el ?v= cuando recompiles CSS -->
   <link rel="stylesheet" href="/assets/styles.css?v=20250901">
@@ -50,13 +50,17 @@
       font-variant-emoji:emoji; line-height:1;
     }
   </style>
-  <!-- GA4 + Consent Mode (default denied + bootstrap previo al config) -->
+
+  <!-- === GA4 + Consent Mode + DebugView (por ?ga_debug=1 o localhost) === -->
   <script>
-  if (location.hostname.endsWith('nuriazardoya.es')) {
+  (function(){
+    if (!(location.hostname.endsWith('nuriazardoya.es') || location.hostname === 'localhost')) return;
+
+    // dataLayer / gtag
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
 
-    // 1) Estado por defecto (sin analítica ni ads)
+    // 1) Consentimiento por defecto (sin analítica hasta aceptar)
     gtag('consent','default',{
       ad_storage:'denied',
       analytics_storage:'denied',
@@ -64,36 +68,56 @@
       security_storage:'granted'
     });
 
-    // 2) Bootstrap: si ya había consentimiento guardado, aplicarlo antes del config
+    // 2) Si ya había preferencia guardada, aplicarla antes del config
+    try {
+      var raw = localStorage.getItem('cookie-consent');
+      if (!raw) {
+        var m = document.cookie.match(/(?:^|;\s*)cookie-consent=([^;]+)/);
+        if (m) raw = decodeURIComponent(m[1]);
+      }
+      if (raw) {
+        var c = JSON.parse(raw);
+        gtag('consent','update',{
+          analytics_storage: c.analytics ? 'granted' : 'denied',
+          ad_storage:       c.marketing ? 'granted' : 'denied',
+          functionality_storage:'granted',
+          security_storage:'granted'
+        });
+      }
+    } catch(_){}
+
+    // 3) Cargar GA4
+    var s=document.createElement('script');
+    s.async=1;
+    s.src='https://www.googletagmanager.com/gtag/js?id=G-LC5PDXC6PE';
+    document.head.appendChild(s);
+
+    // 4) Flag de depuración: ?ga_debug=1 / ?ga_debug=0 o si es localhost
     (function(){
-      try {
-        var raw = localStorage.getItem('cookie-consent');
-        if (!raw) {
-          var m = document.cookie.match(/(?:^|;\s*)cookie-consent=([^;]+)/);
-          if (m) raw = decodeURIComponent(m[1]);
-        }
-        if (raw) {
-          var c = JSON.parse(raw);
-          gtag('consent','update',{
-            analytics_storage: c.analytics ? 'granted' : 'denied',
-            ad_storage:       c.marketing ? 'granted' : 'denied',
-            functionality_storage:'granted',
-            security_storage:'granted'
-          });
-        }
-      } catch(e){}
+      var q = new URLSearchParams(location.search);
+      if (q.get('ga_debug') === '1') { try{ localStorage.setItem('ga_debug','1'); }catch{} }
+      if (q.get('ga_debug') === '0') { try{ localStorage.removeItem('ga_debug'); }catch{} }
+      window.__gaDebug = (location.hostname === 'localhost') || (localStorage.getItem('ga_debug') === '1');
     })();
 
-    // 3) Cargar GA4 y configurar
-    (function(){
-      var s = document.createElement('script');
-      s.async = 1;
-      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-LC5PDXC6PE';
-      document.head.appendChild(s);
-    })();
+    // 5) Inicializar GA4
     gtag('js', new Date());
-    gtag('config','G-LC5PDXC6PE',{ transport_type:'beacon' });
-  }
+    gtag('config','G-LC5PDXC6PE',{
+      transport_type:'beacon',
+      debug_mode: !!window.__gaDebug
+    });
+
+    // 6) Envolver gtag para que todos los eventos lleven debug_mode en debug
+    (function(){
+      var og = window.gtag;
+      window.gtag = function(cmd, name, params){
+        if (cmd === 'event' && window.__gaDebug) {
+          params = Object.assign({}, params || {}, { debug_mode:true });
+        }
+        return og(cmd, name, params);
+      };
+    })();
+  })();
   </script>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -188,7 +212,7 @@
                b.classList.contains('translated-rtl');
       }
 
-      // Si la Edge dejó gt_lang pero aún no hay googtrans, créalo
+      // Si Edge dejó gt_lang pero aún no hay googtrans, créalo
       (function ensurePairFromHint(){
         const m=document.cookie.match(/(?:^|;\s*)gt_lang=([^;]+)/);
         const hinted=m?decodeURIComponent(m[1]):"";
@@ -267,7 +291,7 @@
       }
 
       // ==== Offset de la barra ====
-      const NUDGE = 0; // píxeles para evitar la línea verde
+      const NUDGE = 0;
       function measureBannerHeight(){
         const ifr = document.querySelector('iframe.goog-te-banner-frame') ||
                     document.querySelector('.skiptranslate iframe');
@@ -325,13 +349,11 @@
           host.remove();
 
           if (v === 'global') {
-            // 👉 Todo el sitio en ES (limpia cookies de traducción)
             delCookie('gt_lang'); delCookie('googtrans');
             try { document.cookie = 'langpref=es; Max-Age=2592000; Path=/; SameSite=Lax'; } catch(e){}
             document.documentElement.setAttribute('lang','es-ES');
             syncLangUI();
           } else if (v === 'keep') {
-            // 👉 Volver a traducir en el idioma anterior y mantenerlo globalmente
             const lang = (prevLang||'').toLowerCase();
             if (lang && lang !== 'es') {
               const pair = '/es/' + lang;
@@ -339,10 +361,9 @@
               setCookie('googtrans', pair, 'Max-Age=31536000; Path=/');
               setCookie('googtrans', pair, 'Max-Age=31536000; Path=/; Domain=' + location.hostname);
               document.documentElement.setAttribute('lang', lang);
-              location.reload(); // necesitamos que el widget reaplique
+              location.reload();
             }
           }
-          // 'close' => no hacemos nada (solo esta página en ES; al navegar volverá el idioma previo)
         });
       }
 
@@ -354,12 +375,11 @@
         setBarOffset(barVisible, h);
         syncLangUI();
 
-        // Detecta transición de visible -> oculta
         const was = updateGTLayout.__lastH || 0;
         if (was > 0 && h === 0) {
-          const prev = currentLang(); // idioma que había antes de cerrar
+          const prev = currentLang();
           if (prev !== 'es') {
-            showLangExitPrompt(prev); // opción C: preguntamos
+            showLangExitPrompt(prev);
           }
         }
         updateGTLayout.__lastH = h;
@@ -398,24 +418,27 @@
     })();
   </script>
   <div id="gt-el" class="hidden"></div>
-  <!-- GA4 – eventos útiles para CTA, teléfono/email y descargas -->
+
+  <!-- === GA4 – eventos útiles para CTA, teléfono/email y descargas === -->
   <script>
   (function () {
     const FILE_EXT = /\.(pdf|docx?|xlsx?|pptx?|zip|rar|7z|mp3|mp4|wav|mov|avi)$/i;
+    const dbg = !!window.__gaDebug;
 
     function canSend() {
       return typeof window.gtag === "function" &&
-            window.cookiePrefs && window.cookiePrefs.analytics === true;
+             window.cookiePrefs && window.cookiePrefs.analytics === true;
     }
     function send(eventName, params) {
       if (!canSend()) return;
-      window.gtag("event", eventName, Object.assign({
-        page_location: location.href
-      }, params || {}));
+      window.gtag("event", eventName, Object.assign(
+        { page_location: location.href },
+        params || {},
+        dbg ? { debug_mode:true } : {}
+      ));
     }
 
-    // Marca cualquier CTA con data-gtag="id_que_quieras"
-    // ej. <a href="/pide-tu-cita/" data-gtag="cta_header">Pide tu cita</a>
+    // Cualquier CTA marcado con data-gtag="id_que_quieras"
     document.addEventListener("click", (e) => {
       const el = e.target.closest("a,button");
       if (!el) return;
@@ -463,6 +486,7 @@
     });
   })();
   </script>
+
   <!-- ====================================================================== -->
   <script>
     if ("serviceWorker" in navigator) {
