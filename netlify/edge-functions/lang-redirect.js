@@ -7,6 +7,7 @@ const SUPPORTED = new Set(["en", "fr", "eu"]);
 const STATIC_RX = [
   /^\/admin\//,
   /^\/assets\//,
+  /^\/\.netlify\//,
   /^\/images\//,
   /^\/favicon\./,
   /\.(css|js|json|xml|txt|ico|png|jpg|jpeg|webp|svg|map)$/i,
