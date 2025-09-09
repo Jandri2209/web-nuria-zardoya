@@ -1,10 +1,6 @@
 backend:
-  name: github
-  repo: Jandri2209/web-nuria-zardoya
+  name: git-gateway
   branch: main
-  base_url: "/.netlify/functions/oauth"   # Decap llamará a /auth y /callback aquí
-  auth_endpoint: auth
-
 
 media_folder: "assets/uploads"
 public_folder: "/assets/uploads"

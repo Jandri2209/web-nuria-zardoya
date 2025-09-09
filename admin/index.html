@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Panel de edición | Nuria</title>
 
+    <!-- Netlify Identity -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
     <!-- Manual init (antes de cargar Decap) -->
     <script>
       window.CMS_MANUAL_INIT = true;
@@ -24,6 +27,15 @@
     <script src="/admin/preview.js"></script>
 
     <script>
+      // Recarga tras login
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on("init", (user) => {
+          if (!user) {
+            window.netlifyIdentity.on("login", () => window.location.reload());
+          }
+        });
+      }
+
       document.addEventListener("DOMContentLoaded", function () {
         // 1) Registrar el locale español (usa el bundle oficial)
         if (window.DecapCmsLocales && window.DecapCmsLocales.es) {
