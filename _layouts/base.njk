@@ -50,25 +50,50 @@
       font-variant-emoji:emoji; line-height:1;
     }
   </style>
-  <!-- GA4 + Consent Mode (por defecto sin analítica) -->
+  <!-- GA4 + Consent Mode (default denied + bootstrap previo al config) -->
   <script>
-    if (location.hostname.endsWith('nuriazardoya.es')) {
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){ dataLayer.push(arguments); }
-      gtag('consent','default',{
-        ad_storage:'denied',
-        analytics_storage:'denied',
-        functionality_storage:'granted',
-        security_storage:'granted'
-      });
-      (function(){
-        var s=document.createElement('script');
-        s.async=1; s.src='https://www.googletagmanager.com/gtag/js?id=G-LC5PDXC6PE';
-        document.head.appendChild(s);
-      })();
-      gtag('js', new Date());
-      gtag('config','G-LC5PDXC6PE',{ transport_type:'beacon' });
-    }
+  if (location.hostname.endsWith('nuriazardoya.es')) {
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+
+    // 1) Estado por defecto (sin analítica ni ads)
+    gtag('consent','default',{
+      ad_storage:'denied',
+      analytics_storage:'denied',
+      functionality_storage:'granted',
+      security_storage:'granted'
+    });
+
+    // 2) Bootstrap: si ya había consentimiento guardado, aplicarlo antes del config
+    (function(){
+      try {
+        var raw = localStorage.getItem('cookie-consent');
+        if (!raw) {
+          var m = document.cookie.match(/(?:^|;\s*)cookie-consent=([^;]+)/);
+          if (m) raw = decodeURIComponent(m[1]);
+        }
+        if (raw) {
+          var c = JSON.parse(raw);
+          gtag('consent','update',{
+            analytics_storage: c.analytics ? 'granted' : 'denied',
+            ad_storage:       c.marketing ? 'granted' : 'denied',
+            functionality_storage:'granted',
+            security_storage:'granted'
+          });
+        }
+      } catch(e){}
+    })();
+
+    // 3) Cargar GA4 y configurar
+    (function(){
+      var s = document.createElement('script');
+      s.async = 1;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-LC5PDXC6PE';
+      document.head.appendChild(s);
+    })();
+    gtag('js', new Date());
+    gtag('config','G-LC5PDXC6PE',{ transport_type:'beacon' });
+  }
   </script>
 </head>
 <body class="bg-gray-50 text-gray-800">
