@@ -7,27 +7,24 @@ const TOKEN_URL     = "https://github.com/login/oauth/access_token";
 exports.handler = async (event) => {
   const proto = event.headers["x-forwarded-proto"] || "https";
   const host  = event.headers["x-forwarded-host"] || event.headers.host;
+  const siteOrigin = `${proto}://${host}`;      // <-- origen del panel /admin
   const basePath = event.path.replace(/\/(auth|callback)$/, "");
-  const baseURL  = `${proto}://${host}${basePath}`;
+  const baseURL  = `${siteOrigin}${basePath}`;
   const redirect = `${baseURL}/callback`;
 
-  // --- /auth → GitHub ---
   if (event.path.endsWith("/auth")) {
-    // incluimos state por compatibilidad, pero no dependemos de él
-    const state = Buffer.from(JSON.stringify({ origin: `${proto}://${host}` }))
+    const state = Buffer.from(JSON.stringify({ origin: siteOrigin }))
       .toString("base64url");
 
     const url = new URL(AUTHORIZE_URL);
     url.searchParams.set("client_id", process.env.OAUTH_CLIENT_ID);
     url.searchParams.set("redirect_uri", redirect);
-    // usa "repo" para que funcione si el repo es privado (vale también para público)
-    url.searchParams.set("scope", "repo");
+    url.searchParams.set("scope", "repo"); // sirve para repo público o privado
     url.searchParams.set("state", state);
 
     return { statusCode: 302, headers: { Location: url.toString() } };
   }
 
-  // --- /callback → code→token → postMessage + close ---
   if (event.path.endsWith("/callback")) {
     const code = (event.queryStringParameters || {}).code;
     if (!code) return { statusCode: 400, body: "Missing code" };
@@ -53,19 +50,11 @@ exports.handler = async (event) => {
 <script>
 (function(){
   var t = ${JSON.stringify(token)};
-  var payload = { token: t, provider: 'github' };
-  var msg = 'authorization:github:success:' + JSON.stringify(payload);
-
-  // target robusto: 1) referrer → origin del /admin, 2) fallback '*'
-  var target = '*';
-  try {
-    var ref = document.referrer ? new URL(document.referrer).origin : '';
-    if (ref) target = ref;
-  } catch(e){}
-
+  var msg = 'authorization:github:success:' + JSON.stringify({ token: t, provider: 'github' });
   try {
     if (window.opener && t) {
-      window.opener.postMessage(msg, target);
+      // ¡enviar SIEMPRE al origen del panel!
+      window.opener.postMessage(msg, ${JSON.stringify(siteOrigin)});
       window.close();
     } else {
       document.body.textContent = 'Autorización completada. Puedes cerrar esta ventana.';
