@@ -3,6 +3,7 @@ backend:
   repo: Jandri2209/web-nuria-zardoya
   branch: main
   base_url: "/.netlify/functions/oauth"   # Decap llamará a /auth y /callback aquí
+  auth_endpoint: auth
 
 
 media_folder: "assets/uploads"
