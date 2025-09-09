@@ -47,29 +47,25 @@ exports.handler = async (event) => {
     const token = data.access_token || "";
 
     const html = `<!doctype html><html lang="es"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="google" content="notranslate"><title>Autorización completada</title></head><body>
-<script>
-(function(){
-  var t = ${JSON.stringify(token)};
-  var payload = 'authorization:github:success:' + JSON.stringify({ token: t });
+                    <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+                    <meta name="google" content="notranslate"><title>Autorización completada</title></head><body>
+                    <script>
+                    (function(){
+                    var t = ${JSON.stringify(token)};
+                    try {
+                        if (window.opener && t) {
+                        // formato que Decap espera: token en texto plano
+                        window.opener.postMessage('authorization:github:success:' + t, ${JSON.stringify(siteOrigin)});
+                        setTimeout(function(){ window.close(); }, 120);
+                        } else {
+                        document.body.textContent = 'Autorización completada. Puedes cerrar esta ventana.';
+                        }
+                    } catch(e){
+                        document.body.textContent = 'Autorización completada. Puedes cerrar esta ventana.';
+                    }
+                    })();
+                    </script></body></html>`;
 
-  function safePost(target) {
-    try { if (window.opener) window.opener.postMessage(payload, target); } catch (e) {}
-  }
-
-  // 1) Enviar a '*' (compatibilidad total)
-  safePost('*');
-  // 2) Enviar también al origen exacto del panel
-  safePost(${JSON.stringify(siteOrigin)});
-
-  // Cerrar con un pequeño retardo para asegurar entrega
-  setTimeout(function(){
-    try { window.close(); } catch(e) {}
-    document.body.textContent = 'Puedes cerrar esta ventana.';
-  }, 100);
-})();
-</script></body></html>`;
 
     return { statusCode: 200, headers: { "Content-Type": "text/html" }, body: html };
   }
