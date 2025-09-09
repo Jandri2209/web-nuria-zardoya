@@ -212,7 +212,7 @@
                b.classList.contains('translated-rtl');
       }
 
-      // Si la Edge dejó gt_lang pero aún no hay googtrans, créalo
+      // Si Edge dejó gt_lang pero aún no hay googtrans, créalo
       (function ensurePairFromHint(){
         const m=document.cookie.match(/(?:^|;\s*)gt_lang=([^;]+)/);
         const hinted=m?decodeURIComponent(m[1]):"";
@@ -241,7 +241,7 @@
       window.setLanguage=function(lang){
         if(!lang || lang==="es"){
           delCookie("gt_lang"); delCookie("googtrans");
-          try { document.cookie = "langpref=es; Max-Age=2592000; Path=/; SameSite=Lax"; } catch(e){}
+          setCookie("langpref","es","Max-Age=2592000; Path=/; SameSite=Lax");
           document.documentElement.setAttribute("lang","es-ES");
           location.reload();
           return;
@@ -291,7 +291,7 @@
       }
 
       // ==== Offset de la barra ====
-      const NUDGE = 0; // píxeles para evitar la línea verde
+      const NUDGE = 0;
       function measureBannerHeight(){
         const ifr = document.querySelector('iframe.goog-te-banner-frame') ||
                     document.querySelector('.skiptranslate iframe');
@@ -361,7 +361,7 @@
               setCookie('googtrans', pair, 'Max-Age=31536000; Path=/');
               setCookie('googtrans', pair, 'Max-Age=31536000; Path=/; Domain=' + location.hostname);
               document.documentElement.setAttribute('lang', lang);
-              location.reload(); // necesitamos que el widget reaplique
+              location.reload();
             }
           }
         });
@@ -375,12 +375,11 @@
         setBarOffset(barVisible, h);
         syncLangUI();
 
-        // Detecta transición de visible -> oculta
         const was = updateGTLayout.__lastH || 0;
         if (was > 0 && h === 0) {
-          const prev = currentLang(); // idioma que había antes de cerrar
+          const prev = currentLang();
           if (prev !== 'es') {
-            showLangExitPrompt(prev); // opción C: preguntamos
+            showLangExitPrompt(prev);
           }
         }
         updateGTLayout.__lastH = h;
@@ -420,91 +419,69 @@
   </script>
   <div id="gt-el" class="hidden"></div>
 
-  <!-- GA4 – eventos CTA / Tel / Descargas (a prueba de navegación rápida) -->
+  <!-- === GA4 – eventos útiles para CTA, teléfono/email y descargas === -->
   <script>
   (function () {
     const FILE_EXT = /\.(pdf|docx?|xlsx?|pptx?|zip|rar|7z|mp3|mp4|wav|mov|avi)$/i;
-    const DEBUG = /\bga_debug=1\b/.test(location.search) || location.hostname === 'localhost';
+    const dbg = !!window.__gaDebug;
 
-    function hasGtag(){ return typeof window.gtag === 'function'; }
-
-    // Enviar con beacon + callback para no perder el hit al navegar
-    function send(eventName, params, thenNavigate) {
-      if (!hasGtag()) return;
-      const payload = Object.assign({
-        page_location: location.href,
-        transport_type: 'beacon'
-      }, params || {});
-      if (DEBUG) payload.debug_mode = true;
-
-      if (typeof thenNavigate === 'function') {
-        let finished = false;
-        payload.event_callback = function(){ finished = true; thenNavigate(); };
-        payload.event_timeout  = 2000;
-        gtag('event', eventName, payload);
-        setTimeout(function(){ if (!finished) thenNavigate(); }, 2100);
-      } else {
-        gtag('event', eventName, payload);
-      }
+    function canSend() {
+      return typeof window.gtag === "function" &&
+             window.cookiePrefs && window.cookiePrefs.analytics === true;
+    }
+    function send(eventName, params) {
+      if (!canSend()) return;
+      window.gtag("event", eventName, Object.assign(
+        { page_location: location.href },
+        params || {},
+        dbg ? { debug_mode:true } : {}
+      ));
     }
 
-    // Capturamos en fase de captura para ganar tiempo
-    document.addEventListener('click', function(e){
-      const el = e.target && e.target.closest('a,button');
+    // Cualquier CTA marcado con data-gtag="id_que_quieras"
+    document.addEventListener("click", (e) => {
+      const el = e.target.closest("a,button");
       if (!el) return;
 
-      // --- 1) CTAs con data-gtag ---
-      const tag = el.getAttribute && el.getAttribute('data-gtag');
+      // 1) CTAs etiquetados
+      const tag = el.getAttribute("data-gtag");
       if (tag) {
-        const linkText = (el.textContent || '').trim().slice(0,80);
-        const href = el.href || '';
-
-        if (el.tagName === 'A' && href) {
-          e.preventDefault();
-          send('select_content', {
-            content_type: 'cta',
-            item_id: tag,
-            link_text: linkText,
-            link_url: href
-          }, function(){ location.href = href; });
-        } else {
-          send('select_content', {
-            content_type: 'cta',
-            item_id: tag,
-            link_text: linkText,
-            link_url: href || location.href
-          });
-        }
+        send("select_content", {
+          content_type: "cta",
+          item_id: tag,
+          link_text: (el.textContent || "").trim().slice(0, 80),
+          link_url: el.href || location.href
+        });
         return;
       }
 
-      // --- 2) Teléfono / Email / Descargas ---
-      if (el.tagName === 'A' && el.hasAttribute('href')) {
-        const raw = el.getAttribute('href').trim();
+      // 2) Teléfono / Email / Descargas
+      if (el.tagName === "A" && el.hasAttribute("href")) {
+        const href = el.getAttribute("href").trim();
 
-        if (raw.startsWith('tel:')) {
-          send('generate_lead', { method: 'phone', value: 1, link_url: raw });
+        if (href.startsWith("tel:")) {
+          send("generate_lead", { method: "phone", value: 1, link_url: href });
           return;
         }
-        if (raw.startsWith('mailto:')) {
-          send('generate_lead', { method: 'email', value: 1, link_url: raw });
+        if (href.startsWith("mailto:")) {
+          send("generate_lead", { method: "email", value: 1, link_url: href });
           return;
         }
-        if (FILE_EXT.test(raw)) {
-          const url = new URL(raw, location.href);
-          e.preventDefault();
-          send('file_download', {
+        if (FILE_EXT.test(href)) {
+          const url = new URL(href, location.href);
+          send("file_download", {
             link_url: url.href,
-            file_extension: (url.pathname.split('.').pop() || '').toLowerCase(),
-            file_name: url.pathname.split('/').pop()
-          }, function(){ location.href = url.href; });
+            file_extension: (url.pathname.split(".").pop() || "").toLowerCase(),
+            file_name: url.pathname.split("/").pop()
+          });
+          return;
         }
       }
-    }, true); // fase de captura
+    });
 
     // Si algún día abres Calendly vía JS:
     // window.dispatchEvent(new Event("calendly:open"));
-    window.addEventListener("calendly:open", function(){
+    window.addEventListener("calendly:open", () => {
       send("begin_checkout", { item_list_name: "calendly" });
     });
   })();
