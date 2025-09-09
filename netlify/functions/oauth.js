@@ -56,7 +56,7 @@ exports.handler = async (event) => {
                         if (window.opener && t) {
                         // formato que Decap espera: token en texto plano
                         window.opener.postMessage('authorization:github:success:' + t, ${JSON.stringify(siteOrigin)});
-                        setTimeout(function(){ window.close(); }, 120);
+                        setTimeout(function(){ window.close(); }, 500);
                         } else {
                         document.body.textContent = 'Autorización completada. Puedes cerrar esta ventana.';
                         }
