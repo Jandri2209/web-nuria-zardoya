@@ -182,9 +182,9 @@
       function isTranslatedNow() {
         const el = document.documentElement, b = document.body;
         return el.classList.contains('translated-ltr') ||
-               el.classList.contains('translated-rtl') ||
-               b.classList.contains('translated-ltr')  ||
-               b.classList.contains('translated-rtl');
+              el.classList.contains('translated-rtl') ||
+              b.classList.contains('translated-ltr')  ||
+              b.classList.contains('translated-rtl');
       }
 
       // Si la Edge dejó gt_lang pero aún no hay googtrans, créalo
@@ -349,15 +349,20 @@
         const h = measureBannerHeight();
         const barVisible = translated && h > 0;
 
+        // --- NUEVO: guarda el último idioma mientras la barra está visible ---
+        if (barVisible) {
+          updateGTLayout.__lastLang = currentLang();
+        }
+
         setBarOffset(barVisible, h);
         syncLangUI();
 
         // Detecta transición de visible -> oculta
         const was = updateGTLayout.__lastH || 0;
         if (was > 0 && h === 0) {
-          const prev = currentLang(); // idioma que había antes de cerrar
+          const prev = updateGTLayout.__lastLang || currentLang(); // usa el que guardamos
           if (prev !== 'es') {
-            showLangExitPrompt(prev); // opción C: preguntamos
+            showLangExitPrompt(prev); // dispara tu prompt
           }
         }
         updateGTLayout.__lastH = h;
