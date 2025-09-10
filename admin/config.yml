@@ -65,7 +65,7 @@ collections:
           - { label: "Contenido", name: "body", widget: "markdown", required: false }
 
       - label: "Blog"
-        name: "blog"
+        name: "blog-page"
         file: "blog.html"
         preview_path: "blog/"
         fields:
@@ -124,13 +124,36 @@ collections:
       - { label: "Raciones", name: "servings", widget: "number", min: 1 }
       - { label: "Tiempo (min)", name: "time", widget: "number", min: 0 }
       - { label: "Dificultad", name: "difficulty", widget: "select", options: ["Fácil","Media","Difícil"] }
-
       - label: "Ingredientes"
         name: "ingredients"
         widget: "list"
         field: { label: "Ingrediente", name: "item", widget: "string" }
-
       - label: "Preparación (pasos)"
         name: "steps"
         widget: "list"
         field: { label: "Paso", name: "step", widget: "text" }
+
+  # 3) Blog (entradas)
+  - name: "blog"
+    label: "Blog"
+    label_singular: "Entrada"
+    folder: "blog"
+    create: true
+    extension: "md"
+    format: "frontmatter"
+    slug: "{{slug}}"
+    preview_path: "blog/{{slug}}/"
+    fields:
+      - { label: "Título", name: "title", widget: "string" }
+      - { label: "Fecha", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
+      - { label: "Descripción", name: "description", widget: "text", required: false, hint: "Resumen breve bajo el título." }
+      - { label: "Imagen", name: "image", widget: "image", required: false }
+      - { label: "Categoría", name: "category", widget: "select", options: ["Mito","Noticia","Consejo","Otro"], required: false }
+      - label: "Galería (opcional)"
+        name: "gallery"
+        widget: "list"
+        required: false
+        field: { label: "Imagen", name: "image", widget: "image" }
+      - { label: "URL de Instagram (opcional)", name: "instagram_url", widget: "string", required: false, hint: "Enlace a la publicación de Instagram." }
+      - { label: "Embed de Instagram (pega el código)", name: "instagram_embed", widget: "text", required: false, hint: "Pega aquí el código de inserción (Instagram > … > Embed)." }
+      - { label: "Contenido", name: "body", widget: "markdown" }

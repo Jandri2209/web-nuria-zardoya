@@ -1,22 +1,26 @@
 // /admin/preview.js
 (function () {
+  'use strict';
   const CMS = window.CMS;
   const h = window.h;
   if (!CMS || !h) return;
 
-  // Estilos para el preview (mantén el CDN de Tailwind mientras no tengas CSS propio)
+  // Tailwind para la vista previa (estilos básicos)
   CMS.registerPreviewStyle("https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css");
 
+  /* ========= Helpers ========= */
   const withAsset = (entry, field, getAsset) => {
     const v = entry.getIn(["data", field]);
     if (!v) return null;
     const asset = getAsset(v);
     return asset ? asset.toString() : v;
   };
-  const toArray = (v) => (v && typeof v.toArray === "function" ? v.toArray() : Array.isArray(v) ? v : []);
+  const toArray = (v) =>
+    (v && typeof v.toArray === "function" ? v.toArray() : Array.isArray(v) ? v : []);
   const getText = (item, key) =>
     item && item.get ? (item.get(key) ?? item) : (item && typeof item === "object" ? (item[key] ?? item) : item);
 
+  /* ========= Preview: Recetas ========= */
   const RecipePreview = ({ entry, getAsset }) => {
     const T   = entry.getIn(["data","title"]) || entry.get("slug") || "Título";
     const D   = entry.getIn(["data","description"]) || "Receta saludable de Nuria Zardoya";
@@ -49,7 +53,7 @@
             ].filter(Boolean)),
           ]),
           h("div", {}, [
-            h("img", { src: Img, alt: `Imagen de ${T}`, className: "rounded-xl shadow-lg w-full max-h-[400px] object-cover" }),
+            h("img", { src: Img, alt: `Imagen de ${T}`, className: "rounded-xl shadow-lg w-full max-h-96 object-cover" }),
           ]),
         ]),
       ]),
@@ -65,7 +69,7 @@
                   h("button", { className: "text-sm bg-green-100 text-green-800 font-semibold py-2 px-4 rounded-full cursor-not-allowed", disabled: true }, "Copiar"),
                 ]),
                 h("ul", { className: "list-disc pl-5 space-y-1 text-gray-800" },
-                  ingredients.map((ing, i) => h("li", { key: i }, String(getText(ing, "item"))))
+                  ingredients.map((ing, i) => h("li", { key: `ing-${i}` }, String(getText(ing, "item"))))
                 ),
               ])
             : null,
@@ -86,7 +90,7 @@
           ? h("section", { className: "mt-6" }, [
               h("h2", { className: "text-2xl font-semibold mb-4" }, "Preparación"),
               h("ol", { className: "space-y-4" },
-                steps.map((s, idx) => h("li", { key: idx, className: "relative bg-white border border-gray-200 rounded-xl p-4 pl-12 shadow-sm" }, [
+                steps.map((s, idx) => h("li", { key: `step-${idx}`, className: "relative bg-white border border-gray-200 rounded-xl p-4 pl-12 shadow-sm" }, [
                   h("span", { className: "absolute left-4 top-4 inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-600 text-white text-sm font-bold" }, String(idx + 1)),
                   h("p", { className: "text-gray-800 leading-relaxed" }, String(getText(s, "step"))),
                 ]))
@@ -104,4 +108,64 @@
   };
 
   CMS.registerPreviewTemplate("recetas", RecipePreview);
+
+  /* ========= Preview: Blog (noticias/mitos/consejos) ========= */
+  const PostPreview = ({ entry, widgetFor, getAsset }) => {
+    const T   = entry.getIn(["data","title"]) || entry.get("slug") || "Título";
+    const D   = entry.getIn(["data","description"]) || "";
+    const Img = withAsset(entry, "image", getAsset) || "";
+    const Cat = entry.getIn(["data","category"]) || "Blog";
+    const date = entry.getIn(["data","date"]);
+    const dateText = date ? new Date(date).toLocaleDateString("es-ES", { day:"2-digit", month:"long", year:"numeric" }) : null;
+
+    // Galería opcional (lista de imágenes)
+    const gallery = toArray(entry.getIn(["data","gallery"])).map((g) => {
+      const val = g && g.get ? (g.get("image") ?? g) : g;
+      const asset = val ? getAsset(val) : null;
+      return asset ? asset.toString() : (val ? String(val) : "");
+    }).filter(Boolean);
+
+    return h("div", {}, [
+      h("section", { className: "bg-white" }, [
+        h("div", { className: "container mx-auto px-6 py-10 max-w-4xl" }, [
+          h("p", { className: "text-sm text-green-700 font-semibold mb-2" }, Cat),
+          h("h1", { className: "text-4xl font-bold text-gray-900 mb-3" }, T),
+          D ? h("p", { className: "text-lg text-gray-600 mb-4" }, D) : null,
+          dateText ? h("div", { className: "text-sm text-gray-500 mb-6" }, dateText) : null,
+
+          // Imagen principal
+          Img ? h("img", { src: Img, alt: `Imagen de ${T}`, className: "rounded-xl shadow w-full object-cover mb-8" }) : null,
+
+          // Galería horizontal (opcional, tipo carrusel simple)
+          gallery.length ? h("div", { className: "mb-8" }, [
+            h("div", { className: "overflow-x-auto flex gap-4 pb-2" },
+              gallery.map((src, idx) =>
+                h("img", {
+                  key: `g-${idx}`,
+                  src,
+                  alt: `Imagen ${idx + 1} de ${T}`,
+                  className: "rounded-xl shadow min-w-full object-cover"
+                })
+              )
+            ),
+            h("div", { className: "flex justify-center gap-2 mt-2" },
+              gallery.map((_, idx) =>
+                h("span", { key: `dot-${idx}`, className: "w-2.5 h-2.5 rounded-full bg-gray-300 inline-block" })
+              )
+            )
+          ]) : null,
+
+          // Cuerpo del post
+          h("article", { className: "max-w-none" }, widgetFor ? widgetFor("body") : null),
+
+          // Volver
+          h("div", { className: "mt-10" }, [
+            h("a", { href: "#", className: "inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-6 rounded-full cursor-not-allowed" }, "← Volver al blog")
+          ])
+        ])
+      ])
+    ]);
+  };
+
+  CMS.registerPreviewTemplate("blog", PostPreview);
 })();
