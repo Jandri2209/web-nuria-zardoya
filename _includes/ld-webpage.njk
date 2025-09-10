@@ -24,11 +24,11 @@
   "@type": "{{ pageType }}",
   "@id": "{{ site.url }}{{ page.url }}#webpage",
   "url": "{{ site.url }}{{ page.url }}",
-  "name": {{ (title or site.defaultTitle) | dump }},
-  "description": {{ (description or site.defaultDescription) | dump }},
+  "name": {{ (title or site.defaultTitle) | dump  | safe }},
+  "description": {{ (description or site.defaultDescription) | dump  | safe }},
   "inLanguage": "{{ site.lang or 'es-ES' }}",
   "isPartOf": { "@id": "{{ site.url }}/#website" }{% if img %},
-  "primaryImageOfPage": { "@type": "ImageObject", "url": {{ img | dump }} }{% endif %}{% if page.url != "/" %},
+  "primaryImageOfPage": { "@type": "ImageObject", "url": {{ img | dump  | safe }} }{% endif %}{% if page.url != "/" %},
   "breadcrumb": { "@id": "{{ site.url }}{{ page.url }}#breadcrumb" }{% endif %}{% if page.date %},
   "datePublished": "{{ page.date | date('en-CA', { year:'numeric', month:'2-digit', day:'2-digit' }) }}"{% endif %}
 }
