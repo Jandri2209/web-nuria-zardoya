@@ -1,7 +1,11 @@
 <header id="site-header" class="bg-white/90 backdrop-blur shadow-md fixed w-full top-0 z-50">
   <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
     <!-- Branding -->
-    <a href="/" class="text-2xl font-bold text-green-600">Nuria Zardoya</a>
+    <!-- NUEVO: icono junto al nombre -->
+    <a href="/" class="flex items-center gap-2 text-green-600">
+      <img src="/favicon-32x32.png" alt="" class="w-7 h-7 rounded" loading="lazy" decoding="async">
+      <span class="text-2xl font-bold">Nuria Zardoya</span>
+    </a>
 
     {% set active = "text-green-600 font-semibold" %}
     {% set idle   = "text-gray-600 hover:text-green-600" %}
@@ -43,6 +47,12 @@
       <a href="/recetas/"
          class="{% if isRecetas %}{{ active }}{% else %}{{ idle }}{% endif %}"
          {% if isRecetas %}aria-current="page"{% endif %}>Recetas</a>
+
+      <!-- NUEVO: enlace Blog (activo en /blog/ y en posts dentro de /blog/xxxx/) -->
+      {% set isBlog = page.url == '/blog.html' or page.url == '/blog/' or (page.url and page.url.indexOf('/blog/') == 0) %}
+      <a href="/blog/"
+         class="{% if isBlog %}{{ active }}{% else %}{{ idle }}{% endif %}"
+         {% if isBlog %}aria-current="page"{% endif %}>Blog</a>
 
       {% set isContacto = page.url == '/contacto.html' or page.url == '/contacto/' %}
       <a href="/contacto/"
@@ -142,6 +152,8 @@
       <a href="/quien-soy/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Quién soy</a>
       <a href="/servicios/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Servicios</a>
       <a href="/recetas/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Recetas</a>
+      <!-- NUEVO: enlace Blog en móvil -->
+      <a href="/blog/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Blog</a>
       <a href="/contacto/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Contacto</a>
       <a href="/pide-tu-cita/" class="block py-2 text-sm font-semibold text-green-700 hover:bg-green-50" role="menuitem">Pide tu cita</a>
 
@@ -248,6 +260,21 @@
 
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
     form.addEventListener('submit', (e) => { if (!input.value.trim()) e.preventDefault(); });
+
+    // NUEVO: si hay ?q= en la URL, rellenar el input del header (útil en /buscador/)
+    try {
+      const sp = new URLSearchParams(location.search);
+      const q = sp.get('q');
+      if (q) {
+        input.value = q;
+        // Si ya estás en /buscador/, mostramos el input abierto para que el usuario edite rápido
+        if (location.pathname === '/buscador/') {
+          btn.setAttribute('aria-expanded', 'true');
+          input.classList.remove('w-0','opacity-0');
+          input.classList.add('w-56','opacity-100');
+        }
+      }
+    } catch {}
   })();
 
   // ===== Buscador móvil: cajón =====

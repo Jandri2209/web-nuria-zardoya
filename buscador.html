@@ -5,56 +5,125 @@ permalink: "/buscador/"
 noindex: true
 ---
 
-<h1>Buscar en el sitio</h1>
-<input id="searchBox" type="text" placeholder="Escribe para buscar..." />
-<ul id="results"></ul>
+<section class="bg-white">
+  <div class="container mx-auto px-6 py-10 max-w-4xl">
+    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Buscar en el sitio</h1>
+
+    <!-- Caja con estilo: input + limpiar -->
+    <div class="relative mb-6">
+      <input id="searchBox" type="search" placeholder="Escribe para buscar (recetas y blog)…"
+             class="w-full border border-gray-300 rounded-xl pl-12 pr-12 py-3
+                    focus:outline-none focus:ring-2 focus:ring-green-600"
+             autocomplete="off" />
+      <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <button id="clearBtn" type="button"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600
+                     hidden rounded-full p-1"
+              aria-label="Limpiar búsqueda">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <p id="hint" class="text-sm text-gray-500 mb-4">
+      Resultados en tiempo real. Si prefieres, usa la barra del encabezado para buscar con Enter.
+    </p>
+
+    <ul id="results" class="space-y-4"></ul>
+    <div id="empty" class="hidden text-gray-500">Sin resultados. Prueba con otras palabras.</div>
+  </div>
+</section>
 
 <script src="/assets/vendor/lunr.min.js"></script>
 <script>
-  let idx = null, documents = [];
+  // ========= Normalización (sin acentos, minúsculas) =========
+  const normalize = (s) =>
+    (s || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+  // ========= Sinónimos (opcional; añade los tuyos) =========
+  const SYNONYMS = {
+    "hidratos": ["carbohidratos"],
+    "carbohidrato": ["carbohidratos"],
+    "azucar": ["azúcar","azucares","azúcares"]
+  };
+
+  let idx = null, documents = [], normalizedDocs = [];
+  let debounceT = null;
 
   function getQuery() {
     const p = new URLSearchParams(location.search);
     return (p.get("q") || "").trim();
   }
+  function setQueryInUrl(q) {
+    const u = new URL(location.href);
+    if (q) u.searchParams.set("q", q); else u.searchParams.delete("q");
+    history.replaceState(null, "", u.toString());
+  }
 
   async function initSearch() {
-    const res = await fetch("/search.json");
+    const res = await fetch("/search.json", { cache: "no-store" });
     documents = await res.json();
+
+    normalizedDocs = documents.map(d => ({
+      ...d,
+      ntitle:       normalize(d.title),
+      ndescription: normalize(d.description),
+      ncategory:    normalize(d.category),
+      ntype:        normalize(d.type || "")
+    }));
 
     idx = lunr(function () {
       this.ref("url");
-      this.field("title");
-      this.field("description");
-      documents.forEach(d => this.add(d));
+      this.field("ntitle", { boost: 4 });
+      this.field("ndescription");
+      this.field("ncategory");
+      this.field("ntype");
+      normalizedDocs.forEach(d => this.add(d));
     });
 
-    // Si viene ?q= del header, busca al cargar
-    const q = getQuery();
     const input = document.getElementById("searchBox");
-    if (q) {
-      input.value = q;
-      doSearch(q);
-    }
+    const clear = document.getElementById("clearBtn");
+    const q = getQuery();
+    if (q) { input.value = q; doSearch(q); clear.classList.toggle("hidden", !q); }
 
+    // Búsqueda en vivo con debounce
     input.addEventListener("input", (e) => {
       const v = e.target.value.trim();
-      if (v.length > 1) doSearch(v);
-      else document.getElementById("results").innerHTML = "";
+      clear.classList.toggle("hidden", !v);
+      setQueryInUrl(v);
+      clearTimeout(debounceT);
+      if (!v) { renderResults([]); return; }
+      debounceT = setTimeout(() => doSearch(v), 200);
+    });
+
+    // Limpiar
+    clear.addEventListener("click", () => {
+      input.value = "";
+      setQueryInUrl("");
+      clear.classList.add("hidden");
+      renderResults([]);
+      input.focus();
     });
   }
 
-  function doSearch(query) {
-    const resultsList = document.getElementById("results");
-
-    const terms = query
-      .toLowerCase()
+  function doSearch(rawQuery) {
+    const terms0 = normalize(rawQuery)
       .replace(/[^\p{L}\p{N}\s]/gu, " ")
       .split(/\s+/)
       .filter(Boolean);
 
-    if (!terms.length) { resultsList.innerHTML = ""; return; }
+    // Expansión por sinónimos (opcional)
+    const expanded = new Set(terms0);
+    terms0.forEach(t => (SYNONYMS[t] || []).forEach(s => expanded.add(s)));
+    const terms = Array.from(expanded);
 
+    // OR + comodín de prefijo
     let results = idx.query(q => {
       terms.forEach(t => {
         q.term(t, { presence: lunr.Query.presence.SHOULD });
@@ -62,35 +131,35 @@ noindex: true
       });
     });
 
-    if (!results.length) {
-      results = idx.query(q => {
-        terms.forEach(t => {
-          q.term(t, { presence: lunr.Query.presence.SHOULD, wildcard: lunr.Query.wildcard.TRAILING });
-        });
-      });
-    }
+    renderResults(results.map(r => documents.find(d => d.url === r.ref)).filter(Boolean));
+  }
 
-    resultsList.innerHTML = "";
-    if (!results.length) {
-      resultsList.innerHTML = '<li class="text-gray-500">Sin resultados. Prueba con otras palabras.</li>';
-      return;
-    }
+  function renderResults(items) {
+    const list  = document.getElementById("results");
+    const empty = document.getElementById("empty");
+    list.innerHTML = "";
+    empty.classList.add("hidden");
 
-    results.forEach(r => {
-      const m = documents.find(d => d.url === r.ref);
-      if (!m) return;
-      const metaLeft = [m.category || m.type].filter(Boolean).join(" · ");
+    if (!items.length) { empty.classList.remove("hidden"); return; }
+
+    items.forEach(m => {
+      const metaLeft  = [m.category || m.type].filter(Boolean).join(" · ");
       const metaRight = m.date ? m.date : "";
-      const meta = [metaLeft, metaRight].filter(Boolean).join(" · ");
+      const meta      = [metaLeft, metaRight].filter(Boolean).join(" · ");
 
       const li = document.createElement("li");
+      li.className = "bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow transition";
       li.innerHTML = `
-        <a href="${m.url}">${m.title}</a>
-        ${meta ? ` – <span class="text-sm text-gray-600">${meta}</span>` : ""}
-        ${m.description ? ` – ${m.description}` : ""}
+        ${meta ? `<div class="text-xs text-green-700 font-semibold mb-1">${meta}</div>` : ""}
+        <a href="${m.url}" class="block">
+          <h3 class="text-lg font-semibold text-gray-900">${m.title}</h3>
+          ${m.description ? `<p class="text-sm text-gray-600 mt-1">${m.description}</p>` : ""}
+          <span class="inline-flex items-center gap-1 text-green-700 font-semibold text-sm mt-2">Abrir →</span>
+        </a>
       `;
-      resultsList.appendChild(li);
+      list.appendChild(li);
     });
   }
+
   document.addEventListener("DOMContentLoaded", initSearch);
 </script>
