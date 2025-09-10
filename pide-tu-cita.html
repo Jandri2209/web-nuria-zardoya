@@ -4,38 +4,40 @@ title: "Pide tu Cita - Nuria Zardoya"
 description: "Reserva tu cita online con Nuria Zardoya. Elige el día y la hora que mejor te convenga."
 permalink: "/pide-tu-cita/"
 ---
-<div class="container mx-auto px-6">
-  <div class="mb-12">
-    <h1 class="text-4xl font-bold text-center mb-4">Pide tu cita</h1>
-    <p class="text-lg text-gray-600 text-center max-w-3xl mx-auto mb-8">
-      Haz clic para cargar el calendario y elegir la hora que mejor te convenga.
-    </p>
+<section class="container mx-auto px-6 py-10">
+  <div class="container mx-auto px-6">
+    <div class="mb-12">
+      <h1 class="text-4xl font-bold text-center mb-4">Pide tu cita</h1>
+      <p class="text-lg text-gray-600 text-center max-w-3xl mx-auto mb-8">
+        Haz clic para cargar el calendario y elegir la hora que mejor te convenga.
+      </p>
 
-    <div class="text-center">
-      <button id="btn-cita"
-              type="button"
-              data-gtag="cta_calendario"
-              class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-full shadow">
-        Abrir calendario
-      </button>
+      <div class="text-center">
+        <button id="btn-cita"
+                type="button"
+                data-gtag="cta_calendario"
+                class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-full shadow">
+          Abrir calendario
+        </button>
+      </div>
+
+      <div id="calendly-inline"
+          class="mt-8 mx-auto rounded-lg shadow-2xl overflow-hidden"
+          style="min-width:320px; height:700px; max-width: 960px;"></div>
+
+      <!-- Fallback: se muestra si no hay consentimiento o si el script falla -->
+      <p id="calendly-fallback"
+        class="hidden mt-4 text-center text-sm text-gray-600"
+        aria-live="polite">
+        No se pudo cargar el calendario o no has aceptado las cookies de Marketing.
+        Puedes reservar desde
+        <a class="underline text-green-700"
+          href="https://calendly.com/nuriazardoyalasheras/60min?locale=es"
+          target="_blank" rel="noopener">Calendly en una pestaña nueva</a>.
+      </p>
     </div>
-
-    <div id="calendly-inline"
-         class="mt-8 mx-auto rounded-lg shadow-2xl overflow-hidden"
-         style="min-width:320px; height:700px; max-width: 960px;"></div>
-
-    <!-- Fallback: se muestra si no hay consentimiento o si el script falla -->
-    <p id="calendly-fallback"
-       class="hidden mt-4 text-center text-sm text-gray-600"
-       aria-live="polite">
-      No se pudo cargar el calendario o no has aceptado las cookies de Marketing.
-      Puedes reservar desde
-      <a class="underline text-green-700"
-         href="https://calendly.com/nuriazardoyalasheras/60min?locale=es"
-         target="_blank" rel="noopener">Calendly en una pestaña nueva</a>.
-    </p>
   </div>
-</div>
+</section>
 
 <script>
   /* ===== Helpers UI ===== */
@@ -146,7 +148,7 @@ permalink: "/pide-tu-cita/"
 <noscript>
   <p class="mt-4 text-center">
     Para reservar sin JavaScript, abre
-    <a href="hhttps://calendly.com/nuriazardoyalasheras/60min?locale=es" target="_blank" rel="noopener">
+    <a href="https://calendly.com/nuriazardoyalasheras/60min?locale=es" target="_blank" rel="noopener">
       Calendly en una pestaña nueva
     </a>.
   </p>

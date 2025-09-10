@@ -4,37 +4,38 @@ title: "Blog de Nutrición - Nuria Zardoya"
 description: "Artículos, noticias, mitos y consejos prácticos."
 permalink: "/blog/"
 ---
+<section class="container mx-auto px-6 py-10">
+  <div class="container mx-auto px-6 py-12 max-w-4xl">
+    <h1 class="text-4xl font-bold text-center mb-4">Blog de Nutrición</h1>
+    <p class="text-lg text-gray-600 text-center max-w-3xl mx-auto mb-12">
+      Artículos, noticias, mitos y consejos prácticos.
+    </p>
 
-<div class="container mx-auto px-6">
-  <h1 class="text-4xl font-bold text-center mb-4">Blog de Nutrición</h1>
-  <p class="text-lg text-gray-600 text-center max-w-3xl mx-auto mb-12">
-    Artículos, noticias, mitos y consejos prácticos.
-  </p>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-    {% for p in collections.blog | reverse %}
-      <article class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
-        <a href="{{ p.url }}" class="block">
-          {% if p.data.image %}
-            <img src="{{ p.data.image }}" alt="Imagen de {{ p.data.title }}" class="w-full h-48 object-cover">
-          {% else %}
-            {# Sin imagen: bloque limpio, sin texto feo #}
-            <div class="w-full h-48 bg-gradient-to-br from-green-100 to-emerald-200"></div>
-          {% endif %}
-        </a>
-        <div class="p-6">
-          <span class="text-sm text-green-600 font-semibold">
-            {{ p.data.category or "Blog" }}{% if p.data.date %} · {{ p.data.date | date("es-ES") }}{% endif %}
-          </span>
-          <h3 class="text-xl font-bold my-2">
-            <a href="{{ p.url }}">{{ p.data.title }}</a>
-          </h3>
-          {% if p.data.description %}
-            <p class="text-gray-600 mb-4 text-sm">{{ p.data.description }}</p>
-          {% endif %}
-          <a href="{{ p.url }}" class="font-semibold text-green-600 hover:text-green-700">Leer más &rarr;</a>
-        </div>
-      </article>
-    {% endfor %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% for p in collections.blog | reverse %}
+        <article class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+          <a href="{{ p.url }}" class="block">
+            {% if p.data.image %}
+              <img src="{{ p.data.image }}" alt="Imagen de {{ p.data.title }}" class="w-full h-48 object-cover">
+            {% else %}
+              {# Sin imagen: bloque limpio, sin texto feo #}
+              <div class="w-full h-48 bg-gradient-to-br from-green-100 to-emerald-200"></div>
+            {% endif %}
+          </a>
+          <div class="p-6">
+            <span class="text-sm text-green-600 font-semibold">
+              {{ p.data.category or "Blog" }}{% if p.data.date %} · {{ p.data.date | date("es-ES") }}{% endif %}
+            </span>
+            <h3 class="text-xl font-bold my-2">
+              <a href="{{ p.url }}">{{ p.data.title }}</a>
+            </h3>
+            {% if p.data.description %}
+              <p class="text-gray-600 mb-4 text-sm">{{ p.data.description }}</p>
+            {% endif %}
+            <a href="{{ p.url }}" class="font-semibold text-green-600 hover:text-green-700">Leer más &rarr;</a>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
   </div>
-</div>
+</section>
