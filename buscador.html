@@ -6,22 +6,37 @@ noindex: true
 ---
 
 <section class="container mx-auto px-6 py-14 max-w-5xl">
-  <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900 mb-8">
+  <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-8">
     Buscar en la Web
   </h1>
 
   <!-- Barra de búsqueda con icono dentro -->
   <div class="relative mb-2">
+    <!-- Lupa izquierda -->
     <span class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
       <i data-lucide="search" class="w-5 h-5"></i>
     </span>
+
     <input
       id="searchBox"
       type="search"
       placeholder="Escribe para buscar…"
-      class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-lg text-gray-800 shadow-sm"
+      class="w-full pl-12 pr-12 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-lg text-gray-800 shadow-sm"
       autocomplete="off"
     />
+
+    <!-- Aspa fija (clear) dentro del input -->
+    <button
+      id="clearSearch"
+      type="button"
+      aria-label="Limpiar búsqueda"
+      class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-500 focus:outline-none"
+    >
+      <!-- Icono aspa en gris neutro -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
   </div>
 
   <!-- Contador / estado -->
@@ -36,13 +51,17 @@ noindex: true
   </div>
 </section>
 
+<style>
+  /* Oculta el botón nativo de cancel de algunos navegadores para evitar "doble aspa" */
+  input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+</style>
+
 <script>
   // ========= helpers de normalización =========
   const fold = (s = "") =>
     s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 
   // Diccionario pequeño de sinónimos/variaciones frecuentes
-  // (si quieres ampliar, añadimos más aquí sin tocar nada más)
   const SYN = {
     nutricion: ["nutricion", "nutrición", "nutri"],
     carbohidratos: ["carbohidratos", "hidratos", "carbos"],
@@ -109,18 +128,16 @@ noindex: true
       list.appendChild(li);
     });
 
-    // refrescar iconos lucide si hace falta (por si no se renderizaron aún)
     if (window.lucide && typeof window.lucide.createIcons === "function") {
       window.lucide.createIcons();
     }
   }
 
-  // ========= búsqueda simple (accent/masculina-insensible + prefijos) =========
+  // ========= búsqueda simple (acentos/caso-insensible + prefijos) =========
   function search(query) {
     const tokens = expandTokens(query);
     if (!tokens.length) return [];
 
-    // scoring muy simple: título x3, descripción x1
     return documents
       .map((d) => {
         const title = fold(d.title);
@@ -145,7 +162,6 @@ noindex: true
       const res = await fetch("/search.json", { cache: "no-store" });
       const json = await res.json();
 
-      // normaliza campos que usamos
       documents = json.map((it) => ({
         title: it.title || "",
         url: it.url || "#",
@@ -154,16 +170,18 @@ noindex: true
         date: it.date || "",
       }));
 
-      // si venimos con ?q= rellena y busca
       const sp = new URLSearchParams(location.search);
       const qs = sp.get("q") || "";
       const input = document.getElementById("searchBox");
+      const clearBtn = document.getElementById("clearSearch");
+
+      // Cargar desde ?q=
       if (qs) {
         input.value = qs;
         renderResults(search(qs));
       }
 
-      // búsqueda en vivo
+      // Búsqueda en vivo
       input.addEventListener("input", (e) => {
         const v = e.target.value.trim();
         if (v.length < 2) {
@@ -173,6 +191,21 @@ noindex: true
           return;
         }
         renderResults(search(v));
+      });
+
+      // Botón aspa: limpia y enfoca
+      clearBtn.addEventListener("click", () => {
+        input.value = "";
+        input.focus();
+        document.getElementById("results").innerHTML = "";
+        document.getElementById("empty").classList.add("hidden");
+        document.getElementById("status").classList.add("hidden");
+        // Opcional: limpiar ?q= de la URL sin recargar
+        const sp2 = new URLSearchParams(location.search);
+        if (sp2.has("q")) {
+          sp2.delete("q");
+          history.replaceState({}, "", location.pathname + (sp2.toString() ? "?" + sp2.toString() : ""));
+        }
       });
     } catch (e) {
       console.error("Search init error:", e);
