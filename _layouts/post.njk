@@ -47,25 +47,77 @@ layout: base.njk
       {{ content | safe }}
     </article>
 
-    {# Instagram: enlace o embed (si hay ambos, priorizamos embed) #}
-    {% if instagram_embed %}
-      <div class="mt-8">
-        {{ instagram_embed | safe }}
-        <script async src="https://www.instagram.com/embed.js"></script>
-      </div>
-    {% elseif instagram_url %}
-      <p class="mt-8">
-        <a href="{{ instagram_url }}" target="_blank" rel="noopener" class="underline text-green-700">
-          Ver publicación en Instagram ↗
+    {# ====== Prev / Volver / Next (con flechas) ====== #}
+    {% set prev = collections.blog | getPreviousCollectionItem(page) %}
+    {% set next = collections.blog | getNextCollectionItem(page) %}
+
+    {% if prev %}<link rel="prefetch" href="{{ prev.url }}" as="document">{% endif %}
+    {% if next %}<link rel="prefetch" href="{{ next.url }}" as="document">{% endif %}
+
+    {% if prev or next %}
+    <nav class="mt-10 border-t border-gray-100 pt-6" aria-label="Navegación del blog">
+      <div class="flex items-stretch justify-between gap-3">
+
+        {% if prev %}
+        <a id="nav-prev" href="{{ prev.url }}" rel="prev" aria-label="Entrada anterior: {{ prev.data.title }}"
+          class="group flex-1 rounded-2xl border border-gray-200 hover:border-green-300 hover:bg-green-50 transition p-4 flex items-center gap-3">
+          <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-green-100 group-hover:bg-green-200 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </span>
+          <span class="text-sm">
+            <span class="block text-gray-500">Anterior</span>
+            <span class="block font-semibold text-gray-900 group-hover:text-green-700 line-clamp-1">{{ prev.data.title }}</span>
+          </span>
         </a>
-      </p>
+        {% else %}
+        <span class="flex-1"></span>
+        {% endif %}
+
+        <a id="nav-back" href="/blog/"
+          class="shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-width="2" d="M8 6h12M8 12h12M8 18h12M3 6h.01M3 12h.01M3 18h.01"/>
+          </svg>
+          Volver al blog
+        </a>
+
+        {% if next %}
+        <a id="nav-next" href="{{ next.url }}" rel="next" aria-label="Entrada siguiente: {{ next.data.title }}"
+          class="group flex-1 rounded-2xl border border-gray-200 hover:border-green-300 hover:bg-green-50 transition p-4 flex items-center justify-end gap-3">
+          <span class="text-sm text-right">
+            <span class="block text-gray-500">Siguiente</span>
+            <span class="block font-semibold text-gray-900 group-hover:text-green-700 line-clamp-1">{{ next.data.title }}</span>
+          </span>
+          <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-green-100 group-hover:bg-green-200 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </a>
+        {% else %}
+        <span class="flex-1"></span>
+        {% endif %}
+
+      </div>
+    </nav>
     {% endif %}
 
-    <div class="mt-10">
-      <a href="/blog/" class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-6 rounded-full">
-        ← Volver al blog
-      </a>
-    </div>
+    <script>
+      document.addEventListener("keydown", (e) => {
+        const tag = (e.target && e.target.tagName || "").toLowerCase();
+        if (["input","textarea","select"].includes(tag)) return;
+
+        const prev = document.getElementById("nav-prev");
+        const next = document.getElementById("nav-next");
+        const back = document.getElementById("nav-back");
+
+        if (e.key === "ArrowLeft" && prev) { e.preventDefault(); window.location = prev.href; }
+        if (e.key === "ArrowRight" && next) { e.preventDefault(); window.location = next.href; }
+        if (e.key === "ArrowUp" && back) { e.preventDefault(); window.location = back.href; }
+      });
+    </script>
   </div>
 </section>
 
@@ -87,12 +139,12 @@ layout: base.njk
 {
   "@context":"https://schema.org",
   "@type":"Article",
-  "headline": {{ title | dump }},
-  {% if description %}"description": {{ description | dump }},{% endif %}
-  {% if image %}"image": {{ image | dump }},{% endif %}
+  "headline": {{ title | dump | safe}},
+  {% if description %}"description": {{ description | dump | safe}},{% endif %}
+  {% if image %}"image": {{ image | dump | safe}},{% endif %}
   "datePublished": "{{ date or page.date }}",
-  {% if instagram_url %}"sameAs": [ {{ instagram_url | dump }} ],{% endif %}
-  "mainEntityOfPage": {{ (site.url + page.url) | dump }}
+  {% if instagram_url %}"sameAs": [ {{ instagram_url | dump | safe}} ],{% endif %}
+  "mainEntityOfPage": {{ (site.url + page.url) | dump | safe}}
 }
 </script>
 {% endif %}

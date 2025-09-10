@@ -95,13 +95,87 @@ layout: base.njk
     </section>
   {% endif %}
 
-  {# Acciones #}
-  <div class="mt-12 flex flex-wrap gap-4">
-    <a href="/recetas/"
-       class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-6 rounded-full">
-      ← Volver a recetas
-    </a>
+  {# ====== Prev / Volver / Next (con flechas) ====== #}
+  {% set prev = collections.recetas | getPreviousCollectionItem(page) %}
+  {% set next = collections.recetas | getNextCollectionItem(page) %}
 
+  {# Prefetch para mejorar la navegación percibida #}
+  {% if prev %}<link rel="prefetch" href="{{ prev.url }}" as="document">{% endif %}
+  {% if next %}<link rel="prefetch" href="{{ next.url }}" as="document">{% endif %}
+
+  {% if prev or next %}
+  <nav class="mt-12 border-t border-gray-100 pt-6" aria-label="Navegación de recetas">
+    <div class="flex items-stretch justify-between gap-3">
+
+      {% if prev %}
+      <a id="nav-prev" href="{{ prev.url }}" rel="prev" aria-label="Receta anterior: {{ prev.data.title }}"
+        class="group flex-1 rounded-2xl border border-gray-200 hover:border-green-300 hover:bg-green-50 transition p-4 flex items-center gap-3">
+        <!-- Flecha izquierda en badge -->
+        <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-green-100 group-hover:bg-green-200 transition">
+          <!-- chevron-left -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </span>
+        <span class="text-sm">
+          <span class="block text-gray-500">Anterior</span>
+          <span class="block font-semibold text-gray-900 group-hover:text-green-700 line-clamp-1">{{ prev.data.title }}</span>
+        </span>
+      </a>
+      {% else %}
+      <span class="flex-1"></span>
+      {% endif %}
+
+      <a id="nav-back" href="/recetas/"
+        class="shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold transition">
+        <!-- icono lista -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-width="2" d="M8 6h12M8 12h12M8 18h12M3 6h.01M3 12h.01M3 18h.01"/>
+        </svg>
+        Volver a recetas
+      </a>
+
+      {% if next %}
+      <a id="nav-next" href="{{ next.url }}" rel="next" aria-label="Receta siguiente: {{ next.data.title }}"
+        class="group flex-1 rounded-2xl border border-gray-200 hover:border-green-300 hover:bg-green-50 transition p-4 flex items-center justify-end gap-3">
+        <span class="text-sm text-right">
+          <span class="block text-gray-500">Siguiente</span>
+          <span class="block font-semibold text-gray-900 group-hover:text-green-700 line-clamp-1">{{ next.data.title }}</span>
+        </span>
+        <!-- Flecha derecha en badge -->
+        <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-green-100 group-hover:bg-green-200 transition">
+          <!-- chevron-right -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </span>
+      </a>
+      {% else %}
+      <span class="flex-1"></span>
+      {% endif %}
+
+    </div>
+  </nav>
+  {% endif %}
+
+  <script>
+    // Atajos de teclado: ← anterior, → siguiente, ↑ volver (evita inputs)
+    document.addEventListener("keydown", (e) => {
+      const tag = (e.target && e.target.tagName || "").toLowerCase();
+      if (["input","textarea","select"].includes(tag)) return;
+
+      const prev = document.getElementById("nav-prev");
+      const next = document.getElementById("nav-next");
+      const back = document.getElementById("nav-back");
+
+      if (e.key === "ArrowLeft" && prev) { e.preventDefault(); window.location = prev.href; }
+      if (e.key === "ArrowRight" && next) { e.preventDefault(); window.location = next.href; }
+      if (e.key === "ArrowUp" && back) { e.preventDefault(); window.location = back.href; }
+    });
+  </script>
+
+  {# Acciones (Imprimir se mantiene) #}
+  <div class="mt-6 flex flex-wrap gap-4">
     <button onclick="window.print()"
             class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full shadow">
       Imprimir receta
@@ -112,7 +186,7 @@ layout: base.njk
 {# ====== Toast + Copiar ====== #}
 <style>
   @media print {
-    a[href="/recetas/"], button[onclick^="window.print"], #toast { display: none !important; }
+    a[href="/recetas/"], nav[aria-label="Navegación de recetas"], button[onclick^="window.print"], #toast { display: none !important; }
   }
 </style>
 <script>
@@ -123,7 +197,6 @@ layout: base.njk
       .then(() => showToast("Ingredientes copiados ✅"))
       .catch(() => showToast("No se pudo copiar ❌"));
   }
-
   function showToast(msg) {
     let toast = document.getElementById("toast");
     if (!toast) {
