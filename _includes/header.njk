@@ -139,14 +139,19 @@
     </div>
   </nav>
 
-  <!-- Cajón de búsqueda móvil -->
-  <div id="mobile-search" class="hidden md:hidden bg-white border-t border-gray-100 shadow-sm">
+  <!-- Añadimos w-full y overflow-x-hidden al cajón -->
+  <div id="mobile-search" class="hidden md:hidden bg-white border-t border-gray-100 shadow-sm w-full overflow-x-hidden">
     <div class="container mx-auto px-6 py-3">
-      <form action="/buscador/" method="get" role="search" class="flex gap-2">
+      <!-- Añadimos min-w-0 al form para que el hijo flex-1 pueda encoger -->
+      <form action="/buscador/" method="get" role="search" class="flex gap-2 min-w-0">
+        <!-- min-w-0 evita que el input se “salga”; text-base ≥16px evita zoom en iOS -->
         <input type="search" name="q" placeholder="Buscar…"
-               class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
-               autocomplete="off" />
-        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-full">Buscar</button>
+              class="flex-1 min-w-0 px-4 py-2 text-base border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
+              autocomplete="off" />
+        <!-- shrink-0 impide que el botón se deforme y provoque overflow -->
+        <button type="submit" class="shrink-0 bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-full">
+          Buscar
+        </button>
       </form>
     </div>
   </div>
