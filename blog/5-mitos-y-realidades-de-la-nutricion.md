@@ -2,7 +2,7 @@
 title: 5 Mitos y Realidades de la Nutrición
 date: 2025-09-10
 description: ""
-image: ""
+image: /assets/uploads/1.png
 category: Mito
 instagram_embed: >
   <blockquote class="instagram-media"
