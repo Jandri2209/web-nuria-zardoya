@@ -1,20 +1,34 @@
 ---
 permalink: /search.json
 eleventyExcludeFromCollections: true
+layout: null
 ---
 [
-{%- for page in collections.recetas %}
+{%- set sep = joiner() -%}
+
+{# ===== Recetas ===== #}
+{%- for page in collections.recetas -%}
+  {{- sep() -}}
   {
-    "title": {{ page.data.title | dump }},
-    "url": {{ page.url | dump }},
-    "description": {{ page.data.description | dump }}
-  }{% if not loop.last or collections.blog.length > 0 %},{% endif %}
+    "title": {{ page.data.title | dump | safe }},
+    "url": {{ page.url | dump | safe }},
+    "description": {{ page.data.description | dump | safe }},
+    "category": {{ (page.data.category or "Receta") | dump | safe }},
+    "type": "receta",
+    "date": "{{ page.date | date('es-ES') }}"
+  }
 {%- endfor -%}
-{%- for page in collections.blog %}
+
+{# ===== Blog ===== #}
+{%- for page in collections.blog -%}
+  {{- sep() -}}
   {
-    "title": {{ page.data.title | dump }},
-    "url": {{ page.url | dump }},
-    "description": {{ page.data.description | dump }}
-  }{% if not loop.last %},{% endif %}
+    "title": {{ page.data.title | dump | safe }},
+    "url": {{ page.url | dump | safe }},
+    "description": {{ page.data.description | dump | safe }},
+    "category": {{ (page.data.category or "Blog") | dump | safe }},
+    "type": "blog",
+    "date": "{{ page.date | date('es-ES') }}"
+  }
 {%- endfor -%}
 ]

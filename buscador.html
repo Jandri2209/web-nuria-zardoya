@@ -45,17 +45,52 @@ noindex: true
   }
 
   function doSearch(query) {
-    const results = idx.search(query);
-    const list = document.getElementById("results");
-    list.innerHTML = "";
+    const resultsList = document.getElementById("results");
+
+    const terms = query
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}\s]/gu, " ")
+      .split(/\s+/)
+      .filter(Boolean);
+
+    if (!terms.length) { resultsList.innerHTML = ""; return; }
+
+    let results = idx.query(q => {
+      terms.forEach(t => {
+        q.term(t, { presence: lunr.Query.presence.SHOULD });
+        q.term(t, { presence: lunr.Query.presence.SHOULD, wildcard: lunr.Query.wildcard.TRAILING });
+      });
+    });
+
+    if (!results.length) {
+      results = idx.query(q => {
+        terms.forEach(t => {
+          q.term(t, { presence: lunr.Query.presence.SHOULD, wildcard: lunr.Query.wildcard.TRAILING });
+        });
+      });
+    }
+
+    resultsList.innerHTML = "";
+    if (!results.length) {
+      resultsList.innerHTML = '<li class="text-gray-500">Sin resultados. Prueba con otras palabras.</li>';
+      return;
+    }
+
     results.forEach(r => {
       const m = documents.find(d => d.url === r.ref);
       if (!m) return;
+      const metaLeft = [m.category || m.type].filter(Boolean).join(" · ");
+      const metaRight = m.date ? m.date : "";
+      const meta = [metaLeft, metaRight].filter(Boolean).join(" · ");
+
       const li = document.createElement("li");
-      li.innerHTML = `<a href="${m.url}">${m.title}</a> – ${m.description || ""}`;
-      list.appendChild(li);
+      li.innerHTML = `
+        <a href="${m.url}">${m.title}</a>
+        ${meta ? ` – <span class="text-sm text-gray-600">${meta}</span>` : ""}
+        ${m.description ? ` – ${m.description}` : ""}
+      `;
+      resultsList.appendChild(li);
     });
   }
-
   document.addEventListener("DOMContentLoaded", initSearch);
 </script>
