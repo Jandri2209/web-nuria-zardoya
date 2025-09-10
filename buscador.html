@@ -23,6 +23,7 @@ noindex: true
       placeholder="Escribe para buscar…"
       class="w-full pl-12 pr-12 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-lg text-gray-800 shadow-sm"
       autocomplete="off"
+      aria-label="Buscar en la Web"
     />
 
     <!-- Aspa fija (clear) dentro del input -->
@@ -54,37 +55,289 @@ noindex: true
 <style>
   /* Oculta el botón nativo de cancel de algunos navegadores para evitar "doble aspa" */
   input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+  mark { background: #FEF08A; padding: 0 .15em; border-radius: .2em; }
 </style>
 
 <script>
   // ========= helpers de normalización =========
-  const fold = (s = "") =>
-    s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+  const stripAccents = (s="") =>
+    s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const norm = (s="") => stripAccents(String(s).toLowerCase().trim());
+  const singularize = (w="") => {
+    if (w.length <= 2) return w;
+    if (w.endsWith("es")) return w.slice(0, -2);
+    if (w.endsWith("s")) return w.slice(0, -1);
+    return w;
+  };
+  const esc = (s="") => String(s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 
-  // Diccionario pequeño de sinónimos/variaciones frecuentes
+  // ========= DICCIONARIO GRANDE DE SINÓNIMOS =========
+  // (Clave = etiqueta canónica; valores = variantes aceptadas)
   const SYN = {
-    nutricion: ["nutricion", "nutrición", "nutri"],
-    carbohidratos: ["carbohidratos", "hidratos", "carbos"],
-    desayuno: ["desayuno", "breakfast"],
-    receta: ["receta", "recetas"],
+    // Generales
+    nutricion: ["nutricion","nutrición","nutri","alimentacion","alimentación","dietetica","dietética","dietética-nutricional"],
+    receta: ["receta","recetas","plato","preparacion","preparación","elaboracion","elaboración"],
+    saludable: ["saludable","sano","sana","salud","equilibrado","equilibrada","balanceado","balanceada","fit"],
+    rapido: ["rapido","rápido","express","facil","fácil","simple"],
+    economico: ["economico","económico","barato","barata","low cost","ahorro"],
+    temporada: ["temporada","estacional","de temporada"],
+    casero: ["casero","casera","homemade","hecho en casa"],
+    vegano: ["vegano","vegana","vegan"],
+    vegetariano: ["vegetariano","vegetariana","veggie","ovo-lacto","ovolacto","lacto-ovo"],
+    sin_gluten: ["sin gluten","gluten free","sg","celiaco","celíaco","celiacos","celíacos","apto celiacos","apto celíacos"],
+    sin_lactosa: ["sin lactosa","lactosa free","apto intolerantes a la lactosa"],
+    sin_azucar: ["sin azucar","sin azúcar","sugar free","0 azucar","0 azúcar","sin azucares añadidos","sin azúcares añadidos"],
+    proteico: ["alto en proteinas","alto en proteínas","proteico","protein","high protein"],
+    light: ["light","bajo en calorias","bajo en calorías","hipocalorico","hipocalórico","bajo en grasa"],
+    integral: ["integral","grano entero","whole grain"],
+    casero_fit: ["fit casero","casero fit","realfooding","comida real","comida completa"],
+
+    // Objetivos
+    perdida_peso: ["perdida de peso","pérdida de peso","adelgazar","bajar de peso","definicion","definición","cutting"],
+    aumento_masa: ["aumento de masa","volumen","hipertrofia","ganar musculo","ganar músculo","bulk","bulking"],
+    mantenimiento: ["mantenimiento","equilibrio","balance"],
+    saciante: ["saciante","saciantes","alto en fibra","llena","sacia"],
+    antiinflamatorio: ["antiinflamatorio","antiinflamatoria","antiinflamacion","antiinflamación","inflamacion baja"],
+
+    // Momentos del día
+    desayuno: ["desayuno","breakfast","desayunos"],
+    media_manana: ["media mañana","snack mañana","tentempié","tentempie","picoteo"],
+    comida: ["comida","almuerzo","meal","lunch"],
+    merienda: ["merienda","snack tarde"],
+    cena: ["cena","dinner"],
+    post_entreno: ["postentreno","post entreno","post-workout","recuperacion","recuperación"],
+    pre_entreno: ["preentreno","pre entreno","pre-workout","energia","energía"],
+
+    // Técnicas
+    horno: ["horno","al horno","bake","baked"],
+    plancha: ["plancha","a la plancha","griddle"],
+    vapor: ["vapor","al vapor","steam","steamed"],
+    olla: ["olla","guiso","estofado","cocido","cacerola","crockpot","slow cooker"],
+    microondas: ["microondas","micro"],
+    salteado: ["saltear","salteado","wok","salteados"],
+    hervido: ["hervido","cocido","ebullicion","ebullición","boil","boiled"],
+    frito_ligero: ["salteado ligero","airfryer","freidora de aire","frito en aire"],
+    crudo: ["crudo","raw","ensalada","ensaladas","carpaccio","tartar"],
+
+    // Tipos de plato
+    ensalada: ["ensalada","ensaladas","bowl","poke","poké"],
+    crema: ["crema","cremas","pure","puré","veloute","velouté","sopa","sopas","gazpacho","salmorejo"],
+    tortilla: ["tortilla","omelette","frittata","revuelto","huevo cuajado"],
+    sandwich: ["sandwich","sándwich","bocata","bocadillo","tostada","wrap","burrito","arepa","pan pita","pita","taco"],
+    pasta: ["pasta","spaghetti","espagueti","macarrones","lasaña","lasagna","noodles","fideos"],
+    arroz: ["arroz","paella","risotto","sushi","poke","poké","arroz integral","arroz basmati"],
+    legumbre_plato: ["guiso de legumbres","potaje","lentejas guiso","alubias guiso","garbanzos guiso"],
+    bowl_proteico: ["bowl proteico","macro bowl","plato proteico","plato completo"],
+    postre: ["postre","dulce","dessert","mousse","flan","pudding","natillas","bizcocho","brownie","galletas"],
+    crema_untable: ["untable","dip","hummus","guacamole","pate","paté","salsa","pesto","tahin","tahini"],
+
+    // Restricciones
+    sin_huevo: ["sin huevo","apto alergia huevo","vegano sin huevo"],
+    sin_frutos_secos: ["sin frutos secos","apto alergia frutos secos","sin nueces","sin almendras","sin cacahuete","sin cacahuetes","peanut-free","nut-free"],
+    sin_soja: ["sin soja","apto alergia soja","soy-free"],
+    bajo_fodmap: ["bajo fodmap","low fodmap","fodmap bajo"],
+    sin_marisco: ["sin marisco","apto alergia marisco","shellfish-free"],
+
+    // Macronutrientes
+    carbohidratos: ["carbohidratos","hidratos","carbos","carb"],
+    proteinas: ["proteinas","proteínas","prote","protein","proteico"],
+    grasas_saludables: ["grasas saludables","grasas buenas","monoinsaturadas","poliinsaturadas","omega 3","omega-3"],
+    fibra: ["fibra","alto en fibra","rico en fibra"],
+
+    // Micronutrientes / claims
+    hierro: ["hierro","rico en hierro","iron"],
+    calcio: ["calcio","rico en calcio"],
+    vitamina_c: ["vitamina c","vit c","ácido ascórbico"],
+    b12: ["b12","vitamina b12","cobalamina"],
+    magnesio: ["magnesio","mg"],
+    potasio: ["potasio","k"],
+    sodio_bajo: ["bajo en sodio","pobre en sal","sin sal añadida"],
+
+    // Frutas
+    platano: ["platano","plátano","banana","banano"],
+    manzana: ["manzana","manzanas"],
+    pera: ["pera","peras"],
+    fresa: ["fresa","fresas","frutilla","frutillas"],
+    arandanos: ["arandanos","arándanos","blueberries"],
+    frambuesa: ["frambuesa","frambuesas","raspberry","raspberries"],
+    uva: ["uva","uvas"],
+    mango: ["mango","mangos"],
+    pina: ["piña","pina","ananá","anana"],
+    naranja: ["naranja","naranjas","mandarina","mandarinas","clementina","clementinas"],
+    limon: ["limon","limón","lima","lime"],
+    kiwi: ["kiwi","kiwis"],
+    datil: ["dátil","datil","dátiles","datiles"],
+    aguacate: ["aguacate","palta"],
+
+    // Verduras
+    tomate: ["tomate","tomates","jitomate"],
+    lechuga: ["lechuga","mix verdes","brotes","canónigos","canonigos","rúcula","rucula"],
+    espinaca: ["espinaca","espinacas","spinach"],
+    col: ["col","repollo","col rizada","kale","coliflor","brócoli","brocoli","coles de bruselas"],
+    pimiento: ["pimiento","pimientos","morrón","morron"],
+    cebolla: ["cebolla","cebolleta","cebollino"],
+    ajo: ["ajo","ajos"],
+    calabacin: ["calabacin","calabacín","zucchini"],
+    calabaza: ["calabaza","butternut","pumpkin"],
+    berenjena: ["berenjena","berenjenas","eggplant"],
+    pepino: ["pepino","pepinos","cucumber"],
+    remolacha: ["remolacha","betabel","betarraga"],
+    esparrago: ["esparrago","espárrago","esparragos","espárragos"],
+    alcachofa: ["alcachofa","alcachofas","alcaucil"],
+
+    // Legumbres
+    garbanzo: ["garbanzo","garbanzos","chickpea","chickpeas"],
+    lenteja: ["lenteja","lentejas","lentil","lentils"],
+    alubia: ["alubia","alubias","judia","judía","judias","judías","poroto","porotos","frijol","frijoles"],
+    soja: ["soja","edamame","tempeh","tofu","texturizada","soja texturizada"],
+    guisante: ["guisante","guisantes","arveja","arvejas","peas","protein peas"],
+
+    // Cereales
+    avena: ["avena","copos de avena","harina de avena","oats","oatmeal","porridge"],
+    arroz_ingred: ["arroz","arroz integral","arroz basmati","arroz jazmin","jasmine"],
+    quinoa: ["quinoa","quinua"],
+    maiz: ["maiz","maíz","polenta","corn"],
+    trigo_sarraceno: ["trigo sarraceno","alforfon","alforfón","buckwheat"],
+    cuscus: ["cuscus","cous cous","couscous"],
+    bulgur: ["bulgur","trigo partido"],
+    pasta_integral: ["pasta integral","espagueti integral","macarron integral"],
+
+    // Proteínas animales
+    pollo: ["pollo","pechuga","muslo de pollo","pollo picado"],
+    pavo: ["pavo","jamon de pavo","fiambre de pavo","pechuga de pavo"],
+    ternera: ["ternera","res","carne magra","vacuno"],
+    cerdo_magro: ["cerdo magro","lomo de cerdo","solomillo de cerdo"],
+    huevo: ["huevo","huevos","clara","claras","yema","yemas"],
+    pescado_blanco: ["pescado blanco","merluza","bacalao","lenguado","panga"],
+    pescado_azul: ["pescado azul","salmón","salmon","caballa","sardina","atún","atun","bonito","boqueron","boquerón"],
+    marisco: ["marisco","gamba","gambas","langostino","langostinos","mejillon","mejillón","mejillones","almeja","almejas","berberecho","berberechos","pulpo","calamar","sepia"],
+
+    // Lácteos y alternativos
+    yogur: ["yogur","yogurt","yogur griego","yogurt griego","skyr","kefir","kéfir"],
+    leche: ["leche","leche desnatada","leche semidesnatada","leche entera"],
+    queso: ["queso","queso fresco","ricotta","requeson","requesón","cottage","mozzarella","curado","semicurado"],
+    bebidas_vegetales: ["bebida vegetal","leche vegetal","almendra","soja bebida","avena bebida","coco bebida","arroz bebida"],
+
+    // Grasas saludables
+    aceite_oliva: ["aceite de oliva","aove","virgen extra","aceite oliva"],
+    frutos_secos: ["frutos secos","nueces","almendras","avellanas","anacardos","pistachos","cacahuetes","cacahuete","peanuts","mantequilla de cacahuete","crema de cacahuete","crema de cacahuetes","mantequilla de mani","mantequilla de maní"],
+    semillas: ["semillas","chia","chía","lino","linaza","sesamo","sésamo","ajonjoli","ajonjolí","calabaza semilla","girasol semilla"],
+    aguacate_grasa: ["aguacate","palta"],
+
+    // Azúcares / edulcorantes
+    azucar: ["azucar","azúcar","azucar blanco","azúcar blanco","panela","azucar moreno","azúcar moreno","miel","sirope","jarabe","sirope de arce","maple","dátiles","datiles","pasta de dátil","pasta de datil"],
+    edulcorante: ["edulcorante","estevia","stevia","eritritol","xilitol","sucralosa","sacarina"],
+
+    // Harinas / panes
+    pan: ["pan","tostada","baguette","masa madre","integral pan","pan integral","pan de molde","molde"],
+    harinas_sin_gluten: ["harina de almendra","harina de coco","harina de arroz","harina de garbanzo","maicena","almidon de maiz","almidón de maíz","tapioca","yuca"],
+
+    // Especias / condimentos
+    sal: ["sal","sal marina","sal yodada","sal gruesa"],
+    pimienta: ["pimienta","pimienta negra","pimienta blanca"],
+    pimenton: ["pimenton","pimentón","paprika"],
+    curcuma: ["curcuma","cúrcuma","turmeric"],
+    comino: ["comino"],
+    oregano: ["oregano","orégano"],
+    romero: ["romero"],
+    tomillo: ["tomillo"],
+    albahaca: ["albahaca","basilico","basil"],
+    cilantro: ["cilantro","culantro"],
+    perejil: ["perejil"],
+    jengibre: ["jengibre","ginger"],
+    canela: ["canela","cinnamon"],
+    vainilla: ["vainilla","vanilla"],
+    salsa_soja: ["salsa de soja","soja salsa","tamari","coconut aminos"],
+    vinagre: ["vinagre","vinagre balsamico","balsamico","balsámico","vinagre de manzana","vinagre de vino"],
+    limon_cond: ["limon","limón","zumo de limon","jugo de limón","ralladura de limon"],
+
+    // Bebidas
+    agua: ["agua","agua con gas","sparkling"],
+    cafe: ["cafe","café","expreso","espresso","americano","latte","capuchino","capuccino","cappuccino"],
+    te: ["te","té","matcha","verde","negro","rooibos","infusion","infusión"],
+    smoothie: ["smoothie","batido","licuado","frappe","frappé","shake"],
+
+    // Utensilios / formatos
+    tupper: ["tupper","táper","meal prep","batch cooking","preparacion semanal","preparación semanal"],
+    airfryer: ["airfryer","freidora de aire"],
+    wok: ["wok"],
+    olla_expres: ["olla express","olla rápida","olla a presion","olla a presión","instant pot"],
+
+    // Patologías / condiciones
+    diabetes: ["diabetes","diabetico","diabético","resistencia a la insulina","prediabetes","glucemia alta"],
+    hipotiroidismo: ["hipotiroidismo","tiroides baja","hashimoto"],
+    colon_irritable: ["colon irritable","sii","sindrome de intestino irritable","síndrome de intestino irritable","ibs"],
+    reflujo: ["reflujo","acidez","ardor","pirosis"],
+    hipertension: ["hipertension","hipertensión","tension alta","presion alta"],
+    colesterol: ["colesterol","ldl alto","hdl bajo","dislipemia","trigliceridos","triglicéridos"],
+    celiaquia: ["celiaquia","celiaquía","celiaco","celíaco","enfermedad celiaca","enfermedad celíaca"],
+    intolerancia_lactosa: ["intolerancia a la lactosa","lactosa intolerante","sin lactosa"],
+
+    // Estilos / enfoques
+    mediterranea: ["dieta mediterranea","dieta mediterránea","mediterranea","mediterránea"],
+    realfooding: ["realfooding","comida real","comida sin ultra procesados","sin ultraprocesados","sin UPF"],
+    batch_cooking: ["batch cooking","meal prep","cocinar por lotes"],
+    ayuno_intermitente: ["ayuno intermitente","intermittent fasting","if","16/8","14/10"],
+
+    // Otros
+    sin_ultraprocesados: ["sin ultraprocesados","sin upf","no ultraprocesado","comida real"],
+    sin_fritura: ["sin fritura","no frito","sin freir","sin freír"],
+    bajo_calorias: ["bajo en calorias","bajo en calorías","pocas calorias","pocas calorías","low calorie"],
+    alto_calorias: ["alto en calorias","alto en calorías","calorico","calórico","energy dense"],
   };
 
-  const expandTokens = (q) => {
-    const t = fold(q).split(/\s+/).filter(Boolean);
-    const extra = [];
-    t.forEach((w) => {
-      Object.keys(SYN).forEach((k) => {
-        if (SYN[k].some((v) => v.startsWith(w))) extra.push(...SYN[k]);
-      });
-    });
-    return Array.from(new Set([...t, ...extra]));
+  // Deduplicación + normalización del diccionario
+  for (const key of Object.keys(SYN)) {
+    const seen = new Set();
+    SYN[key] = SYN[key]
+      .map(norm).map(singularize)
+      .filter(x => x && !seen.has(x) && seen.add(x));
+  }
+
+  // ==== Índice de sinónimos para búsqueda ====
+  const buildIndex = (syn=SYN) => {
+    const idx = new Map();
+    for (const [canon, arr] of Object.entries(syn)) {
+      for (const term of arr.concat([canon]).map(norm).map(singularize)) {
+        if (!idx.has(term)) idx.set(term, new Set());
+        idx.get(term).add(canon);
+      }
+    }
+    return idx;
+  };
+  const INDEX = buildIndex(SYN);
+
+  const canonicalizeQuery = (q="") => {
+    const tokens = norm(q).split(/[^a-záéíóúüñ0-9]+/i).filter(Boolean).map(singularize);
+    const found = new Set();
+    for (const t of tokens) {
+      if (INDEX.has(t)) for (const c of INDEX.get(t)) found.add(c);
+    }
+    return [...found];
+  };
+
+  const buildSynonymRegex = (q="") => {
+    const canon = canonicalizeQuery(q);
+    const bag = new Set();
+    for (const c of canon) {
+      for (const s of (SYN[c] || []).concat([c])) bag.add(s);
+    }
+    const parts = [...bag].map(s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+    return parts.length ? new RegExp(`\\b(${parts.join("|")})\\b`, "i") : null;
   };
 
   // ========= estado =========
   let documents = [];
 
   // ========= render =========
-  function renderResults(items) {
+  function highlight(text, rx) {
+    if (!rx || !text) return esc(text);
+    return esc(text).replace(rx, (m) => `<mark>${esc(m)}</mark>`);
+  }
+
+  function renderResults(items, rx=null) {
     const list = document.getElementById("results");
     const empty = document.getElementById("empty");
     const status = document.getElementById("status");
@@ -107,14 +360,14 @@ noindex: true
         <a href="${m.url}" class="block group">
           <div class="p-5">
             <div class="text-xs text-green-700 font-semibold mb-1">
-              ${m.category || "Entrada"}${m.date ? " · " + m.date : ""}
+              ${esc(m.category || "Entrada")}${m.date ? " · " + esc(m.date) : ""}
             </div>
             <h3 class="text-lg font-bold text-gray-900 group-hover:text-green-700">
-              ${m.title}
+              ${highlight(m.title, rx)}
             </h3>
             ${
               m.description
-                ? `<p class="mt-2 text-sm text-gray-600 line-clamp-3">${m.description}</p>`
+                ? `<p class="mt-2 text-sm text-gray-600 line-clamp-3">${highlight(m.description, rx)}</p>`
                 : ""
             }
             <span class="inline-flex items-center gap-1 mt-4 text-green-700 font-semibold">
@@ -133,27 +386,47 @@ noindex: true
     }
   }
 
-  // ========= búsqueda simple (acentos/caso-insensible + prefijos) =========
+  // ========= búsqueda (acentos/caso-insensible + sinónimos + ranking) =========
   function search(query) {
-    const tokens = expandTokens(query);
-    if (!tokens.length) return [];
+    const qn = norm(query).trim();
+    if (!qn) return [];
 
-    return documents
-      .map((d) => {
-        const title = fold(d.title);
-        const desc = fold(d.description || "");
-        let score = 0;
-        tokens.forEach((t) => {
-          if (!t) return;
-          if (title.includes(t)) score += 3;
-          if (desc.includes(t)) score += 1;
-        });
-        return { score, d };
-      })
-      .filter((x) => x.score > 0)
+    const tokens = qn.split(/[^a-záéíóúüñ0-9]+/i).filter(Boolean).map(singularize);
+    const canon = canonicalizeQuery(qn);
+    const rx = buildSynonymRegex(qn);
+
+    const scored = documents.map((d) => {
+      const title = norm(d.title);
+      const desc  = norm(d.description || "");
+      const haystack = title + " " + desc;
+
+      let score = 0;
+
+      // Coincidencias literales de tokens
+      for (const t of tokens) {
+        if (!t) continue;
+        if (title.includes(t)) score += 3;
+        if (desc.includes(t))  score += 1;
+      }
+
+      // Boost por sinónimos/canónicos detectados
+      for (const c of canon) {
+        // si el canónico o sus sinónimos aparecen, sube
+        const syns = (SYN[c] || []).concat([c]);
+        const hit = syns.some(s => haystack.includes(s));
+        if (hit) score += 4;
+      }
+
+      // Pequeño boost si el término principal aparece al inicio del título
+      if (tokens.length && title.startsWith(tokens[0])) score += 2;
+
+      return { score, d, rx };
+    });
+
+    return scored
+      .filter(x => x.score > 0)
       .sort((a, b) => b.score - a.score)
-      .map((x) => x.d)
-      .slice(0, 30);
+      .slice(0, 30); // cap
   }
 
   // ========= init =========
@@ -178,7 +451,8 @@ noindex: true
       // Cargar desde ?q=
       if (qs) {
         input.value = qs;
-        renderResults(search(qs));
+        const items = search(qs);
+        renderResults(items.map(x => x.d), (items[0]||{}).rx || buildSynonymRegex(qs));
       }
 
       // Búsqueda en vivo
@@ -190,7 +464,19 @@ noindex: true
           document.getElementById("status").classList.add("hidden");
           return;
         }
-        renderResults(search(v));
+        const items = search(v);
+        renderResults(items.map(x => x.d), (items[0]||{}).rx || buildSynonymRegex(v));
+      });
+
+      // Enter -> fija ?q= sin recargar (history API)
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          const v = input.value.trim();
+          const sp2 = new URLSearchParams(location.search);
+          if (v) sp2.set("q", v); else sp2.delete("q");
+          history.replaceState({}, "", location.pathname + (sp2.toString() ? "?" + sp2.toString() : ""));
+          e.preventDefault();
+        }
       });
 
       // Botón aspa: limpia y enfoca
@@ -200,7 +486,7 @@ noindex: true
         document.getElementById("results").innerHTML = "";
         document.getElementById("empty").classList.add("hidden");
         document.getElementById("status").classList.add("hidden");
-        // Opcional: limpiar ?q= de la URL sin recargar
+        // Limpia ?q= de la URL sin recargar
         const sp2 = new URLSearchParams(location.search);
         if (sp2.has("q")) {
           sp2.delete("q");
