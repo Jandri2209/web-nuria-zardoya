@@ -39,7 +39,7 @@
   <link rel="manifest" href="/site.webmanifest">
 
   <!-- Actualiza el ?v= cuando recompiles CSS -->
-  <link rel="stylesheet" href="/assets/styles.css?v=20250901">
+  <link rel="stylesheet" href="/assets/styles.css?v=20250910">
 
   <script src="/assets/vendor/lucide.min.js" defer></script>
 
@@ -458,19 +458,6 @@
       sendEvent('begin_checkout', { item_list_name: 'calendly' });
     });
   })();
-  </script>
-  <script defer src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-  <script>
-    if (window.netlifyIdentity) {
-      // Si el enlace de correo trae hash con token, abre el modal
-      window.netlifyIdentity.on("init", (user) => {
-        if (!user && /(_token|recovery_token|confirmation_token)/.test(location.hash)) {
-          window.netlifyIdentity.open("login");
-        }
-      });
-      // Tras login, recarga para que Decap cargue correctamente
-      window.netlifyIdentity.on("login", () => window.location.reload());
-    }
   </script>
   <!-- ====================================================================== -->
   <script>
