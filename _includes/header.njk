@@ -1,14 +1,18 @@
-<header id="site-header"
-  class="fixed inset-x-0 top-0 z-50 bg-white/90 backdrop-blur shadow-md overflow-visible">
-  <nav class="container mx-auto px-6 py-2 md:py-3 flex items-center justify-between gap-3 flex-wrap">
+<header id="site-header" class="bg-white/90 backdrop-blur shadow-md fixed w-full top-0 z-50 overflow-visible">
+  <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
     <!-- Branding -->
+    <!-- NUEVO: icono junto al nombre -->
     <a href="/" class="flex items-center gap-2 text-green-600">
       <img
         src="/favicon-32x32.png"
         srcset="/favicon-32x32.png 1x, /favicon-64x64.png 2x, /favicon-96x96.png 3x"
-        alt="" width="32" height="32" class="rounded" decoding="async">
+        alt=""
+        width="32" height="32"
+        class="rounded"
+        decoding="async">
       <span class="text-2xl font-bold">Nuria Zardoya</span>
     </a>
+
 
     {% set active = "text-green-600 font-semibold" %}
     {% set idle   = "text-gray-600 hover:text-green-600" %}
@@ -51,6 +55,7 @@
          class="{% if isRecetas %}{{ active }}{% else %}{{ idle }}{% endif %}"
          {% if isRecetas %}aria-current="page"{% endif %}>Recetas</a>
 
+      <!-- NUEVO: enlace Blog (activo en /blog/ y en posts dentro de /blog/xxxx/) -->
       {% set isBlog = page.url == '/blog.html' or page.url == '/blog/' or (page.url and page.url.indexOf('/blog/') == 0) %}
       <a href="/blog/"
          class="{% if isBlog %}{{ active }}{% else %}{{ idle }}{% endif %}"
@@ -79,8 +84,8 @@
 
         <!-- MENÚ -->
         <ul id="lang-menu"
-            class="absolute right-0 mt-2 w-48 rounded-xl border border-gray-200 bg-white shadow-xl p-2 space-y-1
-                   transition ease-out duration-150 z-[70]
+            class="absolute right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg w-48 p-2 space-y-1 z-[60]
+                   transition ease-out duration-150
                    invisible opacity-0 translate-y-1
                    group-hover:visible group-hover:opacity-100 group-hover:translate-y-0">
           <li>
@@ -135,8 +140,8 @@
     </div>
   </nav>
 
-  <!-- Cajón búsqueda móvil (altura limitada; el scroll va aquí, NO en el header) -->
-  <div id="mobile-search" class="hidden md:hidden bg-white border-t border-gray-100 shadow-sm w-full max-h-[75vh] overflow-y-auto">
+  <!-- Añadimos w-full y overflow-x-hidden al cajón -->
+  <div id="mobile-search" class="hidden md:hidden bg-white border-t border-gray-100 shadow-sm w-full overflow-x-hidden">
     <div class="container mx-auto px-6 py-3 border-b border-gray-100">
       <form action="/buscador/" method="get" role="search" class="flex gap-2 min-w-0">
         <input type="search" name="q" placeholder="Buscar…"
@@ -159,11 +164,12 @@
       <a href="/quien-soy/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Quién soy</a>
       <a href="/servicios/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Servicios</a>
       <a href="/recetas/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Recetas</a>
+      <!-- NUEVO: enlace Blog en móvil -->
       <a href="/blog/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Blog</a>
       <a href="/contacto/" class="block py-2 text-sm hover:bg-green-50" role="menuitem">Contacto</a>
       <a href="/pide-tu-cita/" class="block py-2 text-sm font-semibold text-green-700 hover:bg-green-50" role="menuitem">Pide tu cita</a>
 
-      <!-- Idioma (móvil) -->
+      <!-- Idioma (móvil) con banderas -->
       <div class="mt-1 pt-2 border-t border-gray-100">
         <p class="px-1 pb-1 text-xs uppercase tracking-wide text-gray-500">Idioma</p>
         <div class="grid grid-cols-2 gap-2">
@@ -192,3 +198,135 @@
     </nav>
   </div>
 </header>
+
+<script>
+  // ===== Limpiador de ?_nolang=1 al cargar en tu dominio (harmless) =====
+  (function () {
+    if (/\.translate\.goog$/.test(location.hostname)) return;
+    const sp = new URLSearchParams(location.search);
+    if (sp.has('_nolang')) {
+      try { document.cookie = 'langpref=es; Path=/; Max-Age=2592000; SameSite=Lax'; } catch {}
+      sp.delete('_nolang');
+      const clean = location.pathname + (sp.toString() ? '?' + sp.toString() : '') + location.hash;
+      history.replaceState({}, '', clean);
+    }
+  })();
+
+  // ===== Guardia global anti anchors vacíos ('#') =====
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a');
+    if (!a) return;
+    const href = a.getAttribute('href');
+    if (!href || href === '#') { e.preventDefault(); e.stopPropagation(); }
+  }, true);
+
+  // ===== Menú móvil =====
+  (function () {
+    const btn = document.getElementById('menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    if (!btn || !menu) return;
+
+    function closeMenu() { btn.setAttribute('aria-expanded', 'false'); menu.classList.add('hidden'); }
+    function openMenu()  { btn.setAttribute('aria-expanded', 'true');  menu.classList.remove('hidden'); }
+
+    btn.addEventListener('click', () => {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      expanded ? closeMenu() : openMenu();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { closeMenu(); btn.focus(); }
+    });
+
+    // Cerrar al tocar un enlace del menú
+    menu.addEventListener('click', (e) => {
+      const target = e.target.closest('a'); if (target) closeMenu();
+    });
+  })();
+
+  // ===== Buscador desktop: toggle con lupa =====
+  (function () {
+    const wrap  = document.querySelector('#header-search');
+    if (!wrap) return;
+    const btn   = wrap.querySelector('button[aria-controls="search-input"]');
+    const input = wrap.querySelector('#search-input');
+    const form  = wrap.querySelector('form');
+
+    function open() {
+      btn.setAttribute('aria-expanded', 'true');
+      input.classList.remove('w-0','opacity-0');
+      input.classList.add('w-56','opacity-100');
+      setTimeout(() => input.focus(), 80);
+    }
+    function close() {
+      btn.setAttribute('aria-expanded', 'false');
+      input.classList.add('w-0','opacity-0');
+      input.classList.remove('w-56','opacity-100');
+    }
+
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      expanded ? close() : open();
+    });
+
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    form.addEventListener('submit', (e) => { if (!input.value.trim()) e.preventDefault(); });
+
+    // NUEVO: si hay ?q= en la URL, rellenar el input del header (útil en /buscador/)
+    try {
+      const sp = new URLSearchParams(location.search);
+      const q = sp.get('q');
+      if (q) {
+        input.value = q;
+        // Si ya estás en /buscador/, mostramos el input abierto para que el usuario edite rápido
+        if (location.pathname === '/buscador/') {
+          btn.setAttribute('aria-expanded', 'true');
+          input.classList.remove('w-0','opacity-0');
+          input.classList.add('w-56','opacity-100');
+        }
+      }
+    } catch {}
+  })();
+
+  // ===== Buscador móvil: cajón =====
+  (function () {
+    const btn   = document.getElementById('search-btn-mobile');
+    const panel = document.getElementById('mobile-search');
+    if (!btn || !panel) return;
+
+    function open()  { btn.setAttribute('aria-expanded', 'true');  panel.classList.remove('hidden'); setTimeout(() => panel.querySelector('input')?.focus(), 50); }
+    function close() { btn.setAttribute('aria-expanded', 'false'); panel.classList.add('hidden'); }
+
+    btn.addEventListener('click', (e) => { e.preventDefault(); const ex = btn.getAttribute('aria-expanded') === 'true'; ex ? close() : open(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  })();
+
+  // ===== Idioma desktop: hover por CSS, click para fijar abierto =====
+  (function () {
+    const wrap = document.getElementById('lang-switch-desktop');
+    if (!wrap) return;
+    const btn  = document.getElementById('lang-btn');
+    const menu = document.getElementById('lang-menu');
+    let forcedOpen = false;
+
+    function setOpen(on) {
+      forcedOpen = on;
+      btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+      menu.classList.toggle('!visible', on);
+      menu.classList.toggle('!opacity-100', on);
+      menu.classList.toggle('!translate-y-0', on);
+    }
+
+    btn.addEventListener('click', (e) => { e.preventDefault(); setOpen(!forcedOpen); });
+    document.addEventListener('click', (e) => { if (!wrap.contains(e.target) && forcedOpen) setOpen(false); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && forcedOpen) { setOpen(false); btn.focus(); } });
+  })();
+
+  // ===== Lucide: render de iconos =====
+  (function () {
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+      window.lucide.createIcons();
+    }
+  })();
+</script>
