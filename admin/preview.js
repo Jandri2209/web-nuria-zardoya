@@ -133,10 +133,15 @@
           D ? h("p", { className: "text-lg text-gray-600 mb-4" }, D) : null,
           dateText ? h("div", { className: "text-sm text-gray-500 mb-6" }, dateText) : null,
 
-          // Imagen principal
-          Img ? h("img", { src: Img, alt: `Imagen de ${T}`, className: "rounded-xl shadow w-full object-cover mb-8" }) : null,
+          // Imagen principal (más contenida)
+          Img ? h("img", {
+            src: Img,
+            alt: `Imagen de ${T}`,
+            className: "rounded-xl shadow w-full object-cover mb-8",
+            style: { maxHeight: "24rem" }
+          }) : null,
 
-          // Galería horizontal (opcional, tipo carrusel simple)
+          // Galería horizontal (más compacta)
           gallery.length ? h("div", { className: "mb-8" }, [
             h("div", { className: "overflow-x-auto flex gap-4 pb-2" },
               gallery.map((src, idx) =>
@@ -144,7 +149,8 @@
                   key: `g-${idx}`,
                   src,
                   alt: `Imagen ${idx + 1} de ${T}`,
-                  className: "rounded-xl shadow min-w-full object-cover"
+                  className: "rounded-xl shadow object-cover",
+                  style: { minWidth: "60%", maxHeight: "22rem" }
                 })
               )
             ),

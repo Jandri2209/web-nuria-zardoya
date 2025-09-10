@@ -22,7 +22,11 @@ layout: base.njk
 
     {% if image %}
       <figure class="mb-8">
-        <img src="{{ image }}" alt="Imagen de {{ title }}" class="rounded-xl shadow w-full object-cover">
+        <img
+          src="{{ image }}"
+          alt="Imagen de {{ title }}"
+          class="rounded-xl shadow w-full object-cover"
+          style="max-height: 24rem;">
       </figure>
     {% endif %}
 
@@ -33,12 +37,13 @@ layout: base.njk
           <img
             src="{{ g.image }}"
             alt="Imagen {{ loop.index }} de {{ title }}"
-            class="rounded-xl shadow min-w-full md:min-w-[70%] object-cover">
+            class="rounded-xl shadow object-cover"
+            style="min-width: 60%; max-height: 22rem;">
         {% endfor %}
       </div>
     {% endif %}
 
-    <article class="prose prose-green max-w-none">
+    <article class="prose prose-green post-content max-w-none">
       {{ content | safe }}
     </article>
 
@@ -63,6 +68,18 @@ layout: base.njk
     </div>
   </div>
 </section>
+
+<style>
+/* Limita las imágenes insertadas desde el cuerpo (Markdown) */
+.post-content img{
+  max-width:100%;
+  height:auto;
+  display:block;
+  margin:1rem auto;
+  border-radius:0.75rem;
+  box-shadow:0 8px 24px rgba(0,0,0,.06);
+}
+</style>
 
 {# JSON-LD básico tipo Article (opcional) #}
 {% if title %}
