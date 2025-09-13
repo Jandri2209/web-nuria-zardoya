@@ -50,8 +50,8 @@ layout: base.njk
     {# === Instagram: solo carga si Marketing está aceptado === #}
     {% if instagram_embed or instagram_url %}
       <div id="ig-container"
-           class="my-8"
-           data-ig-url="{{ (instagram_url or '') | trim }}">
+          class="my-8"
+          data-ig-url="{{ (instagram_url or '') | trim }}">
 
         {# Guardamos el embed en <template> para no ejecutarlo hasta que haya consentimiento #}
         <template id="ig-embed-tpl">
@@ -62,7 +62,7 @@ layout: base.njk
 
         {# Fallback visible cuando NO hay consentimiento de Marketing #}
         <div id="ig-consent"
-             class="rounded-xl border border-gray-200 bg-gray-50 p-5">
+            class="rounded-xl border border-gray-200 bg-gray-50 p-5">
           <div class="flex items-start gap-3">
             <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-tr from-purple-400 via-pink-400 to-orange-300 text-white">★</span>
             <div class="flex-1">
@@ -70,18 +70,17 @@ layout: base.njk
                 Para ver este contenido de Instagram, activa las cookies de <strong>Marketing</strong>.
               </p>
 
-              {# Tarjeta-enlace SIN COOKIES (si hay URL) #}
+              {# Tarjeta-enlace SIN COOKIES #}
               {% if instagram_url %}
                 <a href="{{ instagram_url | trim }}" target="_blank" rel="noopener nofollow"
-                   class="mt-3 block rounded-xl border border-gray-200 hover:border-green-300 bg-white hover:bg-green-50 transition p-4">
-                  <div class="flex items-center gap-3">
-                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-tr from-purple-400 via-pink-400 to-orange-300 text-white">📷</span>
-                    <div class="min-w-0">
-                      <div class="font-semibold text-gray-900">Ver en Instagram</div>
-                      <div class="text-sm text-gray-500 truncate">{{ instagram_url | trim }}</div>
-                    </div>
-                    <span class="ml-auto text-green-700 font-semibold">Abrir →</span>
-                  </div>
+                  class="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-300 text-gray-800 hover:border-green-300 hover:bg-green-50">
+                  Ver en Instagram 📷
+                </a>
+              {% else %}
+                {# si solo hay EMBED, crearemos este enlace por JS leyendo data-instgrm-permalink #}
+                <a id="ig-fallback-link" href="#" target="_blank" rel="noopener nofollow"
+                  class="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-300 text-gray-800 hover:border-green-300 hover:bg-green-50 hidden">
+                  Ver en Instagram 📷
                 </a>
               {% endif %}
 
@@ -101,13 +100,45 @@ layout: base.njk
 
       <script>
         (function () {
+          // === utilidades para leer el consentimiento incluso si aún no se pobló window.cookiePrefs
+          function readSavedConsent(){
+            try {
+              // 1) window.cookiePrefs (si ya fue aplicado por tu banner)
+              if (window.cookiePrefs) return window.cookiePrefs;
+              // 2) localStorage
+              const rawLS = localStorage.getItem('cookie-consent');
+              if (rawLS) return JSON.parse(rawLS);
+              // 3) cookie
+              const m = document.cookie.match(/(?:^|;\\s*)cookie-consent=([^;]+)/);
+              if (m) return JSON.parse(decodeURIComponent(m[1]));
+            } catch(_) {}
+            return null;
+          }
+          function hasMarketing(){
+            const c = readSavedConsent();
+            return !!(c && c.marketing);
+          }
+
+          function processIG(){
+            try{ if (window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process(); }catch(e){}
+          }
+
+          // Monta el widget (embed o iframe)
           function mountIG(){
             var box = document.getElementById('ig-container');
             if (!box) return;
 
-            // Quita el aviso
+            // Oculta (no elimina) el aviso para poder re-mostrarlo si desactivan marketing
             var consentBox = document.getElementById('ig-consent');
-            if (consentBox) consentBox.remove();
+            if (consentBox) consentBox.style.display = 'none';
+
+            // ¿ya está montado? evita duplicar
+            if (box.querySelector('iframe[src*="instagram.com"], blockquote.instagram-media:not(template *)')) {
+              if (!window.instgrm && !document.querySelector('script[src*="instagram.com/embed.js"]')) {
+                var s0 = document.createElement('script'); s0.src='https://www.instagram.com/embed.js'; s0.async=true; s0.onload=processIG; document.head.appendChild(s0);
+              } else { processIG(); }
+              return;
+            }
 
             // 1) ¿hay embed pegado?
             var tpl = document.getElementById('ig-embed-tpl');
@@ -119,35 +150,30 @@ layout: base.njk
               if (rawUrl) {
                 try {
                   var u = new URL(rawUrl, location.origin);
-                  u.search = '';
-                  u.hash   = '';
-                  var embedSrc = u.href.replace(/\/?$/, '/') + 'embed';
+                  u.search = ''; u.hash = '';
+                  var embedSrc = u.href.replace(/\\/?$/, '/') + 'embed';
                   var f = document.createElement('iframe');
                   f.src = embedSrc;
                   f.allowTransparency = 'true';
                   f.allow = 'encrypted-media';
                   f.frameBorder = '0';
-                  f.style.width = '100%';
-                  f.style.height = '600px';
+                  f.style.width = '100%'; f.style.height = '600px';
                   f.className = 'w-full rounded-xl border border-gray-200 shadow';
                   box.appendChild(f);
                 } catch(e) {
-                  // fallback si la URL no parsea
                   var f2 = document.createElement('iframe');
-                  f2.src = String(rawUrl).replace(/\/?$/, '/') + 'embed';
+                  f2.src = String(rawUrl).replace(/\\/?$/, '/') + 'embed';
                   f2.allowTransparency = 'true';
                   f2.allow = 'encrypted-media';
                   f2.frameBorder = '0';
-                  f2.style.width = '100%';
-                  f2.style.height = '600px';
+                  f2.style.width = '100%'; f2.style.height = '600px';
                   f2.className = 'w-full rounded-xl border border-gray-200 shadow';
                   box.appendChild(f2);
                 }
               }
             }
 
-            // Carga embed.js si hace falta y procesa (evita duplicados)
-            function processIG(){ try{ if (window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process(); }catch(e){} }
+            // Cargar embed.js si hace falta (evita duplicados)
             if (!window.instgrm && !document.querySelector('script[src*="instagram.com/embed.js"]')) {
               var s = document.createElement('script');
               s.src = 'https://www.instagram.com/embed.js';
@@ -159,36 +185,68 @@ layout: base.njk
             }
           }
 
-          // Tu banner guarda el estado en window.cookiePrefs y emite 'cookie-preferences:updated'
-          function hasMarketing(){ return !!(window.cookiePrefs && window.cookiePrefs.marketing); }
+          // Desmonta el widget y re-muestra el aviso
+          function unmountIG(){
+            var box = document.getElementById('ig-container');
+            if (!box) return;
+            // elimina iframes y blockquotes montados (deja el <template> y el aviso)
+            box.querySelectorAll('iframe[src*="instagram.com"], blockquote.instagram-media').forEach(function(el){
+              if (el.closest('template')) return; // no tocar el template
+              el.remove();
+            });
+            var consentBox = document.getElementById('ig-consent');
+            if (consentBox) consentBox.style.display = '';
+          }
 
+          // Si solo hay EMBED, crea el enlace "Ver en Instagram 📷" a partir de data-instgrm-permalink
+          function hydrateFallbackLinkFromEmbed(){
+            var link = document.getElementById('ig-fallback-link');
+            if (!link) return;
+            var tpl = document.getElementById('ig-embed-tpl');
+            if (!tpl || !tpl.content) return;
+            var bq = tpl.content.querySelector('blockquote.instagram-media');
+            var href = bq?.getAttribute('data-instgrm-permalink') || bq?.querySelector('a[href]')?.getAttribute('href');
+            if (href) { link.href = href; link.classList.remove('hidden'); }
+          }
+
+          // Abrir modal de cookies existente
+          function wirePrefsButton(){
+            var btn = document.getElementById('ig-open-prefs');
+            if (!btn) return;
+            btn.addEventListener('click', function(e){
+              e.preventDefault();
+              if (typeof window.openCookiePreferences === 'function') window.openCookiePreferences();
+              else location.href = '/cookies/#preferencias';
+            });
+          }
+
+          // Inicialización robusta: comprobación inmediata + micro-retardo + onload
           function initIG(){
-            var container = document.getElementById('ig-container');
-            if (!container) return;
+            wirePrefsButton();
+            hydrateFallbackLinkFromEmbed();
 
-            if (hasMarketing()) {
-              mountIG();
-            } else {
-              // Botón que abre el modal de cookies existente
-              var btn = document.getElementById('ig-open-prefs');
-              if (btn) btn.addEventListener('click', function(e){
-                e.preventDefault();
-                if (typeof window.openCookiePreferences === 'function') window.openCookiePreferences();
-                else location.href = '/cookies/#preferencias';
-              });
-            }
+            // si ya hay marketing, monta
+            if (hasMarketing()) { mountIG(); return; }
+
+            // espera un tick por si tu banner aplica cookiePrefs en DOMContentLoaded
+            setTimeout(function(){ if (hasMarketing()) mountIG(); }, 0);
+            // y otra de seguridad
+            setTimeout(function(){ if (hasMarketing()) mountIG(); }, 150);
           }
 
           if (document.readyState !== 'loading') initIG();
           else document.addEventListener('DOMContentLoaded', initIG);
+          window.addEventListener('load', function(){ if (hasMarketing()) mountIG(); });
 
-          // Cuando el usuario cambie preferencias y active Marketing, montamos IG
+          // Reaccionar a cambios en tiempo real
           window.addEventListener('cookie-preferences:updated', function (ev) {
-            if (ev.detail && ev.detail.marketing) mountIG();
+            var mk = !!(ev && ev.detail && ev.detail.marketing);
+            if (mk) mountIG(); else unmountIG();
           });
         })();
       </script>
     {% endif %}
+
 
     {# ====== Prev / Volver / Next (con flechas) ====== #}
     {% set prev = collections.blog | getPreviousCollectionItem(page) %}
