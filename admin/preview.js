@@ -133,7 +133,7 @@
     const Img = withAsset(entry, "image", getAsset) || "";
     const Cat = entry.getIn(["data","category"]) || "Blog";
     const date = entry.getIn(["data","date"]);
-    const dateText = date ? new Date(date).toLocaleDateString("es-IS", { day:"2-digit", month:"long", year:"numeric" }) : null; // es-ES también sirve
+    const dateText = date ? new Date(date).toLocaleDateString("es-ES", { day:"2-digit", month:"long", year:"numeric" }) : null; // es-ES también sirve
 
     const gallery = toArray(entry.getIn(["data","gallery"])).map((g) => {
       const val = g && g.get ? (g.get("image") ?? g) : g;
