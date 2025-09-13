@@ -49,6 +49,9 @@
       font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif!important;
       font-variant-emoji:emoji; line-height:1;
     }
+    :root { --header-h: 80px; }          /* fallback por si falla el JS */
+    html { scroll-padding-top: var(--header-h, 80px); }
+    footer { margin-top: auto; }         /* pega el footer al fondo solo si falta contenido */
   </style>
 
   <!-- === GA4 + Consent Mode (por defecto DENIED y respetando tu banner) === -->
@@ -95,11 +98,24 @@
   }
   </script>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="min-h-[100svh] flex flex-col bg-gray-50 text-gray-800">
 
   {% include "header.njk" %}
 
-  <main class="pt-20 md:pt-24 pb-4">
+  <script>
+    (function(){
+      function setHeaderOffset(){
+        var h = document.getElementById('site-header');
+        if (!h) return;
+        var v = h.offsetHeight || 0;
+        document.documentElement.style.setProperty('--header-h', (v || 80) + 'px');
+      }
+      window.addEventListener('DOMContentLoaded', setHeaderOffset, {once:true});
+      window.addEventListener('resize', setHeaderOffset);
+    })();
+  </script>
+
+  <main id="page" class="flex-1 pt-[var(--header-h,5rem)] pb-4">
     {{ content | safe }}
   </main>
 
