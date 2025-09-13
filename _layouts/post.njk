@@ -72,13 +72,14 @@ layout: base.njk
 
               {# Tarjeta-enlace SIN COOKIES #}
               {% if instagram_url %}
-                <a href="{{ instagram_url | trim }}" target="_blank" rel="noopener nofollow"
+                <a id="ig-fallback-link"
+                  href="{{ instagram_url | trim }}" target="_blank" rel="noopener nofollow"
                   class="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-300 text-gray-800 hover:border-green-300 hover:bg-green-50">
                   Ver en Instagram 📷
                 </a>
               {% else %}
-                {# si solo hay EMBED, crearemos este enlace por JS leyendo data-instgrm-permalink #}
-                <a id="ig-fallback-link" href="#" target="_blank" rel="noopener nofollow"
+                <a id="ig-fallback-link"
+                  href="#" target="_blank" rel="noopener nofollow"
                   class="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-300 text-gray-800 hover:border-green-300 hover:bg-green-50 hidden">
                   Ver en Instagram 📷
                 </a>
@@ -100,16 +101,13 @@ layout: base.njk
 
       <script>
         (function () {
-          // === utilidades para leer el consentimiento incluso si aún no se pobló window.cookiePrefs
+          // === Lee el consentimiento guardado (banner tuyo) ===
           function readSavedConsent(){
             try {
-              // 1) window.cookiePrefs (si ya fue aplicado por tu banner)
-              if (window.cookiePrefs) return window.cookiePrefs;
-              // 2) localStorage
+              if (window.cookiePrefs) return window.cookiePrefs; // ya aplicado por tu banner
               const rawLS = localStorage.getItem('cookie-consent');
               if (rawLS) return JSON.parse(rawLS);
-              // 3) cookie
-              const m = document.cookie.match(/(?:^|;\\s*)cookie-consent=([^;]+)/);
+              const m = document.cookie.match(/(?:^|;\s*)cookie-consent=([^;]+)/); // <-- regex correcta
               if (m) return JSON.parse(decodeURIComponent(m[1]));
             } catch(_) {}
             return null;
@@ -128,12 +126,12 @@ layout: base.njk
             var box = document.getElementById('ig-container');
             if (!box) return;
 
-            // Oculta (no elimina) el aviso para poder re-mostrarlo si desactivan marketing
+            // Oculta el aviso (sin borrarlo) por si luego hay que re-mostrarlo
             var consentBox = document.getElementById('ig-consent');
             if (consentBox) consentBox.style.display = 'none';
 
-            // ¿ya está montado? evita duplicar
-            if (box.querySelector('iframe[src*="instagram.com"], blockquote.instagram-media:not(template *)')) {
+            // Evita duplicados si ya hay algo montado
+            if (box.querySelector('iframe[src*="instagram.com"]') || box.querySelector('blockquote.instagram-media')) {
               if (!window.instgrm && !document.querySelector('script[src*="instagram.com/embed.js"]')) {
                 var s0 = document.createElement('script'); s0.src='https://www.instagram.com/embed.js'; s0.async=true; s0.onload=processIG; document.head.appendChild(s0);
               } else { processIG(); }
@@ -151,7 +149,7 @@ layout: base.njk
                 try {
                   var u = new URL(rawUrl, location.origin);
                   u.search = ''; u.hash = '';
-                  var embedSrc = u.href.replace(/\\/?$/, '/') + 'embed';
+                  var embedSrc = u.href.replace(/\/?$/, '/') + 'embed';
                   var f = document.createElement('iframe');
                   f.src = embedSrc;
                   f.allowTransparency = 'true';
@@ -162,7 +160,7 @@ layout: base.njk
                   box.appendChild(f);
                 } catch(e) {
                   var f2 = document.createElement('iframe');
-                  f2.src = String(rawUrl).replace(/\\/?$/, '/') + 'embed';
+                  f2.src = String(rawUrl).replace(/\/?$/, '/') + 'embed';
                   f2.allowTransparency = 'true';
                   f2.allow = 'encrypted-media';
                   f2.frameBorder = '0';
@@ -189,27 +187,26 @@ layout: base.njk
           function unmountIG(){
             var box = document.getElementById('ig-container');
             if (!box) return;
-            // elimina iframes y blockquotes montados (deja el <template> y el aviso)
             box.querySelectorAll('iframe[src*="instagram.com"], blockquote.instagram-media').forEach(function(el){
-              if (el.closest('template')) return; // no tocar el template
+              if (el.closest && el.closest('template')) return; // deja el <template>
               el.remove();
             });
             var consentBox = document.getElementById('ig-consent');
             if (consentBox) consentBox.style.display = '';
           }
 
-          // Si solo hay EMBED, crea el enlace "Ver en Instagram 📷" a partir de data-instgrm-permalink
+          // Si solo hay EMBED, saca la URL del data-instgrm-permalink y muestra "Ver en Instagram 📷"
           function hydrateFallbackLinkFromEmbed(){
             var link = document.getElementById('ig-fallback-link');
-            if (!link) return;
+            if (!link || !link.classList.contains('hidden')) return; // ya está visible (tenías URL)
             var tpl = document.getElementById('ig-embed-tpl');
             if (!tpl || !tpl.content) return;
             var bq = tpl.content.querySelector('blockquote.instagram-media');
-            var href = bq?.getAttribute('data-instgrm-permalink') || bq?.querySelector('a[href]')?.getAttribute('href');
+            var href = bq && (bq.getAttribute('data-instgrm-permalink') || (bq.querySelector('a[href]') && bq.querySelector('a[href]').getAttribute('href')));
             if (href) { link.href = href; link.classList.remove('hidden'); }
           }
 
-          // Abrir modal de cookies existente
+          // Abre tu modal de cookies
           function wirePrefsButton(){
             var btn = document.getElementById('ig-open-prefs');
             if (!btn) return;
@@ -220,23 +217,21 @@ layout: base.njk
             });
           }
 
-          // Inicialización robusta: comprobación inmediata + micro-retardo + onload
           function initIG(){
             wirePrefsButton();
             hydrateFallbackLinkFromEmbed();
 
-            // si ya hay marketing, monta
+            // Si ya hay marketing al entrar, monta YA
             if (hasMarketing()) { mountIG(); return; }
 
-            // espera un tick por si tu banner aplica cookiePrefs en DOMContentLoaded
+            // Pequeños retardos por si cookiePrefs se aplica tras DOMContentLoaded
             setTimeout(function(){ if (hasMarketing()) mountIG(); }, 0);
-            // y otra de seguridad
             setTimeout(function(){ if (hasMarketing()) mountIG(); }, 150);
+            window.addEventListener('load', function(){ if (hasMarketing()) mountIG(); });
           }
 
           if (document.readyState !== 'loading') initIG();
           else document.addEventListener('DOMContentLoaded', initIG);
-          window.addEventListener('load', function(){ if (hasMarketing()) mountIG(); });
 
           // Reaccionar a cambios en tiempo real
           window.addEventListener('cookie-preferences:updated', function (ev) {
@@ -246,7 +241,6 @@ layout: base.njk
         })();
       </script>
     {% endif %}
-
 
     {# ====== Prev / Volver / Next (con flechas) ====== #}
     {% set prev = collections.blog | getPreviousCollectionItem(page) %}
