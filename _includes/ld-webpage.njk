@@ -24,7 +24,7 @@
   "@type": "{{ pageType }}",
   "@id": "{{ site.url }}{{ page.url }}#webpage",
   "url": "{{ site.url }}{{ page.url }}",
-  "name": {{ (title or site.defaultTitle) | dump  | safe }},
+  "name": {{ (title or site.defaultTitle) | dump}},
   "description": {{ (description or site.defaultDescription) | dump  | safe }},
   "inLanguage": "{{ site.lang or 'es-ES' }}",
   "isPartOf": { "@id": "{{ site.url }}/#website" }{% if img %},

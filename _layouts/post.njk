@@ -46,7 +46,40 @@ layout: base.njk
     <article class="prose prose-green post-content max-w-none">
       {{ content | safe }}
     </article>
+    {# === Instagram === #}
+    {% if instagram_embed %}
+      <div class="my-8">
+        {{ instagram_embed | safe }}
+      </div>
+    {% elseif instagram_url %}
+      <div class="my-8">
+        <iframe
+          src="{{ instagram_url | trim }}/embed"
+          allowtransparency="true"
+          allow="encrypted-media"
+          frameborder="0"
+          class="w-full rounded-xl border border-gray-200 shadow"
+          style="height:600px">
+        </iframe>
+      </div>
+    {% endif %}
 
+    <script>
+      (function () {
+        function processIG(){
+          try{ if(window.instgrm && window.instgrm.Embeds){ window.instgrm.Embeds.process(); } }catch(e){}
+        }
+        if(!window.instgrm){
+          var s = document.createElement('script');
+          s.src = 'https://www.instagram.com/embed.js';
+          s.async = true;
+          s.onload = processIG;
+          document.head.appendChild(s);
+        } else {
+          processIG();
+        }
+      })();
+    </script>
     {# ====== Prev / Volver / Next (con flechas) ====== #}
     {% set prev = collections.blog | getPreviousCollectionItem(page) %}
     {% set next = collections.blog | getNextCollectionItem(page) %}

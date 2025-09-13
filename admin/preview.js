@@ -5,20 +5,37 @@
   const h = window.h;
   if (!CMS || !h) return;
 
-  // Tailwind para la vista previa (estilos básicos)
+  // Estilos básicos en la preview
   CMS.registerPreviewStyle("https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css");
 
   /* ========= Helpers ========= */
   const withAsset = (entry, field, getAsset) => {
     const v = entry.getIn(["data", field]);
     if (!v) return null;
-    const asset = getAsset(v);
-    return asset ? asset.toString() : v;
+    const a = getAsset(v);
+    return a ? a.toString() : v;
   };
   const toArray = (v) =>
     (v && typeof v.toArray === "function" ? v.toArray() : Array.isArray(v) ? v : []);
   const getText = (item, key) =>
     item && item.get ? (item.get(key) ?? item) : (item && typeof item === "object" ? (item[key] ?? item) : item);
+
+  // Carga única de embed.js y reprocesado
+  function ensureInstagramProcessed() {
+    function process() {
+      try { if (window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process(); } catch (_e) {}
+    }
+    if (!window.__ig_script_loaded__) {
+      const s = document.createElement("script");
+      s.src = "https://www.instagram.com/embed.js";
+      s.async = true;
+      s.onload = () => setTimeout(process, 0);
+      document.body.appendChild(s);
+      window.__ig_script_loaded__ = true;
+    } else {
+      setTimeout(process, 0);
+    }
+  }
 
   /* ========= Preview: Recetas ========= */
   const RecipePreview = ({ entry, getAsset }) => {
@@ -109,21 +126,45 @@
 
   CMS.registerPreviewTemplate("recetas", RecipePreview);
 
-  /* ========= Preview: Blog (noticias/mitos/consejos) ========= */
+  /* ========= Preview: Blog ========= */
   const PostPreview = ({ entry, widgetFor, getAsset }) => {
     const T   = entry.getIn(["data","title"]) || entry.get("slug") || "Título";
     const D   = entry.getIn(["data","description"]) || "";
     const Img = withAsset(entry, "image", getAsset) || "";
     const Cat = entry.getIn(["data","category"]) || "Blog";
     const date = entry.getIn(["data","date"]);
-    const dateText = date ? new Date(date).toLocaleDateString("es-ES", { day:"2-digit", month:"long", year:"numeric" }) : null;
+    const dateText = date ? new Date(date).toLocaleDateString("es-IS", { day:"2-digit", month:"long", year:"numeric" }) : null; // es-ES también sirve
 
-    // Galería opcional (lista de imágenes)
     const gallery = toArray(entry.getIn(["data","gallery"])).map((g) => {
       const val = g && g.get ? (g.get("image") ?? g) : g;
-      const asset = val ? getAsset(val) : null;
-      return asset ? asset.toString() : (val ? String(val) : "");
+      const a = val ? getAsset(val) : null;
+      return a ? a.toString() : (val ? String(val) : "");
     }).filter(Boolean);
+
+    // Instagram
+    const igUrl   = (entry.getIn(["data","instagram_url"]) || "").trim();
+    const igEmbed = (entry.getIn(["data","instagram_embed"]) || "").trim();
+
+    let igNode = null;
+    if (igEmbed) {
+      igNode = h("div", { className: "my-8", dangerouslySetInnerHTML: { __html: igEmbed } });
+      ensureInstagramProcessed();
+    } else if (igUrl) {
+      const src = igUrl.replace(/\/?$/, "/") + "embed";
+      igNode = h("div", { className: "my-8" }, [
+        h("iframe", {
+          src,
+          allowtransparency: "true",
+          allow: "encrypted-media",
+          frameborder: "0",
+          height: "600",
+          width: "100%",
+          className: "w-full rounded-xl border border-gray-200 shadow"
+        })
+      ]);
+      // No hace falta embed.js para el iframe, pero no molesta si está
+      ensureInstagramProcessed();
+    }
 
     return h("div", {}, [
       h("section", { className: "bg-white" }, [
@@ -133,7 +174,6 @@
           D ? h("p", { className: "text-lg text-gray-600 mb-4" }, D) : null,
           dateText ? h("div", { className: "text-sm text-gray-500 mb-6" }, dateText) : null,
 
-          // Imagen principal (más contenida)
           Img ? h("img", {
             src: Img,
             alt: `Imagen de ${T}`,
@@ -141,7 +181,7 @@
             style: { maxHeight: "24rem" }
           }) : null,
 
-          // Galería horizontal (más compacta)
+          // Galería horizontal
           gallery.length ? h("div", { className: "mb-8" }, [
             h("div", { className: "overflow-x-auto flex gap-4 pb-2" },
               gallery.map((src, idx) =>
@@ -161,7 +201,10 @@
             )
           ]) : null,
 
-          // Cuerpo del post
+          // Instagram
+          igNode,
+
+          // Cuerpo
           h("article", { className: "max-w-none" }, widgetFor ? widgetFor("body") : null),
 
           // Volver
