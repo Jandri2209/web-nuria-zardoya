@@ -46,40 +46,150 @@ layout: base.njk
     <article class="prose prose-green post-content max-w-none">
       {{ content | safe }}
     </article>
-    {# === Instagram === #}
-    {% if instagram_embed %}
-      <div class="my-8">
-        {{ instagram_embed | safe }}
+
+    {# === Instagram: solo carga si Marketing está aceptado === #}
+    {% if instagram_embed or instagram_url %}
+      <div id="ig-container"
+           class="my-8"
+           data-ig-url="{{ (instagram_url or '') | trim }}">
+
+        {# Guardamos el embed en <template> para no ejecutarlo hasta que haya consentimiento #}
+        <template id="ig-embed-tpl">
+          {% if instagram_embed %}
+            {{ instagram_embed | safe }}
+          {% endif %}
+        </template>
+
+        {# Fallback visible cuando NO hay consentimiento de Marketing #}
+        <div id="ig-consent"
+             class="rounded-xl border border-gray-200 bg-gray-50 p-5">
+          <div class="flex items-start gap-3">
+            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-tr from-purple-400 via-pink-400 to-orange-300 text-white">★</span>
+            <div class="flex-1">
+              <p class="text-sm text-gray-700">
+                Para ver este contenido de Instagram, activa las cookies de <strong>Marketing</strong>.
+              </p>
+
+              {# Tarjeta-enlace SIN COOKIES (si hay URL) #}
+              {% if instagram_url %}
+                <a href="{{ instagram_url | trim }}" target="_blank" rel="noopener nofollow"
+                   class="mt-3 block rounded-xl border border-gray-200 hover:border-green-300 bg-white hover:bg-green-50 transition p-4">
+                  <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-tr from-purple-400 via-pink-400 to-orange-300 text-white">📷</span>
+                    <div class="min-w-0">
+                      <div class="font-semibold text-gray-900">Ver en Instagram</div>
+                      <div class="text-sm text-gray-500 truncate">{{ instagram_url | trim }}</div>
+                    </div>
+                    <span class="ml-auto text-green-700 font-semibold">Abrir →</span>
+                  </div>
+                </a>
+              {% endif %}
+
+              <div class="mt-3 flex flex-wrap gap-2">
+                <button id="ig-open-prefs"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-600 hover:bg-green-700 text-white font-semibold">
+                  Configurar cookies
+                </button>
+                <a href="/cookies/" class="inline-flex items-center px-4 py-2 rounded-full bg-white border border-gray-300 text-gray-700">
+                  Más info
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    {% elseif instagram_url %}
-      <div class="my-8">
-        <iframe
-          src="{{ instagram_url | trim }}/embed"
-          allowtransparency="true"
-          allow="encrypted-media"
-          frameborder="0"
-          class="w-full rounded-xl border border-gray-200 shadow"
-          style="height:600px">
-        </iframe>
-      </div>
+
+      <script>
+        (function () {
+          function mountIG(){
+            var box = document.getElementById('ig-container');
+            if (!box) return;
+
+            // Quita el aviso
+            var consentBox = document.getElementById('ig-consent');
+            if (consentBox) consentBox.remove();
+
+            // 1) ¿hay embed pegado?
+            var tpl = document.getElementById('ig-embed-tpl');
+            if (tpl && tpl.content && tpl.content.childNodes.length) {
+              box.appendChild(tpl.content.cloneNode(true));
+            } else {
+              // 2) si no, ¿hay URL? → iframe oficial /embed (limpiando ? y #)
+              var rawUrl = box.getAttribute('data-ig-url') || '';
+              if (rawUrl) {
+                try {
+                  var u = new URL(rawUrl, location.origin);
+                  u.search = '';
+                  u.hash   = '';
+                  var embedSrc = u.href.replace(/\/?$/, '/') + 'embed';
+                  var f = document.createElement('iframe');
+                  f.src = embedSrc;
+                  f.allowTransparency = 'true';
+                  f.allow = 'encrypted-media';
+                  f.frameBorder = '0';
+                  f.style.width = '100%';
+                  f.style.height = '600px';
+                  f.className = 'w-full rounded-xl border border-gray-200 shadow';
+                  box.appendChild(f);
+                } catch(e) {
+                  // fallback si la URL no parsea
+                  var f2 = document.createElement('iframe');
+                  f2.src = String(rawUrl).replace(/\/?$/, '/') + 'embed';
+                  f2.allowTransparency = 'true';
+                  f2.allow = 'encrypted-media';
+                  f2.frameBorder = '0';
+                  f2.style.width = '100%';
+                  f2.style.height = '600px';
+                  f2.className = 'w-full rounded-xl border border-gray-200 shadow';
+                  box.appendChild(f2);
+                }
+              }
+            }
+
+            // Carga embed.js si hace falta y procesa (evita duplicados)
+            function processIG(){ try{ if (window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process(); }catch(e){} }
+            if (!window.instgrm && !document.querySelector('script[src*="instagram.com/embed.js"]')) {
+              var s = document.createElement('script');
+              s.src = 'https://www.instagram.com/embed.js';
+              s.async = true;
+              s.onload = processIG;
+              document.head.appendChild(s);
+            } else {
+              processIG();
+            }
+          }
+
+          // Tu banner guarda el estado en window.cookiePrefs y emite 'cookie-preferences:updated'
+          function hasMarketing(){ return !!(window.cookiePrefs && window.cookiePrefs.marketing); }
+
+          function initIG(){
+            var container = document.getElementById('ig-container');
+            if (!container) return;
+
+            if (hasMarketing()) {
+              mountIG();
+            } else {
+              // Botón que abre el modal de cookies existente
+              var btn = document.getElementById('ig-open-prefs');
+              if (btn) btn.addEventListener('click', function(e){
+                e.preventDefault();
+                if (typeof window.openCookiePreferences === 'function') window.openCookiePreferences();
+                else location.href = '/cookies/#preferencias';
+              });
+            }
+          }
+
+          if (document.readyState !== 'loading') initIG();
+          else document.addEventListener('DOMContentLoaded', initIG);
+
+          // Cuando el usuario cambie preferencias y active Marketing, montamos IG
+          window.addEventListener('cookie-preferences:updated', function (ev) {
+            if (ev.detail && ev.detail.marketing) mountIG();
+          });
+        })();
+      </script>
     {% endif %}
 
-    <script>
-      (function () {
-        function processIG(){
-          try{ if(window.instgrm && window.instgrm.Embeds){ window.instgrm.Embeds.process(); } }catch(e){}
-        }
-        if(!window.instgrm){
-          var s = document.createElement('script');
-          s.src = 'https://www.instagram.com/embed.js';
-          s.async = true;
-          s.onload = processIG;
-          document.head.appendChild(s);
-        } else {
-          processIG();
-        }
-      })();
-    </script>
     {# ====== Prev / Volver / Next (con flechas) ====== #}
     {% set prev = collections.blog | getPreviousCollectionItem(page) %}
     {% set next = collections.blog | getNextCollectionItem(page) %}
@@ -93,7 +203,7 @@ layout: base.njk
 
         {% if prev %}
         <a id="nav-prev" href="{{ prev.url }}" rel="prev" aria-label="Entrada anterior: {{ prev.data.title }}"
-          class="group flex-1 rounded-2xl border border-gray-200 hover:border-green-300 hover:bg-green-50 transition p-4 flex items-center gap-3">
+           class="group flex-1 rounded-2xl border border-gray-200 hover:border-green-300 hover:bg-green-50 transition p-4 flex items-center gap-3">
           <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-green-100 group-hover:bg-green-200 transition">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -109,7 +219,7 @@ layout: base.njk
         {% endif %}
 
         <a id="nav-back" href="/blog/"
-          class="shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold transition">
+           class="shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold transition">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-width="2" d="M8 6h12M8 12h12M8 18h12M3 6h.01M3 12h.01M3 18h.01"/>
           </svg>
@@ -118,7 +228,7 @@ layout: base.njk
 
         {% if next %}
         <a id="nav-next" href="{{ next.url }}" rel="next" aria-label="Entrada siguiente: {{ next.data.title }}"
-          class="group flex-1 rounded-2xl border border-gray-200 hover:border-green-300 hover:bg-green-50 transition p-4 flex items-center justify-end gap-3">
+           class="group flex-1 rounded-2xl border border-gray-200 hover:border-green-300 hover:bg-green-50 transition p-4 flex items-center justify-end gap-3">
           <span class="text-sm text-right">
             <span class="block text-gray-500">Siguiente</span>
             <span class="block font-semibold text-gray-900 group-hover:text-green-700 line-clamp-1">{{ next.data.title }}</span>
