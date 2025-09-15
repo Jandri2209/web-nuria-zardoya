@@ -24,7 +24,7 @@
       "@type": "ListItem",
       "position": {{ loop.index }},
       "name": {{ item.name | dump | safe }},
-      "item": {{ u | dump}}
+      "item": {{ u | dump | safe }}
     }{% if not loop.last %},{% endif %}
 {% endfor %}
   ]
