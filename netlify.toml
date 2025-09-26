@@ -1,104 +1,32 @@
+# ============================
+# Build
+# ============================
 [build]
   command = "npm run build"
   publish = "_site"
 
 [build.environment]
   NODE_VERSION = "18"
-  # Evita pasos innecesarios en la instalación de npm y reduce ruido de logs
   NPM_FLAGS = "--no-audit --no-fund --loglevel=error"
 
-# Empaquetado de Functions más rápido
+# ============================
+# Functions
+# ============================
 [functions]
   node_bundler = "esbuild"
 
-# Si alguna function usa módulos que prefieres NO bundlear (como nodemailer), decláralos aquí:
 [functions."submission-created"]
   external_node_modules = ["nodemailer"]
 
-# ---------------------------
-# Pretty URLs (.html → /)
-# ---------------------------
-[[redirects]]
-  from = "/privacidad.html"
-  to = "/privacidad/"
-  status = 301
+# ============================
+# Redirects (orden importa)
+# ============================
 
-[[redirects]]
-  from = "/legal.html"
-  to = "/legal/"
-  status = 301
-
-[[redirects]]
-  from = "/cookies.html"
-  to = "/cookies/"
-  status = 301
-
-[[redirects]]
-  from = "/servicios.html"
-  to = "/servicios/"
-  status = 301
-
-[[redirects]]
-  from = "/contacto.html"
-  to = "/contacto/"
-  status = 301
-
-[[redirects]]
-  from = "/gracias.html"
-  to = "/gracias/"
-  status = 301
-
-[[redirects]]
-  from = "/recetas.html"
-  to = "/recetas/"
-  status = 301
-
-[[redirects]]
-  from = "/blog.html"
-  to = "/blog/"
-  status = 301
-
-[[redirects]]
-  from = "/buscador.html"
-  to = "/buscador/"
-  status = 301
-
-[[redirects]]
-  from = "/quien-soy.html"
-  to = "/quien-soy/"
-  status = 301
-
-[[redirects]]
-  from = "/pide-tu-cita.html"
-  to = "/pide-tu-cita/"
-  status = 301
-
-# ------------------------------------
-# Legacy: guion_bajo → guiones (301)
-# ------------------------------------
-[[redirects]]
-  from = "/quien_soy/"
-  to = "/quien-soy/"
-  status = 301
-
-[[redirects]]
-  from = "/quien_soy.html"
-  to = "/quien-soy/"
-  status = 301
-
-[[redirects]]
-  from = "/pide_tu_cita/"
-  to = "/pide-tu-cita/"
-  status = 301
-
-[[redirects]]
-  from = "/pide_tu_cita.html"
-  to = "/pide-tu-cita/"
-  status = 301
-
-# ------------------------------------
-# Canonicalización de dominio (301)
-# ------------------------------------
+# 0) Redirecciones de host → dominio canónico + HTTPS (un único salto)
+#    - http sin www   → https raíz
+#    - http con www   → https raíz
+#    - https con www  → https raíz
+#    - subdominio Netlify → https raíz
 [[redirects]]
   from = "http://nuriazardoya.es/*"
   to = "https://nuriazardoya.es/:splat"
@@ -117,16 +45,56 @@
   status = 301
   force = true
 
-# Redirige el subdominio de Netlify al dominio final
 [[redirects]]
   from = "https://nuriazardoyalasheras.netlify.app/*"
   to = "https://nuriazardoya.es/:splat"
   status = 301
   force = true
 
-# ---------------------------
-# Headers de seguridad
-# ---------------------------
+# 1) .html → versión / (regla genérica; evita listar página a página)
+#    Ej.: /servicios.html → /servicios/
+[[redirects]]
+  from = "/:page.html"
+  to   = "/:page/"
+  status = 301
+
+# 2) Normalización legacy (guion_bajo → guiones)
+[[redirects]]
+  from = "/quien_soy/"
+  to   = "/quien-soy/"
+  status = 301
+
+[[redirects]]
+  from = "/quien_soy.html"
+  to   = "/quien-soy/"
+  status = 301
+
+[[redirects]]
+  from = "/pide_tu_cita/"
+  to   = "/pide-tu-cita/"
+  status = 301
+
+[[redirects]]
+  from = "/pide_tu_cita.html"
+  to   = "/pide-tu-cita/"
+  status = 301
+
+# (Opcional pero recomendable) Normaliza algunas rutas "sin slash" a "con slash"
+# para evitar que GSC lo marque: /privacidad → /privacidad/ (un salto controlado)
+# Añade aquí solo las secciones principales si GSC las señala.
+[[redirects]]
+  from = "/privacidad"
+  to   = "/privacidad/"
+  status = 301
+
+[[redirects]]
+  from = "/servicios"
+  to   = "/servicios/"
+  status = 301
+
+# ============================
+# Headers (seguridad + caché)
+# ============================
 [[headers]]
   for = "/*"
   [headers.values]
@@ -148,6 +116,7 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# Tipos explícitos
 [[headers]]
   for = "/sitemap.xml"
   [headers.values]
@@ -156,10 +125,9 @@
 [[headers]]
   for = "/site.webmanifest"
   [headers.values]
-  Content-Type = "application/manifest+json; charset=utf-8"
+    Content-Type = "application/manifest+json; charset=utf-8"
 
 [[headers]]
   for = "/sw.js"
   [headers.values]
-  Cache-Control = "no-cache"
-
+    Cache-Control = "no-cache"
