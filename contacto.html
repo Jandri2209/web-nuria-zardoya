@@ -33,6 +33,47 @@ permalink: "/contacto/"
     <p class="text-center text-green-100 text-sm -mt-6 mb-8">
       ¿Prefieres Calendly directo? <a href="{{ site.calendlyUrl }}" class="underline decoration-dotted text-white hover:text-green-200">Abrir calendario</a>
     </p>
+    <!-- Social: seguir/contactar por redes -->
+    <div class="mt-2 mb-10">
+      <div class="text-center text-green-100 text-sm mb-3">
+        ¿Te resulta más cómodo hablar por redes o seguirme para ver consejos y recetas?
+      </div>
+
+      <nav class="flex justify-center gap-6" aria-label="Redes sociales">
+        <a href="https://www.facebook.com/people/nutrizar/61580428302596/"
+          target="_blank" rel="noopener noreferrer"
+          data-gtag="social_facebook_contacto"
+          class="inline-flex items-center justify-center rounded
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-green-300
+                  text-white hover:text-white"
+          aria-label="Facebook de Nuria Zardoya" title="Facebook">
+          <i data-lucide="facebook" class="w-7 h-7" aria-hidden="true"></i>
+          <span class="sr-only">Facebook</span>
+        </a>
+
+        <a href="https://www.instagram.com/nutri.zar/"
+          target="_blank" rel="noopener noreferrer"
+          data-gtag="social_instagram_contacto"
+          class="inline-flex items-center justify-center rounded
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-green-300
+                  text-white hover:text-white"
+          aria-label="Instagram de Nuria Zardoya" title="Instagram">
+          <i data-lucide="instagram" class="w-7 h-7" aria-hidden="true"></i>
+          <span class="sr-only">Instagram</span>
+        </a>
+
+        <a href="https://www.linkedin.com/in/nuria-zardoya-lasheras-3579262b8"
+          target="_blank" rel="noopener noreferrer"
+          data-gtag="social_linkedin_contacto"
+          class="inline-flex items-center justify-center rounded
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-green-300
+                  text-white hover:text-white"
+          aria-label="LinkedIn de Nuria Zardoya" title="LinkedIn">
+          <i data-lucide="linkedin" class="w-7 h-7" aria-hidden="true"></i>
+          <span class="sr-only">LinkedIn</span>
+        </a>
+      </nav>
+    </div>
 
     <div class="max-w-xl mx-auto">
       <form name="contact" method="POST" action="/gracias/"
@@ -71,6 +112,7 @@ permalink: "/contacto/"
             <option>Alimentación Antiinflamatoria</option>
             <option>Patologías Digestivas</option>
             <option>Control Evolutivo</option>
+            <option>Cross-Training</option>
             <option>Otro</option>
           </select>
         </div>
