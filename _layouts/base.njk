@@ -482,47 +482,44 @@
         navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {});
       });
     }
-  {% set wa_phone = site.telephone
-    | replace("+","") | replace(" ","")
-    | replace("-","") | replace("(","") | replace(")","") %}
+{% set wa_phone = site.telephone
+  | replace("+","") | replace(" ","")
+  | replace("-","") | replace("(","") | replace(")","") %}
 
-  <a id="whatsapp-fab"
-    href="https://wa.me/{{ wa_phone }}?text="
-    target="_blank" rel="noopener"
-    class="fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-[999]
-            inline-flex items-center justify-center rounded-full
-            w-16 h-16 md:w-18 md:h-18  /* md: 72px (Tailwind arbitario bajo) */
-            transition-transform hover:scale-110 print:hidden"
-    style="--tw-shadow:0 10px 25px rgba(0,0,0,.18); box-shadow:var(--tw-shadow);"
-    aria-label="Abrir chat de WhatsApp"
-    data-gtag="cta_whatsapp">
-    <!-- Aro blanco + icono dentro -->
-    <span class="rounded-full bg-white/95 p-2 md:p-2.5 shadow-sm">
-      <img src="/images/WhatsApp.svg" alt="" width="48" height="48"
-          class="block w-9 h-9 md:w-10 md:h-10" loading="lazy">
-    </span>
-    <span class="sr-only">WhatsApp</span>
-  </a>
+<a id="whatsapp-fab"
+   href="https://wa.me/{{ wa_phone }}?text="
+   target="_blank" rel="noopener"
+   class="fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-[999]
+          inline-flex items-center justify-center rounded-full print:hidden
+          w-[68px] h-[68px] md:w-[76px] md:h-[76px]
+          transition-transform hover:scale-110"
+   aria-label="Abrir chat de WhatsApp"
+   data-gtag="cta_whatsapp"
+   style="
+     background: radial-gradient(circle, rgba(255,255,255,.95) 62%, rgba(255,255,255,0) 63%);
+     filter: drop-shadow(0 10px 28px rgba(37,211,102,.35));
+   ">
+  <img src="/images/WhatsApp.svg" alt="" width="64" height="64"
+       class="block w-12 h-12 md:w-14 md:h-14" loading="lazy">
+  <span class="sr-only">WhatsApp</span>
+</a>
 
-  <script>
-  (function(){
-    const a = document.getElementById('whatsapp-fab');
-    if (!a) return;
+<script>
+(function(){
+  const a = document.getElementById('whatsapp-fab');
+  if (!a) return;
+  const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent);
+  const wave = isMobile ? ' 👋' : ''; // quita el emoji en desktop (evita �)
 
-    // Solo emoji en móvil (en desktop a veces aparece � en WhatsApp)
-    const ua = navigator.userAgent;
-    const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(ua);
-    const wave = isMobile ? ' 👋' : '';  // <- quita el emoji en escritorio
+  const msg = [
+    `Hola, Nuria${wave}`,
+    'He visto tu web y me gustaría hacer una consulta.',
+    `Página: ${document.title}`,
+    location.href
+  ].join('\n');
 
-    const msg = [
-      `Hola, Nuria${wave}`,
-      'He visto tu web y me gustaría hacer una consulta.',
-      `Página: ${document.title}`,
-      location.href
-    ].join('\n');
-
-    a.href = a.href + encodeURIComponent(msg);
-  })();
-  </script>
+  a.href = a.href + encodeURIComponent(msg);
+})();
+</script>
 </body>
 </html>
