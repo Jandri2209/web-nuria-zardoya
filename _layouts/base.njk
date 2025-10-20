@@ -490,26 +490,26 @@
     <a id="whatsapp-fab"
       href="https://wa.me/{{ wa_phone }}?text="
       target="_blank" rel="noopener"
-      class="fixed bottom-4 right-4 z-[999] md:right-6 md:bottom-6
-              inline-flex items-center gap-2 rounded-full shadow-lg
-              bg-green-600 hover:bg-green-700 text-white
-              px-4 py-3 md:px-5 md:py-4 print:hidden"
+      class="fixed bottom-4 right-4 z-[999]
+              inline-flex items-center justify-center rounded-full shadow-lg
+              w-14 h-14 md:w-16 md:h-16 print:hidden
+              transition-transform hover:scale-110"
       aria-label="Abrir chat de WhatsApp"
       data-gtag="cta_whatsapp">
-      <!-- SVG… -->
-      <span class="hidden sm:inline">WhatsApp</span>
+      <img src="/images/WhatsApp.svg" alt="WhatsApp" width="48" height="48"
+          class="w-8 h-8 md:w-10 md:h-10" loading="lazy">
     </a>
 
     <script>
-      // Solo añade el mensaje; no intercepta el click
-      (function () {
+      // Mensaje robusto (sin depender del emoji literal)
+      (function(){
         const a = document.getElementById('whatsapp-fab');
         if (!a) return;
+        const wave = '\uD83D\uDC4B'; // 👋 (escape, evita fallos de codificación)
         const msg = [
-          "Hola, Nuria 👋",
-          "he visto tu web y me gustaría hacer una consulta.",
-          "Página:", document.title, location.href
-        ].join(" ");
+          `Hola, Nuria ${wave}`,
+          'He visto tu web y me gustaría hacer una consulta.',
+        ].join('\n'); // mejor con saltos de línea
         a.href = a.href + encodeURIComponent(msg);
       })();
     </script>
