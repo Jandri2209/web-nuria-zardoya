@@ -1,7 +1,7 @@
 ---
 title: Granola Casera
 date: 2025-10-10
-description: Receta saludable fácil y rápida de hacer.
+description: Receta saludable, fácil y rápida de hacer.
 category: Consejo
 instagram_embed: >-
   <blockquote class="instagram-media" data-instgrm-captioned
