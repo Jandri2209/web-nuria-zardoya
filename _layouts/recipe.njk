@@ -94,6 +94,12 @@ layout: base.njk
       </ol>
     </section>
   {% endif %}
+  {# ====== CONTENIDO EXTRA (Markdown del .md) ====== #}
+  {% if content %}
+  <section class="mt-12 md-content">
+    {{ content | safe }}
+  </section>
+  {% endif %}
 
   {# === Instagram: solo carga si Marketing está aceptado === #}
   {% if instagram_embed or instagram_url %}
@@ -249,13 +255,6 @@ layout: base.njk
       });
     })();
     </script>
-  {% endif %}
-
-  {# ====== CONTENIDO EXTRA (Markdown del .md) ====== #}
-  {% if content %}
-  <section class="mt-12">
-    {{ content | safe }}
-  </section>
   {% endif %}
 
   {# ====== Prev / Volver / Next (con flechas) ====== #}
