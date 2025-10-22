@@ -133,16 +133,10 @@ instagram_embed: >-
 
   <script async src="//www.instagram.com/embed.js"></script>
 ---
-\## Cómo servir
+## Cómo servir
+Queda top con **yogur natural** y rodajas de **plátano** o frutos rojos. También puedes desmenuzarlo sobre queso fresco batido o tomarlo como snack con un café o té.
 
-Queda top con \*\*yogur natural\*\* y rodajas de \*\*plátano\*\* o frutos rojos. También puedes desmenuzarlo sobre queso fresco batido o tomarlo como snack con un café o té.
-
-
-
-\## Notas
-
+## Notas
 – Si te gusta más crujiente, baja el grosor a ~0,7 cm y hornea en el rango alto del tiempo.  
-
 – Endulza (solo si te hace falta) con 1–2 cucharaditas de miel o dátiles muy picados, aunque el plátano maduro ya aporta dulzor.  
-
 – Conserva en recipiente hermético 3–4 días.
