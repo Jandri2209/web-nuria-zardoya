@@ -14,7 +14,7 @@
     if (!v) return null;
     const a = getAsset(v);
     return a ? a.toString() : v;
-  };
+    };
   const toArray = (v) =>
     (v && typeof v.toArray === "function" ? v.toArray() : Array.isArray(v) ? v : []);
   const getText = (item, key) =>
@@ -53,6 +53,30 @@
     const steps       = toArray(entry.getIn(["data","steps"]));
 
     const dateText = date ? new Date(date).toLocaleDateString("es-ES", { day:"2-digit", month:"long", year:"numeric" }) : null;
+
+    // Instagram (preview en recetas también)
+    const igUrl   = (entry.getIn(["data","instagram_url"]) || "").trim();
+    const igEmbed = (entry.getIn(["data","instagram_embed"]) || "").trim();
+    let igNode = null;
+    if (igEmbed) {
+      igNode = h("div", { className: "my-8", dangerouslySetInnerHTML: { __html: igEmbed } });
+      ensureInstagramProcessed();
+    } else if (igUrl) {
+      const src = igUrl.replace(/\/?$/, "/") + "embed";
+      igNode = h("div", { className: "my-8" }, [
+        h("iframe", {
+          src,
+          allowTransparency: "true",
+          allow: "encrypted-media",
+          frameBorder: "0",
+          loading: "lazy",
+          height: "600",
+          width: "100%",
+          className: "w-full rounded-xl border border-gray-200 shadow"
+        })
+      ]);
+      ensureInstagramProcessed();
+    }
 
     return h("div", {}, [
       // ===== HERO =====
@@ -115,6 +139,9 @@
             ])
           : null,
 
+        // Instagram (preview recetas)
+        igNode,
+
         // Acciones (desactivadas en preview)
         h("div", { className: "mt-12 flex flex-wrap gap-4" }, [
           h("a", { href: "#", className: "inline-flex items-center gap-2 bg-gray-100 text-gray-800 font-semibold py-3 px-6 rounded-full cursor-not-allowed" }, "← Volver a recetas"),
@@ -154,9 +181,10 @@
       igNode = h("div", { className: "my-8" }, [
         h("iframe", {
           src,
-          allowtransparency: "true",
+          allowTransparency: "true",
           allow: "encrypted-media",
-          frameborder: "0",
+          frameBorder: "0",
+          loading: "lazy",
           height: "600",
           width: "100%",
           className: "w-full rounded-xl border border-gray-200 shadow"

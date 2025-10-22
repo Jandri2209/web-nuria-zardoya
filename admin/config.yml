@@ -132,6 +132,8 @@ collections:
         name: "steps"
         widget: "list"
         field: { label: "Paso", name: "step", widget: "text" }
+      - { label: "URL de Instagram (opcional)", name: "instagram_url", widget: "string", required: false }
+      - { label: "Embed de Instagram (pega el código)", name: "instagram_embed", widget: "text", required: false }
 
   # 3) Blog (entradas)
   - name: "blog"
