@@ -47,7 +47,7 @@ layout: base.njk
 
   <section class="grid md:grid-cols-2 gap-8 mb-10">
     {# Ingredientes + copiar #}
-    {% if ingredients and ingredients.length %}
+    {% if ingredients | length %}
       <div>
         <div class="flex items-center justify-between mb-3">
           <h2 class="text-2xl font-semibold">Ingredientes</h2>
@@ -79,7 +79,7 @@ layout: base.njk
   </section>
 
   {# Pasos bonitos (sin markdown) #}
-  {% if steps and steps.length %}
+  {% if steps | length %}
     <section class="mt-6">
       <h2 class="text-2xl font-semibold mb-4">Preparación</h2>
       <ol class="space-y-4">
@@ -94,6 +94,7 @@ layout: base.njk
       </ol>
     </section>
   {% endif %}
+
   {# === Instagram: solo carga si Marketing está aceptado === #}
   {% if instagram_embed or instagram_url %}
     <div id="ig-container"
@@ -249,6 +250,14 @@ layout: base.njk
     })();
     </script>
   {% endif %}
+
+  {# ====== CONTENIDO EXTRA (Markdown del .md) ====== #}
+  {% if content %}
+  <section class="mt-12">
+    {{ content | safe }}
+  </section>
+  {% endif %}
+
   {# ====== Prev / Volver / Next (con flechas) ====== #}
   {% set prev = collections.recetas | getPreviousCollectionItem(page) %}
   {% set next = collections.recetas | getNextCollectionItem(page) %}
@@ -264,9 +273,7 @@ layout: base.njk
       {% if prev %}
       <a id="nav-prev" href="{{ prev.url }}" rel="prev" aria-label="Receta anterior: {{ prev.data.title }}"
         class="group flex-1 rounded-2xl border border-gray-200 hover:border-green-300 hover:bg-green-50 transition p-4 flex items-center gap-3">
-        <!-- Flecha izquierda en badge -->
         <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-green-100 group-hover:bg-green-200 transition">
-          <!-- chevron-left -->
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-width="2" d="M15 19l-7-7 7-7"/>
           </svg>
@@ -282,7 +289,6 @@ layout: base.njk
 
       <a id="nav-back" href="/recetas/"
         class="shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold transition">
-        <!-- icono lista -->
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-width="2" d="M8 6h12M8 12h12M8 18h12M3 6h.01M3 12h.01M3 18h.01"/>
         </svg>
@@ -296,9 +302,7 @@ layout: base.njk
           <span class="block text-gray-500">Siguiente</span>
           <span class="block font-semibold text-gray-900 group-hover:text-green-700 line-clamp-1">{{ next.data.title }}</span>
         </span>
-        <!-- Flecha derecha en badge -->
         <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-green-100 group-hover:bg-green-200 transition">
-          <!-- chevron-right -->
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-width="2" d="M9 5l7 7-7 7"/>
           </svg>
@@ -340,7 +344,13 @@ layout: base.njk
 {# ====== Toast + Copiar ====== #}
 <style>
   @media print {
-    a[href="/recetas/"], nav[aria-label="Navegación de recetas"], button[onclick^="window.print"], #toast { display: none !important; }, #ig-container { display:none !important; }
+    a[href="/recetas/"],
+    nav[aria-label="Navegación de recetas"],
+    button[onclick^="window.print"],
+    #toast,
+    #ig-container {
+      display: none !important;
+    }
   }
 </style>
 <script>
@@ -369,6 +379,7 @@ layout: base.njk
     window.__toastTimer = setTimeout(() => { toast.style.opacity = 0; }, 3000);
   }
 </script>
+
 {% if title %}
 <script type="application/ld+json">
 {
@@ -378,28 +389,27 @@ layout: base.njk
   {% if D %}"description": {{ D | dump | safe }},{% endif %}
   "image": {{ Img | dump | safe }},
   {% if time %}"totalTime": "PT{{ time }}M",{% endif %}
-  {% if servings %}"recipeYield": {{ (servings + " raciones") | dump | safe }},{% endif %}
+  {% if servings %}"recipeYield": {{ (servings ~ " raciones") | dump | safe }},{% endif %}
   {% if Cat %}"recipeCategory": {{ Cat | dump | safe }},{% endif %}
 
-  {% if ingredients and ingredients.length %}
+  {% if ingredients | length %}
   "recipeIngredient": [
     {% for i in ingredients %}
-      {{ (i.item or i) | dump | safe }}{{ loop.last ? "" : "," }}
+      {{ (i.item or i) | dump | safe }}{% if not loop.last %},{% endif %}
     {% endfor %}
   ],
   {% endif %}
 
-  {% if steps and steps.length %}
+  {% if steps | length %}
   "recipeInstructions": [
     {% for s in steps %}
-      { "@type": "HowToStep", "text": {{ (s.step or s) | dump | safe }} }{{ loop.last ? "" : "," }}
+      { "@type": "HowToStep", "text": {{ (s.step or s) | dump | safe }} }{% if not loop.last %},{% endif %}
     {% endfor %}
   ],
   {% endif %}
 
   {% if date %}"datePublished": "{{ date }}",{% endif %}
-  "mainEntityOfPage": {{ (site.url + page.url) | dump | safe }}
+  "mainEntityOfPage": {{ ((site.url or "") ~ page.url) | dump | safe }}
 }
 </script>
 {% endif %}
-

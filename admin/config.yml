@@ -116,24 +116,35 @@ collections:
     slug: "{{slug}}"
     preview_path: "recetas/{{slug}}/"
     fields:
+      # ⚙️ Asegura el layout correcto para la plantilla nueva
+      - { label: "Layout", name: "layout", widget: "hidden", default: "_layouts/recipe.njk" }
+
       - { label: "Título", name: "title", widget: "string" }
       - { label: "Fecha", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
-      - { label: "Descripción", name: "description", widget: "text", hint: "Frase breve que aparecerá bajo el título." }
+      - { label: "Descripción", name: "description", widget: "text", hint: "Frase breve que aparecerá bajo el título.", required: false }
       - { label: "Imagen principal", name: "image", widget: "image" }
-      - { label: "Categoría", name: "category", widget: "select", options: ["Plato principal","Desayuno","Ensalada","Sopa/Crema","Snack","Postre","Bebida"] }
-      - { label: "Raciones", name: "servings", widget: "number", min: 1 }
-      - { label: "Tiempo (min)", name: "time", widget: "number", min: 0 }
-      - { label: "Dificultad", name: "difficulty", widget: "select", options: ["Fácil","Media","Difícil"] }
+      - { label: "Categoría", name: "category", widget: "select", options: ["Plato principal","Desayuno","Ensalada","Sopa/Crema","Snack","Postre","Bebida"], required: false }
+      - { label: "Raciones", name: "servings", widget: "number", min: 1, required: false }
+      - { label: "Tiempo (min)", name: "time", widget: "number", min: 0, required: false }
+      - { label: "Dificultad", name: "difficulty", widget: "select", options: ["Fácil","Media","Difícil"], required: false }
+
       - label: "Ingredientes"
         name: "ingredients"
         widget: "list"
+        required: false
         field: { label: "Ingrediente", name: "item", widget: "string" }
+
       - label: "Preparación (pasos)"
         name: "steps"
         widget: "list"
+        required: false
         field: { label: "Paso", name: "step", widget: "text" }
+
       - { label: "URL de Instagram (opcional)", name: "instagram_url", widget: "string", required: false }
       - { label: "Embed de Instagram (pega el código)", name: "instagram_embed", widget: "text", required: false }
+
+      # 📝 Contenido extra en Markdown (se renderiza donde pusimos {{ content | safe }})
+      - { label: "Contenido extra (Markdown)", name: "body", widget: "markdown", required: false }
 
   # 3) Blog (entradas)
   - name: "blog"
@@ -151,11 +162,14 @@ collections:
       - { label: "Descripción", name: "description", widget: "text", required: false, hint: "Resumen breve bajo el título." }
       - { label: "Imagen", name: "image", widget: "image", required: false }
       - { label: "Categoría", name: "category", widget: "select", options: ["Mito","Noticia","Consejo","Otro"], required: false }
+
       - label: "Galería (opcional)"
         name: "gallery"
         widget: "list"
         required: false
         field: { label: "Imagen", name: "image", widget: "image" }
+
       - { label: "URL de Instagram (opcional)", name: "instagram_url", widget: "string", required: false, hint: "Enlace a la publicación de Instagram." }
       - { label: "Embed de Instagram (pega el código)", name: "instagram_embed", widget: "text", required: false, hint: "Pega aquí el código de inserción (Instagram > … > Embed)." }
+
       - { label: "Contenido", name: "body", widget: "markdown" }

@@ -14,7 +14,7 @@
     if (!v) return null;
     const a = getAsset(v);
     return a ? a.toString() : v;
-    };
+  };
   const toArray = (v) =>
     (v && typeof v.toArray === "function" ? v.toArray() : Array.isArray(v) ? v : []);
   const getText = (item, key) =>
@@ -38,7 +38,7 @@
   }
 
   /* ========= Preview: Recetas ========= */
-  const RecipePreview = ({ entry, getAsset }) => {
+  const RecipePreview = ({ entry, widgetFor, getAsset }) => {
     const T   = entry.getIn(["data","title"]) || entry.get("slug") || "Título";
     const D   = entry.getIn(["data","description"]) || "Receta saludable de Nuria Zardoya";
     const Img = withAsset(entry, "image", getAsset) || "/images/nuria-zardoya-hero-640.jpg";
@@ -77,6 +77,8 @@
       ]);
       ensureInstagramProcessed();
     }
+
+    const extra = widgetFor && widgetFor("body"); // Markdown extra
 
     return h("div", {}, [
       // ===== HERO =====
@@ -139,8 +141,11 @@
             ])
           : null,
 
-        // Instagram (preview recetas)
+        // Instagram
         igNode,
+
+        // Markdown extra
+        extra ? h("section", { className: "mt-12 prose prose-sm sm:prose lg:prose-lg" }, [ extra ]) : null,
 
         // Acciones (desactivadas en preview)
         h("div", { className: "mt-12 flex flex-wrap gap-4" }, [
@@ -160,7 +165,7 @@
     const Img = withAsset(entry, "image", getAsset) || "";
     const Cat = entry.getIn(["data","category"]) || "Blog";
     const date = entry.getIn(["data","date"]);
-    const dateText = date ? new Date(date).toLocaleDateString("es-ES", { day:"2-digit", month:"long", year:"numeric" }) : null; // es-ES también sirve
+    const dateText = date ? new Date(date).toLocaleDateString("es-ES", { day:"2-digit", month:"long", year:"numeric" }) : null;
 
     const gallery = toArray(entry.getIn(["data","gallery"])).map((g) => {
       const val = g && g.get ? (g.get("image") ?? g) : g;
@@ -190,7 +195,6 @@
           className: "w-full rounded-xl border border-gray-200 shadow"
         })
       ]);
-      // No hace falta embed.js para el iframe, pero no molesta si está
       ensureInstagramProcessed();
     }
 
