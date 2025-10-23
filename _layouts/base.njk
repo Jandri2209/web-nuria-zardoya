@@ -488,18 +488,18 @@
     | replace("-","") | replace("(","") | replace(")","") %}
 
   <a id="whatsapp-fab"
-   href="…"
-   target="_blank" rel="noopener"
-   class="fixed right-4 z-[999] inline-flex items-center justify-center rounded-full print:hidden
-          w-[68px] h-[68px] md:w-[76px] md:h-[76px] transition-transform hover:scale-110"
-   aria-label="Abrir chat de WhatsApp"
-   data-gtag="cta_whatsapp"
-   style="
-     bottom: max(1rem, env(safe-area-inset-bottom));
-     box-shadow:
-       0 10px 28px rgba(37,211,102,.35),
-       0 0 0 6px rgba(255,255,255,.95);
-   ">
+    href="https://wa.me/{{ wa_phone }}?text="
+    target="_blank" rel="noopener"
+    class="fixed right-4 z-[999] inline-flex items-center justify-center rounded-full print:hidden
+            w-[68px] h-[68px] md:w-[76px] md:h-[76px] transition-transform hover:scale-110"
+    aria-label="Abrir chat de WhatsApp"
+    data-gtag="cta_whatsapp"
+    style="
+      bottom: max(1rem, env(safe-area-inset-bottom));
+      box-shadow:
+        0 10px 28px rgba(37,211,102,.35),
+        0 0 0 6px rgba(255,255,255,.95);
+    ">
     <img src="/images/WhatsApp.svg" alt="" width="64" height="64"
         class="block w-12 h-12 md:w-14 md:h-14" loading="lazy" decoding="async">
     <span class="sr-only">WhatsApp</span>
@@ -509,15 +509,24 @@
   (function(){
     const a = document.getElementById('whatsapp-fab');
     if (!a) return;
+
+    // Si quieres forzar web.whatsapp en escritorio, cambia esta línea
     const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent);
-    const wave = isMobile ? ' 👋' : ''; // sin emoji en desktop (evita �)
+
+    // Evita el emoji en desktop si te salía el tofu "�"
+    const wave = isMobile ? ' 👋' : '';
 
     const msg = [
       `Hola Nuria${wave}!`,
-      'He visto tu web y me gustaría informarme sobre los servicios que ofreces.',
+      'He visto tu web y me gustaría informarme sobre los servicios que ofreces.'
     ].join('\n');
 
-    a.href = a.href + encodeURIComponent(msg);
+    // Construye SIEMPRE desde base, sin reutilizar a.href previo
+    const base = isMobile
+      ? `https://wa.me/{{ wa_phone }}?text=`
+      : `https://wa.me/{{ wa_phone }}?text=`; // o: https://web.whatsapp.com/send?phone={{ wa_phone }}&text=
+
+    a.href = base + encodeURIComponent(msg);
   })();
   </script>
 </body>
