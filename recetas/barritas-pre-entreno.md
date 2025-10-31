@@ -4,7 +4,7 @@ title: Barritas Pre-Entreno
 date: 2025-10-29
 description: Una opción práctica y equilibrada para optimizar el rendimiento
   antes de entrenar.
-image: /assets/uploads/barritas.jfif
+image: /assets/uploads/barritas.jpg
 category: Snack
 servings: 10
 time: 20
