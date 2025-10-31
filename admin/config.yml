@@ -117,8 +117,6 @@ collections:
     preview_path: "recetas/{{slug}}/"
     fields:
       # ⚙️ Asegura el layout correcto para la plantilla nueva
-      - { label: "Layout", name: "layout", widget: "hidden", default: "recipe.njk" }
-
       - { label: "Título", name: "title", widget: "string" }
       - { label: "Fecha", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
       - { label: "Descripción", name: "description", widget: "text", hint: "Frase breve que aparecerá bajo el título.", required: false }

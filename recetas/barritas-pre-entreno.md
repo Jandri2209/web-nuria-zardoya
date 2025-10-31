@@ -1,5 +1,4 @@
 ---
-layout: _layouts/recipe.njk
 title: Barritas Pre-Entreno
 date: 2025-10-29
 description: Una opción práctica y equilibrada para optimizar el rendimiento
