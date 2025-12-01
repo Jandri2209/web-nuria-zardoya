@@ -105,68 +105,132 @@ instagram_embed: >-
 
   <script async src="//www.instagram.com/embed.js"></script>
 ---
-## 1. “El azúcar moreno es mejor que el blanco”
-
-**Mito:** El azúcar moreno se vende muchas veces como una opción “más sana” que el azúcar blanco.
-
-**Realidad:**  
-La principal diferencia entre ambos está en el **proceso de elaboración** y en el refinado. Nutricionalmente son **muy parecidos**: siguen siendo azúcar libre, con un aporte de vitaminas y minerales prácticamente irrelevante en las cantidades que consumimos.
-
-👉 Conclusión:  
-Tanto el azúcar blanco como el moreno deben consumirse **con moderación**. Si quieres mejorar tu alimentación, es más interesante **reducir la cantidad total de azúcar añadido** que cambiar de tipo de azúcar.
+\## 1. “El azúcar moreno es mejor que el blanco”
 
 
-## 2. “Los huevos aumentan el colesterol”
 
-**Mito:** Comer huevos “sube el colesterol” y es mejor evitarlos.
+\*\*Mito:\*\* El azúcar moreno se vende muchas veces como una opción “más sana” que el azúcar blanco.
 
-**Realidad:**  
-La evidencia científica actual muestra que, en personas sanas, los huevos pueden formar parte de una **alimentación equilibrada** sin aumentar el riesgo cardiovascular.  
-El colesterol de la sangre depende mucho más del **conjunto de la dieta y del estilo de vida** (grasas saturadas, ultraprocesados, actividad física, tabaco…) que de un alimento concreto.
+
+
+\*\*Realidad:\*\*  
+
+La principal diferencia entre ambos está en el \*\*proceso de elaboración\*\* y en el refinado. Nutricionalmente son \*\*muy parecidos\*\*: siguen siendo azúcar libre, con un aporte de vitaminas y minerales prácticamente irrelevante en las cantidades que consumimos.
+
+
 
 👉 Conclusión:  
-En el contexto de una dieta variada y saludable, los huevos pueden consumirse de forma **regular y segura**. En personas con patologías específicas, la pauta debe individualizarla siempre un profesional sanitario.
+
+Tanto el azúcar blanco como el moreno deben consumirse \*\*con moderación\*\*. Si quieres mejorar tu alimentación, es más interesante \*\*reducir la cantidad total de azúcar añadido\*\* que cambiar de tipo de azúcar.
 
 
-## 3. “Los zumos detox limpian el cuerpo”
 
-**Mito:** Necesitamos zumos “detox” para limpiar el organismo y “resetear” nuestro cuerpo.
 
-**Realidad:**  
-Tu cuerpo ya tiene un sistema detox increíblemente eficaz formado por **hígado, riñones, pulmones y sistema digestivo**. No necesitas zumos especiales, ayunos extremos ni mezclas milagrosas para “depurarte”.
+
+\## 2. “Los huevos aumentan el colesterol”
+
+
+
+\*\*Mito:\*\* Comer huevos “sube el colesterol” y es mejor evitarlos.
+
+
+
+\*\*Realidad:\*\*  
+
+La evidencia científica actual muestra que, en personas sanas, los huevos pueden formar parte de una \*\*alimentación equilibrada\*\* sin aumentar el riesgo cardiovascular.  
+
+El colesterol de la sangre depende mucho más del \*\*conjunto de la dieta y del estilo de vida\*\* (grasas saturadas, ultraprocesados, actividad física, tabaco…) que de un alimento concreto.
+
+
+
+👉 Conclusión:  
+
+En el contexto de una dieta variada y saludable, los huevos pueden consumirse de forma \*\*regular y segura\*\*. En personas con patologías específicas, la pauta debe individualizarla siempre un profesional sanitario.
+
+
+
+
+
+\## 3. “Los zumos detox limpian el cuerpo”
+
+
+
+\*\*Mito:\*\* Necesitamos zumos “detox” para limpiar el organismo y “resetear” nuestro cuerpo.
+
+
+
+\*\*Realidad:\*\*  
+
+Tu cuerpo ya tiene un sistema detox increíblemente eficaz formado por \*\*hígado, riñones, pulmones y sistema digestivo\*\*. No necesitas zumos especiales, ayunos extremos ni mezclas milagrosas para “depurarte”.
+
+
 
 Además, muchos de estos zumos:
 
-- Aportan **mucho azúcar libre** (aunque sea “natural”).
-- Apenas tienen **fibra**, por lo que sacian poco.
-- Suelen venderse con mensajes poco realistas o engañosos.
+
+
+\- Aportan \*\*mucho azúcar libre\*\* (aunque sea “natural”).
+
+\- Apenas tienen \*\*fibra\*\*, por lo que sacian poco.
+
+\- Suelen venderse con mensajes poco realistas o engañosos.
+
+
 
 👉 Conclusión:  
-La mejor “detox” es bastante menos glamourosa: **alimentación saludable, agua, descanso, movimiento y menos ultraprocesados**. Los zumos pueden ser algo puntual, pero no una solución mágica.
+
+La mejor “detox” es bastante menos glamourosa: \*\*alimentación saludable, agua, descanso, movimiento y menos ultraprocesados\*\*. Los zumos pueden ser algo puntual, pero no una solución mágica.
 
 
-## 4. “Un vaso de zumo equivale a una pieza de fruta”
 
-**Mito:** Tomar un vaso de zumo es lo mismo que comerse una pieza de fruta.
 
-**Realidad:**  
+
+\## 4. “Un vaso de zumo equivale a una pieza de fruta”
+
+
+
+\*\*Mito:\*\* Tomar un vaso de zumo es lo mismo que comerse una pieza de fruta.
+
+
+
+\*\*Realidad:\*\*  
+
 Cuando exprimimos fruta:
 
-- Perdemos casi toda la **fibra**, que ayuda a saciar y a regular la absorción de azúcar.
-- Es fácil concentrar el azúcar de **varias piezas de fruta** en un solo vaso.
-- Se bebe muy rápido y sacia mucho menos que masticar la fruta entera.
+
+
+\- Perdemos casi toda la \*\*fibra\*\*, que ayuda a saciar y a regular la absorción de azúcar.
+
+\- Es fácil concentrar el azúcar de \*\*varias piezas de fruta\*\* en un solo vaso.
+
+\- Se bebe muy rápido y sacia mucho menos que masticar la fruta entera.
+
+
 
 👉 Conclusión:  
-No es lo mismo. Siempre que puedas, prioriza la **fruta entera** frente al zumo. Si tomas zumo, que sea en una **cantidad moderada y ocasional**, no como sustituto habitual de la fruta.
+
+No es lo mismo. Siempre que puedas, prioriza la \*\*fruta entera\*\* frente al zumo. Si tomas zumo, que sea en una \*\*cantidad moderada y ocasional\*\*, no como sustituto habitual de la fruta.
 
 
-## 5. “Cenar carbohidratos engorda”
 
-**Mito:** Comer carbohidratos por la noche hace que engordes más que si los tomas durante el día.
 
-**Realidad:**  
-Lo que influye en el peso corporal es el **balance energético global** (lo que comes y lo que gastas), no la hora exacta a la que tomas los alimentos.  
+
+\## 5. “Cenar carbohidratos engorda”
+
+
+
+\*\*Mito:\*\* Comer carbohidratos por la noche hace que engordes más que si los tomas durante el día.
+
+
+
+\*\*Realidad:\*\*  
+
+Lo que influye en el peso corporal es el \*\*balance energético global\*\* (lo que comes y lo que gastas), no la hora exacta a la que tomas los alimentos.  
+
 Cenar carbohidratos de calidad (por ejemplo, patata, arroz integral, pasta integral, pan integral, legumbres…) puede ser totalmente compatible con una alimentación saludable.
 
+
+
 👉 Conclusión:  
-No es la hora, es el **tipo de carbohidrato, la cantidad y el contexto de tu alimentación**. Lo importante es cuidar el conjunto del día: raciones ajustadas, buena presencia de verduras y proteínas, y elegir carbohidratos lo menos procesados posible.
+
+No es la hora, es el \*\*tipo de carbohidrato, la cantidad y el contexto de tu alimentación\*\*. Lo importante es cuidar el conjunto del día: raciones ajustadas, buena presencia de verduras y proteínas, y elegir carbohidratos lo menos procesados posible.
