@@ -105,14 +105,8 @@ instagram_embed: >-
 
   <script async src="//www.instagram.com/embed.js"></script>
 ---
-¿Sabías que en nutrición existen muchos mitos?
-
-
-
-
+## ¿Sabías que en nutrición existen muchos mitos?
 
 Algunos se repiten tanto que terminamos creyéndolos, aquí desmiento 5 de ellos.
-
-
 
 🥒🥑🥥🍒🥬
