@@ -10,28 +10,27 @@ category: Noticia
 
 Este reto está pensado para ayudarte a **mejorar tus hábitos de alimentación** de forma realista, sin dietas imposibles ni prohibiciones extremas.
 
-Durante **1 semana** (ajustaremos cuando esté definido) trabajaremos:
+Durante **1 semana** trabajaremos:
 
-- Organización de menús semanales.
-- Ideas de desayunos, comidas y cenas saludables.
-- Opciones prácticas para días con poco tiempo.
-- Estrategias para manejar el picoteo y el hambre emocional.
+* Organización de menús semanales.
+* Ideas de desayunos, comidas y cenas saludables.
+* Opciones prácticas para días con poco tiempo.
+* Estrategias para manejar el picoteo y el hambre emocional.
 
 Todo con un enfoque cercano, flexible y adaptado a tu día a día.
 
----
+- - -
 
 ## ¿Qué incluye el pack del reto?
 
 El contenido exacto lo terminaremos de ajustar, pero la idea es que al apuntarte recibas:
 
-- 📂 Acceso a una **carpeta privada** con materiales en PDF.
-- 🧾 **Recetas saludables** fáciles y rápidas de preparar.
-- 🗓️ Propuesta de **menús orientativos** para las semanas del reto.
-- ✅ Pequeños retos y acciones concretas para ir aplicando los cambios.
+* 📂 Acceso a una **carpeta privada** con materiales en PDF.
+* 🧾 **Recetas saludables** fáciles y rápidas de preparar.
+* 🗓️ Propuesta de **menús orientativos** para las semanas del reto.
+* ✅ Pequeños retos y acciones concretas para ir aplicando los cambios.
 
-
----
+- - -
 
 ## Cómo funciona paso a paso
 
@@ -41,20 +40,20 @@ El contenido exacto lo terminaremos de ajustar, pero la idea es que al apuntarte
 
 Es un proceso sencillo, pero si en algún momento tienes dudas, podrás escribir directamente y te ayudaremos.
 
----
+- - -
 
 ## ¿Para quién es este reto?
 
 Este reto puede encajarte especialmente si:
 
-- Sientes que **comes “más o menos bien” pero sin orden**.
-- Te cuesta planificar y acabas improvisando con lo primero que pillas.
-- Quieres mejorar tu alimentación, pero **no sabes por dónde empezar**.
-- Buscas ideas de recetas y menús que sean **saludables y alcanzables**, no de revista.
+* Sientes que **comes “más o menos bien” pero sin orden**.
+* Te cuesta planificar y acabas improvisando con lo primero que pillas.
+* Quieres mejorar tu alimentación, pero **no sabes por dónde empezar**.
+* Buscas ideas de recetas y menús que sean **saludables y alcanzables**, no de revista.
 
 No es un programa de dieta milagrosa, sino un acompañamiento práctico para construir hábitos que puedas mantener en el tiempo.
 
----
+- - -
 
 ## Próximos pasos
 
