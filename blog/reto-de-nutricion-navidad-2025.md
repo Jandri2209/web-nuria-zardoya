@@ -1,21 +1,21 @@
 ---
-title: Reto de Nutrición Navidad 2025
+title: Reto de Navidad 2025
 date: 2025-12-01
 description: Un reto grupal de 1 semana para mejorar tus hábitos, con recetas,
   materiales y acompañamiento.
 image: /assets/uploads/nuria-zardoya-portrait-960.jpg
 category: Noticia
 ---
-## ¿En qué consiste el Reto de Nutrición?
+## ¿En qué consiste el Reto de Navidad?
 
-Este reto está pensado para ayudarte a **mejorar tus hábitos de alimentación** de forma realista, sin dietas imposibles ni prohibiciones extremas.
+Este reto está pensado para ayudarte a pasar las Navidades de forma equilibrada disfrutando de **estos días especiales**, enseñándote que es posible llevar una alimentación saludable sin restricciones y disfrutar de ello.
 
 Durante **1 semana** trabajaremos:
 
-* Organización de menús semanales.
+* Organización de menú semanal.
 * Ideas de desayunos, comidas y cenas saludables.
 * Opciones prácticas para días con poco tiempo.
-* Estrategias para manejar el picoteo y el hambre emocional.
+* Listas de la compra.
 
 Todo con un enfoque cercano, flexible y adaptado a tu día a día.
 
@@ -23,12 +23,17 @@ Todo con un enfoque cercano, flexible y adaptado a tu día a día.
 
 ## ¿Qué incluye el pack del reto?
 
-El contenido exacto lo terminaremos de ajustar, pero la idea es que al apuntarte recibas:
+El pack completo del reto tiene un precio de **35 €** e incluye:
 
 * 📂 Acceso a una **carpeta privada** con materiales en PDF.
 * 🧾 **Recetas saludables** fáciles y rápidas de preparar.
-* 🗓️ Propuesta de **menús orientativos** para las semanas del reto.
-* ✅ Pequeños retos y acciones concretas para ir aplicando los cambios.
+* 🗓️ Propuesta de **un menú semanal completo**.
+* 📝 Lista de la compra para **complementar el menú semanal**.
+* 🥗 Ideas para **5 desayunos antinflamatorios**, con variedad de los ingredientes dependiendo del supermercado, e incluyendo una revisión del etiquetado nutricional. 
+* 🥮 Recetario de **postres saludables**. 
+* ✅ **Pautas nutricionales** para llevar a cabo en las celebraciones especiales de Navidad.
+* ❓ **Resolución privada de dudas** y apoyo en el proceso.
+
 
 - - -
 
@@ -46,21 +51,22 @@ Es un proceso sencillo, pero si en algún momento tienes dudas, podrás escribir
 
 Este reto puede encajarte especialmente si:
 
-* Sientes que **comes “más o menos bien” pero sin orden**.
+* No sabes como llevar una **alimentación equilibrada** en estas fechas.
 * Te cuesta planificar y acabas improvisando con lo primero que pillas.
 * Quieres mejorar tu alimentación, pero **no sabes por dónde empezar**.
-* Buscas ideas de recetas y menús que sean **saludables y alcanzables**, no de revista.
+* Buscas ideas de recetas y menús que sean **saludables y alcanzables**.
 
-No es un programa de dieta milagrosa, sino un acompañamiento práctico para construir hábitos que puedas mantener en el tiempo.
 
 - - -
 
 ## Próximos pasos
 
-Mientras preparamos todos los materiales y detalles del reto, puedes ir **manifestando tu interés** para ser de las primeras personas en recibir la información:
+Mientras preparamos todos los materiales y detalles del reto, puedes ir **mostrando tu interés** para ser de las primeras personas en recibir toda la información.
 
-👉 **Muy pronto activaremos la opción para apuntarte directamente desde la web** y completar tu inscripción en pocos minutos.
+👉 El precio del pack será de **35 €** e **incluye todo el contenido y el acompañamiento de la semana**.
 
-Mientras tanto, si ya lo tienes claro y quieres que te avise cuando se abra el plazo de inscripción, puedes escribirme desde la página de contacto.
+Muy pronto activaremos la opción para **pagar directamente desde la web** y completar tu inscripción en pocos minutos.
+
+Mientras tanto, si ya lo tienes claro y quieres que te avise cuando se abra el plazo de inscripción, puedes escribirme desde la página de contacto:
 
 [Ir a la página de contacto](/contacto/)
