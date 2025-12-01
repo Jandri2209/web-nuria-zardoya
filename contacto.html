@@ -33,6 +33,7 @@ permalink: "/contacto/"
     <p class="text-center text-green-100 text-sm -mt-6 mb-8">
       ¿Prefieres Calendly directo? <a href="{{ site.calendlyUrl }}" class="underline decoration-dotted text-white hover:text-green-200">Abrir calendario</a>
     </p>
+
     <!-- Social: seguir/contactar por redes -->
     <div class="mt-2 mb-10">
       <div class="text-center text-green-100 text-sm mb-3">
@@ -96,6 +97,19 @@ permalink: "/contacto/"
                  class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
         </div>
 
+        <!-- Teléfono (nuevo campo) -->
+        <div class="mb-4">
+          <label for="phone" class="block text-gray-700 font-bold mb-2">
+            Teléfono <span class="text-gray-400 font-normal">(opcional)</span>
+          </label>
+          <input type="tel" id="phone" name="phone" autocomplete="tel"
+                 class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                 placeholder="+34 6XX XXX XXX">
+          <p class="mt-1 text-xs text-gray-500">
+            Solo lo usaré si es necesario aclarar tu consulta o concertar la cita.
+          </p>
+        </div>
+
         <div class="mb-4">
           <label for="email" class="block text-gray-700 font-bold mb-2">Email</label>
           <input type="email" id="email" name="email" required autocomplete="email"
@@ -104,16 +118,18 @@ permalink: "/contacto/"
 
         <div class="mb-4">
           <label for="reason" class="block text-gray-700 font-bold mb-2">Motivo de la consulta</label>
-          <select id="reason" name="reason"
+          <select id="reason" name="reason" required
                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white">
-            <option>Nutrición Clínica</option>
-            <option>Pérdida de peso y Composición corporal</option>
-            <option>Nutrición Deportiva</option>
-            <option>Alimentación Antiinflamatoria</option>
-            <option>Patologías Digestivas</option>
-            <option>Control Evolutivo</option>
-            <option>Cross-Training</option>
-            <option>Otro</option>
+            <option value="" disabled selected>Selecciona una opción</option>
+            <option value="Nutrición Clínica">Nutrición Clínica</option>
+            <option value="Pérdida de peso y Composición corporal">Pérdida de peso y Composición corporal</option>
+            <option value="Nutrición Deportiva">Nutrición Deportiva</option>
+            <option value="Alimentación Antiinflamatoria">Alimentación Antiinflamatoria</option>
+            <option value="Patologías Digestivas">Patologías Digestivas</option>
+            <option value="Control Evolutivo">Control Evolutivo</option>
+            <option value="Cross-Training">Cross-Training</option>
+            <option value="reto-navidad">Reto de Navidad 2025</option>
+            <option value="Otro">Otro</option>
           </select>
         </div>
 
@@ -129,7 +145,7 @@ permalink: "/contacto/"
         <div class="text-center">
           <button type="submit"
                   class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 shadow-lg">
-            Enviar Mensaje
+            Enviar mensaje
           </button>
         </div>
       </form>
@@ -137,12 +153,33 @@ permalink: "/contacto/"
   </div>
 </div>
 
-<!-- Salvavidas: asegura que el banner/modal de cookies no queden dentro del form -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+  // Sacar banner/modal de cookies fuera del form
   const banner = document.getElementById("cookie-banner");
   const modal  = document.getElementById("cookie-modal");
   if (banner && banner.closest("form")) document.body.appendChild(banner);
   if (modal  && modal.closest("form"))  document.body.appendChild(modal);
+
+  // Autopreseleccionar el motivo si llegamos con ?motivo=...
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const motivo = (params.get("motivo") || "").toLowerCase();
+    if (motivo) {
+      const select = document.getElementById("reason");
+      if (select) {
+        for (const opt of select.options) {
+          const val = (opt.value || "").toLowerCase();
+          if (val === motivo) {
+            select.value = opt.value;
+            break;
+          }
+        }
+      }
+    }
+  } catch (e) {
+    // si algo falla, ignoramos
+  }
 });
 </script>
+
