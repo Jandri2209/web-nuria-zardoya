@@ -105,11 +105,53 @@ instagram_embed: >-
 
   <script async src="//www.instagram.com/embed.js"></script>
 ---
+## ¿La fruta sube la glucosa “demasiado”?
 
-Esto no significa que la fruta sea “mala”, sino que podemos mejorar su forma de consumo.
+La fruta **no es tu enemiga**: aporta vitaminas, minerales, agua y fibra.  
+Pero, cuando la tomamos **aislada**, sobre todo en personas con resistencia a la insulina o con hambre muy intensa, el azúcar natural de la fruta puede absorberse **muy rápido** y hacer que la glucosa en sangre suba de golpe.
 
-Si la combinas con proteína (yogur o queso fresco) o grasas saludables (frutos secos) la absorción será más lenta, tu energía se mantendrá estable y te saciará durante más tiempo.
+Eso no significa que la fruta sea “mala”, sino que **podemos mejorar la forma de consumirla** para que:
 
-Ejemplo: plátano + yogur natural // manzana + almendras.
+- La subida de glucosa sea más **progresiva**.  
+- Tengas una **energía más estable**.  
+- Te sientas **saciado/a durante más tiempo**.
 
-🍎🍇🥜
+---
+
+## Truco fácil: combina fruta + proteína o grasa saludable
+
+Si a la fruta le añadimos **proteína** o **grasas saludables**, la digestión se hace un poco más lenta y la glucosa entra de forma más gradual.
+
+Algunas ideas:
+
+- 🍌 Plátano + yogur natural (o yogur griego sin azúcar)  
+- 🍎 Manzana + un puñado de almendras o nueces  
+- 🍇 Uvas + queso fresco tipo burgos  
+- 🍐 Pera + crema de cacahuete 100 % (cantidad pequeña)  
+- 🥝 Kiwi + requesón + semillas de chía  
+
+Son combinaciones sencillas que puedes usar en **desayunos, media mañana o merienda**.
+
+---
+
+## ¿Cuándo puede ayudarte especialmente?
+
+Este truco puede ser útil si:
+
+- Notas que, tras tomar solo fruta, al poco rato tienes **mucha hambre otra vez**.  
+- Sientes **bajones de energía** a media mañana o por la tarde.  
+- Quieres que tus tentempiés sean **más completos y saciantes**.
+
+En cambio, en momentos muy concretos (por ejemplo, **justo antes de hacer ejercicio**), tomar fruta sola puede ser interesante porque aporta energía rápida. Depende siempre del contexto.
+
+---
+
+## Resumen
+
+La fruta **no engorda por sí sola** ni es un alimento “prohibido”.  
+La clave está en:
+
+- Elegir **fruta entera** mejor que zumos.  
+- Combinarla muchas veces con **proteína o grasas saludables** para tener una glucosa y una energía más estables.
+
+Fruta + buen acompañamiento = mejor saciedad y mejor sensación a lo largo del día 🍎🥜✨
