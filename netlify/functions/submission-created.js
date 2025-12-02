@@ -96,7 +96,11 @@ exports.handler = async (event) => {
     // Campos del formulario
     const to      = (data.email || data.correo || "").trim();
     const name    = (data.name || data.nombre || "").trim();
-    const reason  = (data.reason || data.motivo || "").trim();
+    const phone   = (data.phone || data.telefono || "").trim();
+    let   reason  = (data.reason || data.motivo || "").trim();
+    if (reason === "reto-navidad") {
+      reason = "Reto de Navidad 2025";
+    }
     const message = (data.message || data.mensaje || "").trim();
     const bot     = (data["bot-field"] || data._gotcha || "").trim(); // honeypot
     if (!to || bot) return { statusCode: 200, body: "skip" };
@@ -105,6 +109,7 @@ exports.handler = async (event) => {
     const safeName    = escapeHtml(name || "hola");
     const safeReason  = escapeHtml(trimAndLimit(reason, 140));
     const safeMessage = escapeHtml(trimAndLimit(message, 1200));
+    const safePhone = escapeHtml(trimAndLimit(phone, 40));
 
     const transporter = makeTransporter();
 
@@ -175,6 +180,7 @@ exports.handler = async (event) => {
       `Nueva consulta — ${stamp}`,
       `Nombre: ${name || "-"}`,
       `Email: ${to}`,
+      phone ? `Teléfono: ${phone}` : "",
       reason ? `Motivo: ${reason}` : "",
       message ? `Mensaje: ${message}` : ""
     ].filter(Boolean).join("\n");
@@ -188,6 +194,7 @@ exports.handler = async (event) => {
     <div style="display:grid;grid-template-columns:140px 1fr;gap:8px 16px">
       <div style="color:#6b7280">Nombre</div><div><strong>${escapeHtml(name || "-")}</strong></div>
       <div style="color:#6b7280">Email</div><div><a href="mailto:${to}" style="color:#15803d;text-decoration:none">${to}</a></div>
+      ${safePhone ? `<div style="color:#6b7280">Teléfono</div><div>${safePhone}</div>` : ``}
       ${safeReason ? `<div style="color:#6b7280">Motivo</div><div>${safeReason}</div>` : ``}
       ${safeMessage ? `<div style="grid-column:1/-1;color:#6b7280;margin-top:8px">Mensaje</div>` : ``}
       ${safeMessage ? `<div style="grid-column:1/-1"><pre style="white-space:pre-wrap;background:#f9fafb;padding:12px;border-radius:8px;margin:0">${safeMessage}</pre></div>` : ``}
@@ -207,7 +214,7 @@ exports.handler = async (event) => {
       attachments: [
         logoForNotify,
         { filename: `consulta-${stamp}.txt`,  content: flatText },
-        { filename: `consulta.json`, content: JSON.stringify({ name, email: to, reason, message }, null, 2), contentType: "application/json" }
+        { filename: `consulta.json`, content: JSON.stringify({ name, email: to, phone, reason, message }, null, 2), contentType: "application/json" }
       ]
     });
 

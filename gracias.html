@@ -6,18 +6,56 @@ permalink: "/gracias/"
 noindex: true
 ---
 <div class="flex items-center justify-center" style="min-height: 60vh;">
-    <div class="text-center p-8 bg-white shadow-2xl rounded-xl max-w-lg mx-4">
-        <div class="flex justify-center mb-6">
-            <div class="bg-green-100 p-4 rounded-full">
-                <i data-lucide="check" class="text-green-600 w-12 h-12"></i>
-            </div>
-        </div>
-        <h1 class="text-3xl font-bold text-green-600 mb-4">¡Mensaje enviado con éxito!</h1>
-        <p class="text-gray-700 mb-8">
-            Gracias por contactar. He recibido tu mensaje y te responderé personalmente lo antes posible.
-        </p>
-        <a href="/" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full text-lg transition duration-300 shadow-lg">
-            Volver a la página de inicio
-        </a>
+  <div class="text-center p-8 bg-white shadow-2xl rounded-xl max-w-lg mx-4">
+    <div class="flex justify-center mb-6">
+      <div class="bg-green-100 p-4 rounded-full">
+        <i data-lucide="check" class="text-green-600 w-12 h-12"></i>
+      </div>
     </div>
+
+    <h1 id="thanks-title" class="text-3xl font-bold text-green-600 mb-4">
+      ¡Mensaje enviado con éxito!
+    </h1>
+
+    <p id="thanks-text" class="text-gray-700 mb-6">
+      Gracias por contactar. He recibido tu mensaje y te responderé personalmente lo antes posible.
+    </p>
+
+    {# Bloque extra solo para el Reto de Navidad #}
+    <div id="reto-extra" class="hidden">
+      <p class="text-gray-700 mb-4">
+        Para completar tu inscripción al <strong>Reto de Navidad 2025</strong>, realiza el pago de
+        <strong>35&nbsp;€</strong> desde este enlace seguro:
+      </p>
+
+      <a href="https://www.paypal.com/ncp/payment/M83FR7MUKNGBG"
+         class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-full text-lg transition duration-300 shadow-lg mb-4"
+         target="_blank" rel="noopener">
+        Pagar el reto (35&nbsp;€)
+      </a>
+
+      <p class="text-sm text-gray-500">
+        Una vez confirmado el pago recibirás un correo con el acceso a todo el material del reto.
+      </p>
+
+      <hr class="my-6 border-gray-200">
+    </div>
+
+    <a href="/"
+       class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full text-lg transition duration-300 shadow-lg">
+      Volver a la página de inicio
+    </a>
+  </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  const motivo = (params.get("motivo") || "").toLowerCase();
+
+  if (motivo === "reto-navidad") {
+    const extra = document.getElementById("reto-extra");
+    if (extra) extra.classList.remove("hidden");
+  }
+});
+</script>

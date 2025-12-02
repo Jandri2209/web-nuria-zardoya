@@ -165,21 +165,35 @@ document.addEventListener("DOMContentLoaded", () => {
   try {
     const params = new URLSearchParams(window.location.search);
     const motivo = (params.get("motivo") || "").toLowerCase();
-    if (motivo) {
-      const select = document.getElementById("reason");
-      if (select) {
-        for (const opt of select.options) {
-          const val = (opt.value || "").toLowerCase();
-          if (val === motivo) {
-            select.value = opt.value;
-            break;
-          }
+    const select = document.getElementById("reason");
+    if (motivo && select) {
+      for (const opt of select.options) {
+        const val = (opt.value || "").toLowerCase();
+        if (val === motivo) {
+          select.value = opt.value;
+          break;
         }
       }
     }
   } catch (e) {
     // si algo falla, ignoramos
   }
+
+  // Cambiar la URL de gracias según el motivo elegido
+  const form   = document.querySelector('form[name="contact"]');
+  const reason = document.getElementById("reason");
+
+  if (form && reason) {
+    form.addEventListener("submit", () => {
+      const val = reason.value;
+      let target = "/gracias/";
+      if (val === "reto-navidad") {
+        target = "/gracias/?motivo=reto-navidad";
+      }
+      form.action = target;
+    });
+  }
 });
 </script>
+
 
