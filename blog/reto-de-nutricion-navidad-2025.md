@@ -69,4 +69,4 @@ Muy pronto activaremos la opción para **pagar directamente desde la web** y com
 
 Mientras tanto, si ya lo tienes claro y quieres que te avise cuando se abra el plazo de inscripción, puedes escribirme desde la página de contacto:
 
-[Ir a la página de contacto](/contacto/)
+[Ir a la página de contacto](/contacto/?motivo=reto-navidad)
