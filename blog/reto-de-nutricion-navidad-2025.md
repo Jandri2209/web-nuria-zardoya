@@ -29,8 +29,8 @@ El pack completo del reto tiene un precio de **35 €** e incluye:
 * 🧾 **Recetas saludables** fáciles y rápidas de preparar.
 * 🗓️ Propuesta de **un menú semanal completo**.
 * 📝 Lista de la compra para **complementar el menú semanal**.
-* 🥗 Ideas para **5 desayunos antinflamatorios**, con variedad de los ingredientes dependiendo del supermercado, e incluyendo una revisión del etiquetado nutricional. 
-* 🥮 Recetario de **postres saludables**. 
+* 🥗 Ideas para **5 desayunos antinflamatorios**, con variedad de los ingredientes dependiendo del supermercado, e incluyendo una revisión del etiquetado nutricional.
+* 🥮 Recetario de **postres saludables**.
 * ✅ **Pautas nutricionales** para llevar a cabo en las celebraciones especiales de Navidad.
 * ❓ **Resolución privada de dudas** y apoyo en el proceso.
 
@@ -61,12 +61,21 @@ Este reto puede encajarte especialmente si:
 
 ## Próximos pasos
 
-Mientras preparamos todos los materiales y detalles del reto, puedes ir **mostrando tu interés** para ser de las primeras personas en recibir toda la información.
+Si te interesa el reto, puedes hacerlo de dos maneras:
 
-👉 El precio del pack será de **35 €** e **incluye todo el contenido y el acompañamiento de la semana**.
+**1. Resolver dudas antes de apuntarte**
 
-Muy pronto activaremos la opción para **pagar directamente desde la web** y completar tu inscripción en pocos minutos.
-
-Mientras tanto, si ya lo tienes claro y quieres que te avise cuando se abra el plazo de inscripción, puedes escribirme desde la página de contacto:
+Mientras terminamos de preparar todos los materiales, puedes escribirme para contarme tu caso y ver si el reto encaja contigo.
 
 [Ir a la página de contacto](/contacto/?motivo=reto-navidad)
+
+---
+
+**2. Apuntarte y pagar directamente**
+
+El precio del pack es de **35 €** e incluye todo el contenido y el acompañamiento de la semana.
+
+Si lo tienes claro, puedes realizar el pago de forma segura a través de PayPal:
+
+[Apuntarme y pagar ahora (35 €)](https://www.paypal.com/ncp/payment/M83FR7MUKNGBG)
+

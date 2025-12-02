@@ -92,6 +92,11 @@
   to   = "/servicios/"
   status = 301
 
+[[redirects]]
+  from = "/gracias-reto-navidad"
+  to   = "/gracias-reto-navidad/"
+  status = 301
+
 # ============================
 # Headers (seguridad + caché)
 # ============================
